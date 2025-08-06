@@ -1,18 +1,34 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Database, Shield, TrendingUp, Zap, BarChart3, Users, FileText } from 'lucide-react';
+import { Database, Shield, TrendingUp, Zap, BarChart3, Users, FileText, Globe, Brain, Layers } from 'lucide-react';
 import StarField from '@/components/StarField';
 import KPICard from '@/components/KPICard';
 import FileUpload from '@/components/FileUpload';
 import ChatBot from '@/components/ChatBot';
+import ProcessingTimeline from '@/components/ProcessingTimeline';
+import InsightBoard from '@/components/InsightBoard';
+import DataStoryMode from '@/components/DataStoryMode';
+import ScenarioSimulator from '@/components/ScenarioSimulator';
+import Globe3D from '@/components/Globe3D';
 
 const Index = () => {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [activeSection, setActiveSection] = useState<'upload' | 'timeline' | 'insights' | 'story' | 'simulator' | '3d'>('upload');
 
   const handleFileUpload = (file: File) => {
     setUploadedFile(file);
+    setActiveSection('timeline');
     console.log('File uploaded:', file.name);
   };
+
+  const sections = [
+    { id: 'upload' as const, label: 'Upload', icon: <FileText className="w-4 h-4" /> },
+    { id: 'timeline' as const, label: 'Processing', icon: <Layers className="w-4 h-4" /> },
+    { id: 'insights' as const, label: 'Insights', icon: <TrendingUp className="w-4 h-4" /> },
+    { id: 'story' as const, label: 'Story Mode', icon: <Brain className="w-4 h-4" /> },
+    { id: 'simulator' as const, label: 'Simulator', icon: <Zap className="w-4 h-4" /> },
+    { id: '3d' as const, label: '3D Globe', icon: <Globe className="w-4 h-4" /> }
+  ];
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -87,41 +103,64 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Upload Section */}
-        <section className="py-20 px-6">
-          <div className="max-w-6xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="text-center mb-16"
-            >
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                Upload Your <span className="gradient-text">Dataset</span>
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Drop your CSV or Excel files and watch as our AI analyzes, cleans, and transforms your data in real-time
-              </p>
-            </motion.div>
+        {/* Navigation Tabs */}
+        {uploadedFile && (
+          <section className="py-8 px-6">
+            <div className="max-w-6xl mx-auto">
+              <div className="flex items-center justify-center space-x-2 mb-8">
+                {sections.map((section) => (
+                  <button
+                    key={section.id}
+                    onClick={() => setActiveSection(section.id)}
+                    className={`
+                      flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300
+                      ${activeSection === section.id 
+                        ? 'bg-gradient-to-r from-primary to-quantum-purple text-primary-foreground quantum-glow' 
+                        : 'glass border border-border/30 hover:border-primary/50'
+                      }
+                    `}
+                  >
+                    {section.icon}
+                    <span>{section.label}</span>
+                  </button>
+                ))}
+              </div>
 
-            <FileUpload onFileUpload={handleFileUpload} />
+              {/* Dynamic Content */}
+              <div className="min-h-[600px]">
+                {activeSection === 'upload' && <FileUpload onFileUpload={handleFileUpload} />}
+                {activeSection === 'timeline' && <ProcessingTimeline />}
+                {activeSection === 'insights' && <InsightBoard />}
+                {activeSection === 'story' && <DataStoryMode />}
+                {activeSection === 'simulator' && <ScenarioSimulator />}
+                {activeSection === '3d' && <Globe3D />}
+              </div>
+            </div>
+          </section>
+        )}
 
-            {uploadedFile && (
+        {!uploadedFile && (
+          <section className="py-20 px-6">
+            <div className="max-w-6xl mx-auto">
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-12 text-center"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                viewport={{ once: true }}
+                className="text-center mb-16"
               >
-                <div className="glass p-6 rounded-lg max-w-md mx-auto">
-                  <FileText className="w-8 h-8 text-primary mx-auto mb-3" />
-                  <h3 className="font-semibold mb-2">File Ready for Analysis</h3>
-                  <p className="text-sm text-muted-foreground">{uploadedFile.name}</p>
-                </div>
+                <h2 className="text-4xl md:text-5xl font-bold mb-6">
+                  Upload Your <span className="gradient-text">Dataset</span>
+                </h2>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  Drop your CSV or Excel files and explore advanced analytics, 3D visualizations, and AI-powered insights
+                </p>
               </motion.div>
-            )}
-          </div>
-        </section>
+
+              <FileUpload onFileUpload={handleFileUpload} />
+            </div>
+          </section>
+        )}
 
         {/* Features Section */}
         <section className="py-20 px-6">
