@@ -61,7 +61,13 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				'quantum-glow': 'hsl(var(--quantum-glow))',
+				'quantum-purple': 'hsl(var(--quantum-purple))',
+				'quantum-green': 'hsl(var(--quantum-green))',
+				'quantum-surface': 'hsl(var(--quantum-surface))',
+				'quantum-surface-elevated': 'hsl(var(--quantum-surface-elevated))',
+				'quantum-glass': 'hsl(var(--quantum-glass))'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -88,7 +94,16 @@ export default {
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'floating': 'floating 3s ease-in-out infinite',
+				'particle-float': 'particle-float 4s linear infinite',
+				'glow-pulse': 'glow-pulse 2s ease-in-out infinite',
+				'shimmer': 'shimmer 2s infinite'
+			},
+			backgroundImage: {
+				'gradient-quantum': 'var(--gradient-quantum)',
+				'gradient-surface': 'var(--gradient-surface)',
+				'gradient-glow': 'var(--gradient-glow)'
 			}
 		}
 	},
