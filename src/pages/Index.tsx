@@ -1,269 +1,321 @@
 
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Database, Shield, TrendingUp } from 'lucide-react';
-import ObservatoryBackground from '@/components/backgrounds/ObservatoryBackground';
-import CommandBridge from '@/components/navigation/CommandBridge';
-import AmbientSoundSystem from '@/components/audio/AmbientSoundSystem';
-import KPICard from '@/components/KPICard';
-import FileUpload from '@/components/FileUpload';
-import ChatBot from '@/components/ChatBot';
-import ProcessingTimeline from '@/components/ProcessingTimeline';
-import InsightBoard from '@/components/InsightBoard';
-import DataStoryMode from '@/components/DataStoryMode';
-import ScenarioSimulator from '@/components/ScenarioSimulator';
-import Globe3D from '@/components/Globe3D';
-import AutoInsightEngine from '@/components/AutoInsightEngine';
-import DataScorecard from '@/components/DataScorecard';
-import KnowledgeGraph from '@/components/KnowledgeGraph';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Upload, BarChart3, Brain, Settings, Headphones, Command } from "lucide-react";
+
+import FileUpload from "@/components/FileUpload";
+import ProcessingTimeline from "@/components/ProcessingTimeline";
+import LoadingScreen from "@/components/LoadingScreen";
+import InsightBoard from "@/components/InsightBoard";
+import DataScorecard from "@/components/DataScorecard";
+import ChatBot from "@/components/ChatBot";
+import AutoInsightEngine from "@/components/AutoInsightEngine";
+import KnowledgeGraph from "@/components/KnowledgeGraph";
+import DataStoryMode from "@/components/DataStoryMode";
+import Globe3D from "@/components/Globe3D";
+import PresentationMode from "@/components/PresentationMode";
+import ScenarioSimulator from "@/components/ScenarioSimulator";
+
+// New AI-powered components
+import AIAgentSystem from "@/components/ai/AIAgentSystem";
+import Asset3DManager from "@/components/3d/Asset3DManager";
+import ChartEngine from "@/components/charts/ChartEngine";
+
+// Enhanced background and navigation
+import ObservatoryBackground from "@/components/backgrounds/ObservatoryBackground";
+import CommandBridge from "@/components/navigation/CommandBridge";
+import AmbientSoundSystem from "@/components/audio/AmbientSoundSystem";
+
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import KPICard from "@/components/KPICard";
 
 const Index = () => {
+  const [isUploading, setIsUploading] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [activeSection, setActiveSection] = useState<'upload' | 'timeline' | 'insights' | 'story' | 'simulator' | '3d' | 'intelligence'>('upload');
-  const [autoInsightActive, setAutoInsightActive] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isAnalysisReady, setIsAnalysisReady] = useState(false);
+  const [activeMode, setActiveMode] = useState<'analysis' | 'story' | '3d' | 'presentation' | 'simulation'>('analysis');
+  const [showAIPanel, setShowAIPanel] = useState(false);
+
+  // Mock data state
+  const [insights] = useState([
+    { id: '1', type: 'correlation', title: 'Strong Education-Employment Link', description: 'High correlation detected between education level and employment status' },
+    { id: '2', type: 'outlier', title: 'Income Anomalies Found', description: '12 data points exceed 3 standard deviations from mean' },
+    { id: '3', type: 'trend', title: 'Regional Disparity Trend', description: 'Consistent income gaps observed across urban-rural divide' }
+  ]);
 
   const handleFileUpload = (file: File) => {
+    setIsUploading(true);
     setUploadedFile(file);
-    setActiveSection('timeline');
-    setAutoInsightActive(true);
-    console.log('File uploaded:', file.name);
     
-    // Play success sound if available
-    if ((window as any).playInteractionSound) {
-      (window as any).playInteractionSound('success');
-    }
+    setTimeout(() => {
+      setIsUploading(false);
+      setIsProcessing(true);
+      
+      setTimeout(() => {
+        setIsProcessing(false);
+        setIsAnalysisReady(true);
+        setShowAIPanel(true); // Activate AI agents after processing
+      }, 3000);
+    }, 1500);
   };
 
-  const handleModuleSelect = (moduleId: string) => {
-    setActiveSection(moduleId as any);
-    
-    // Play click sound if available
-    if ((window as any).playInteractionSound) {
-      (window as any).playInteractionSound('click');
-    }
+  const handleVisualize = (data: any) => {
+    console.log('Visualizing:', data);
+    // Implementation for visualization requests from AI agents
   };
 
-  const availableModules = uploadedFile 
-    ? ['upload', 'timeline', 'insights', 'intelligence', 'story', 'simulator', '3d']
-    : ['upload'];
+  const handleExport = (data: any) => {
+    console.log('Exporting:', data);
+    // Implementation for export requests from AI agents
+  };
+
+  if (isUploading) {
+    return <LoadingScreen message="Uploading dataset to quantum processors..." />;
+  }
+
+  if (isProcessing) {
+    return <ProcessingTimeline />;
+  }
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Immersive Background */}
+    <div className="min-h-screen bg-background relative">
+      {/* Enhanced 3D Background */}
       <ObservatoryBackground />
       
       {/* Ambient Sound System */}
-      <AmbientSoundSystem activeModule={activeSection} isActive={true} />
-      
-      {/* Auto-Insight Engine (Fixed Position) */}
-      {uploadedFile && (
-        <AutoInsightEngine 
-          dataset={uploadedFile}
-          isActive={autoInsightActive}
-          onInsightAccepted={(insight) => {
-            console.log('Insight accepted:', insight);
-            if ((window as any).playInteractionSound) {
-              (window as any).playInteractionSound('success');
-            }
-          }}
-          onInsightDismissed={(insight) => {
-            console.log('Insight dismissed:', insight);
-            if ((window as any).playInteractionSound) {
-              (window as any).playInteractionSound('hover');
-            }
-          }}
-        />
-      )}
-      
+      <AmbientSoundSystem isActive={isAnalysisReady} />
+
+      {/* Command Bridge Navigation */}
+      <CommandBridge 
+        activeMode={activeMode}
+        onModeChange={setActiveMode}
+        isAnalysisReady={isAnalysisReady}
+      />
+
+      {/* AI Agent System */}
+      <AIAgentSystem 
+        dataset={uploadedFile ? [uploadedFile] : undefined}
+        onVisualize={handleVisualize}
+        onExport={handleExport}
+        isVisible={showAIPanel}
+      />
+
       {/* Main Content */}
-      <div className="relative z-10">
-        {/* Hero Section */}
-        <section className="min-h-screen flex items-center justify-center px-6">
-          <div className="text-center max-w-4xl mx-auto">
+      <div className="container mx-auto px-4 py-8">
+        {!isAnalysisReady ? (
+          // Welcome State - Data Navigator Introduction
+          <div className="space-y-12">
             <motion.div
-              initial={{ opacity: 0, y: 50 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="space-y-8"
+              className="text-center space-y-6"
             >
-              {/* Observatory Title */}
-              <div className="space-y-4">
-                <motion.div
-                  initial={{ scale: 0.8, rotateY: -180 }}
-                  animate={{ scale: 1, rotateY: 0 }}
-                  transition={{ duration: 1.2, type: "spring" }}
-                  className="relative"
-                >
-                  <h1 className="text-6xl md:text-8xl font-bold gradient-text leading-tight">
-                    DATA
-                    <br />
-                    OBSERVATORY
-                  </h1>
-                  
-                  {/* Holographic scan lines */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/10 to-transparent animate-shimmer" />
-                </motion.div>
-                
-                <motion.p
-                  className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 0.5 }}
-                >
-                  Navigate through crystalline data pipelines in your personal orbital command station. 
-                  Transform raw information into living knowledge with AI-powered precision.
-                </motion.p>
+              <div className="inline-flex items-center space-x-3 px-6 py-3 rounded-full glass">
+                <Command className="w-5 h-5 text-primary" />
+                <span className="text-sm font-medium">Data Observatory • Status: Orbital</span>
               </div>
+              
+              <h1 className="text-5xl font-bold gradient-text">
+                Welcome, Data Navigator
+              </h1>
+              
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+                You are aboard the Quantum Survey Observatory, a cutting-edge AI-operated platform orbiting above a smart planet. 
+                Your mission: explore, refine, and interpret knowledge from massive volumes of survey signals flowing through 
+                crystalline data pipelines.
+              </p>
 
-              {/* Mission Status Cards */}
-              <motion.div
-                className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.8 }}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="glass p-6 text-center space-y-3"
+                >
+                  <div className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                    <Upload className="w-6 h-6 text-primary" />
+                  </div>
+                  <h3 className="font-semibold">Data Intake</h3>
+                  <p className="text-xs text-muted-foreground">Beam aboard your survey datasets</p>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="glass p-6 text-center space-y-3"
+                >
+                  <div className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-quantum-purple/20 to-quantum-purple/5 flex items-center justify-center">
+                    <Brain className="w-6 h-6 text-quantum-purple" />
+                  </div>
+                  <h3 className="font-semibold">AI Analysis</h3>
+                  <p className="text-xs text-muted-foreground">Multi-agent intelligence processing</p>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="glass p-6 text-center space-y-3"
+                >
+                  <div className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-quantum-green/20 to-quantum-green/5 flex items-center justify-center">
+                    <BarChart3 className="w-6 h-6 text-quantum-green" />
+                  </div>
+                  <h3 className="font-semibold">3D Visualization</h3>
+                  <p className="text-xs text-muted-foreground">Immersive data exploration</p>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.5 }}
+                  className="glass p-6 text-center space-y-3"
+                >
+                  <div className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-yellow-500/20 to-yellow-500/5 flex items-center justify-center">
+                    <Headphones className="w-6 h-6 text-yellow-500" />
+                  </div>
+                  <h3 className="font-semibold">Ambient Mode</h3>
+                  <p className="text-xs text-muted-foreground">Living data artwork experience</p>
+                </motion.div>
+              </div>
+            </motion.div>
+
+            {/* File Upload Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+            >
+              <FileUpload onFileUpload={handleFileUpload} />
+            </motion.div>
+          </div>
+        ) : (
+          // Analysis Interface
+          <div className="space-y-8">
+            {/* Mode-Specific Content */}
+            {activeMode === 'analysis' && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="space-y-8"
               >
-                <KPICard
-                  title="Data Streams Processed"
-                  value={15847}
-                  icon={<Database className="w-6 h-6" />}
-                  color="cyan"
-                  delay={0.2}
-                />
-                <KPICard
-                  title="Anomalies Detected"
-                  value={342}
-                  icon={<Shield className="w-6 h-6" />}
-                  color="purple"
-                  delay={0.4}
-                />
-                <KPICard
-                  title="Observatory Efficiency"
-                  value={98}
-                  suffix="%"
-                  icon={<TrendingUp className="w-6 h-6" />}
-                  color="green"
-                  delay={0.6}
+                {/* KPI Overview */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <KPICard
+                    title="Total Records"
+                    value={15847}
+                    icon={<BarChart3 className="w-5 h-5" />}
+                    color="cyan"
+                    delay={0.1}
+                  />
+                  <KPICard
+                    title="Data Quality"
+                    value={98}
+                    suffix="%"
+                    icon={<Brain className="w-5 h-5" />}
+                    color="green"
+                    delay={0.2}
+                  />
+                  <KPICard
+                    title="Insights Found"
+                    value={23}
+                    icon={<Settings className="w-5 h-5" />}
+                    color="purple"
+                    delay={0.3}
+                  />
+                </div>
+
+                {/* Main Analysis Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  <div className="lg:col-span-2 space-y-8">
+                    <InsightBoard insights={insights} />
+                    <ChartEngine dataset={[]} />
+                  </div>
+                  
+                  <div className="space-y-8">
+                    <DataScorecard />
+                    <KnowledgeGraph insights={insights} />
+                  </div>
+                </div>
+
+                {/* Auto-Insight Engine */}
+                <AutoInsightEngine 
+                  dataset={uploadedFile ? [uploadedFile] : undefined}
+                  isActive={true}
                 />
               </motion.div>
-            </motion.div>
-          </div>
-        </section>
+            )}
 
-        {/* Command Bridge Navigation */}
-        <section className="py-12 px-6">
-          <div className="max-w-6xl mx-auto">
-            <CommandBridge
-              activeModule={activeSection}
-              onModuleSelect={handleModuleSelect}
-              availableModules={availableModules}
-            />
-
-            {/* Holographic Content Display */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6 }}
-              className="mt-16"
-            >
-              <div className="relative min-h-[600px]">
-                {/* Content with holographic frame */}
-                <div className="relative glass p-8 rounded-lg border-2 border-border/30 quantum-glow-hover">
-                  {/* Holographic corner decorations */}
-                  {[0, 1, 2, 3].map((corner) => (
-                    <div
-                      key={corner}
-                      className={`absolute w-6 h-6 border-2 border-primary/50 ${
-                        corner === 0 ? 'top-2 left-2 border-r-0 border-b-0' :
-                        corner === 1 ? 'top-2 right-2 border-l-0 border-b-0' :
-                        corner === 2 ? 'bottom-2 left-2 border-r-0 border-t-0' :
-                        'bottom-2 right-2 border-l-0 border-t-0'
-                      }`}
-                    />
-                  ))}
-
-                  {/* Dynamic Content */}
-                  <motion.div
-                    key={activeSection}
-                    initial={{ opacity: 0, x: 50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -50 }}
-                    transition={{ duration: 0.4 }}
-                  >
-                    {activeSection === 'upload' && <FileUpload onFileUpload={handleFileUpload} />}
-                    {activeSection === 'timeline' && <ProcessingTimeline />}
-                    {activeSection === 'insights' && <InsightBoard />}
-                    {activeSection === 'intelligence' && (
-                      <div className="space-y-8">
-                        <DataScorecard dataset={uploadedFile} />
-                        <KnowledgeGraph />
-                      </div>
-                    )}
-                    {activeSection === 'story' && <DataStoryMode />}
-                    {activeSection === 'simulator' && <ScenarioSimulator />}
-                    {activeSection === '3d' && <Globe3D />}
-                  </motion.div>
+            {activeMode === '3d' && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="space-y-8"
+              >
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <Globe3D title="Geographic Data Distribution" />
+                  <Asset3DManager assets={[]} />
                 </div>
+              </motion.div>
+            )}
 
-                {/* Ambient particles around content */}
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <motion.div
-                    key={i}
-                    className="absolute w-2 h-2 bg-primary/30 rounded-full"
-                    animate={{
-                      x: [0, Math.random() * 400 - 200],
-                      y: [0, Math.random() * 400 - 200],
-                      opacity: [0, 1, 0],
-                      scale: [0, 1, 0]
-                    }}
-                    transition={{
-                      duration: 4,
-                      delay: i * 0.5,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                    style={{
-                      left: `${Math.random() * 100}%`,
-                      top: `${Math.random() * 100}%`
-                    }}
-                  />
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </section>
+            {activeMode === 'story' && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+              >
+                <DataStoryMode dataset={uploadedFile} />
+              </motion.div>
+            )}
 
-        {/* Observatory Footer */}
-        <footer className="py-12 px-6 border-t border-border/30">
-          <div className="max-w-6xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-            >
-              <h3 className="text-2xl font-bold gradient-text mb-4">
-                ORBITAL DATA OBSERVATORY
-              </h3>
-              <p className="text-muted-foreground">
-                Mission Status: OPERATIONAL • Next-Generation Survey Intelligence Platform
-              </p>
-              <div className="flex items-center justify-center mt-4 space-x-4">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-quantum-green rounded-full animate-pulse" />
-                  <span className="text-xs text-muted-foreground">AI CORE ACTIVE</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                  <span className="text-xs text-muted-foreground">QUANTUM PROCESSORS ONLINE</span>
-                </div>
-              </div>
-            </motion.div>
+            {activeMode === 'presentation' && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <PresentationMode />
+              </motion.div>
+            )}
+
+            {activeMode === 'simulation' && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+              >
+                <ScenarioSimulator />
+              </motion.div>
+            )}
           </div>
-        </footer>
+        )}
       </div>
 
-      {/* Floating Communication Bay (Chat Bot) */}
+      {/* Floating Chatbot */}
       <ChatBot />
+      
+      {/* AI Panel Toggle */}
+      {isAnalysisReady && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 1.5 }}
+          className="fixed bottom-24 right-24 z-40"
+        >
+          <Button
+            onClick={() => setShowAIPanel(!showAIPanel)}
+            className={`w-12 h-12 rounded-full ${
+              showAIPanel 
+                ? 'bg-gradient-to-br from-destructive to-destructive/80' 
+                : 'bg-gradient-to-br from-quantum-purple to-quantum-purple/80'
+            } quantum-glow-hover`}
+            variant="default"
+          >
+            <Brain className="w-5 h-5" />
+          </Button>
+        </motion.div>
+      )}
     </div>
   );
 };
