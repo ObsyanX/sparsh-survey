@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Database, Shield, TrendingUp, Zap, BarChart3, Users, FileText, Globe, Brain, Layers } from 'lucide-react';
+import { Database, Shield, TrendingUp, Zap, BarChart3, Users, FileText, Globe, Brain, Layers, Activity } from 'lucide-react';
 import StarField from '@/components/StarField';
 import KPICard from '@/components/KPICard';
 import FileUpload from '@/components/FileUpload';
@@ -10,14 +11,19 @@ import InsightBoard from '@/components/InsightBoard';
 import DataStoryMode from '@/components/DataStoryMode';
 import ScenarioSimulator from '@/components/ScenarioSimulator';
 import Globe3D from '@/components/Globe3D';
+import AutoInsightEngine from '@/components/AutoInsightEngine';
+import DataScorecard from '@/components/DataScorecard';
+import KnowledgeGraph from '@/components/KnowledgeGraph';
 
 const Index = () => {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [activeSection, setActiveSection] = useState<'upload' | 'timeline' | 'insights' | 'story' | 'simulator' | '3d'>('upload');
+  const [activeSection, setActiveSection] = useState<'upload' | 'timeline' | 'insights' | 'story' | 'simulator' | '3d' | 'intelligence'>('upload');
+  const [autoInsightActive, setAutoInsightActive] = useState(false);
 
   const handleFileUpload = (file: File) => {
     setUploadedFile(file);
     setActiveSection('timeline');
+    setAutoInsightActive(true); // Activate AI engine when file is uploaded
     console.log('File uploaded:', file.name);
   };
 
@@ -25,15 +31,31 @@ const Index = () => {
     { id: 'upload' as const, label: 'Upload', icon: <FileText className="w-4 h-4" /> },
     { id: 'timeline' as const, label: 'Processing', icon: <Layers className="w-4 h-4" /> },
     { id: 'insights' as const, label: 'Insights', icon: <TrendingUp className="w-4 h-4" /> },
+    { id: 'intelligence' as const, label: 'AI Intelligence', icon: <Activity className="w-4 h-4" /> },
     { id: 'story' as const, label: 'Story Mode', icon: <Brain className="w-4 h-4" /> },
     { id: 'simulator' as const, label: 'Simulator', icon: <Zap className="w-4 h-4" /> },
     { id: '3d' as const, label: '3D Globe', icon: <Globe className="w-4 h-4" /> }
   ];
 
+  const handleInsightAccepted = (insight: any) => {
+    console.log('Insight accepted:', insight);
+    // Could trigger new visualizations or analyses here
+  };
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* Star Field Background */}
       <StarField />
+      
+      {/* Auto-Insight Engine (Fixed Position) */}
+      {uploadedFile && (
+        <AutoInsightEngine 
+          dataset={uploadedFile}
+          isActive={autoInsightActive}
+          onInsightAccepted={handleInsightAccepted}
+          onInsightDismissed={(insight) => console.log('Insight dismissed:', insight)}
+        />
+      )}
       
       {/* Main Content */}
       <div className="relative z-10">
@@ -131,6 +153,12 @@ const Index = () => {
                 {activeSection === 'upload' && <FileUpload onFileUpload={handleFileUpload} />}
                 {activeSection === 'timeline' && <ProcessingTimeline />}
                 {activeSection === 'insights' && <InsightBoard />}
+                {activeSection === 'intelligence' && (
+                  <div className="space-y-8">
+                    <DataScorecard dataset={uploadedFile} />
+                    <KnowledgeGraph />
+                  </div>
+                )}
                 {activeSection === 'story' && <DataStoryMode />}
                 {activeSection === 'simulator' && <ScenarioSimulator />}
                 {activeSection === '3d' && <Globe3D />}
