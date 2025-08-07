@@ -85,7 +85,7 @@ function Globe({ data = [] }: { data: DataPoint[] }) {
           map={globeTexture}
           transparent={true}
           opacity={0.8}
-          emissive="#001122"
+          emissive={new THREE.Color("#001122")}
           emissiveIntensity={0.1}
         />
       </Sphere>
@@ -93,7 +93,7 @@ function Globe({ data = [] }: { data: DataPoint[] }) {
       {/* Atmosphere */}
       <Sphere args={[2.05, 64, 64]}>
         <meshPhongMaterial
-          color="#00F5FF"
+          color={new THREE.Color("#00F5FF")}
           transparent={true}
           opacity={0.1}
           side={THREE.BackSide}
@@ -114,8 +114,8 @@ function Globe({ data = [] }: { data: DataPoint[] }) {
                 {/* Data point marker */}
                 <Sphere args={[0.05, 16, 16]}>
                   <meshPhongMaterial
-                    color={point.color || '#00F5FF'}
-                    emissive={point.color || '#00F5FF'}
+                    color={new THREE.Color(point.color || '#00F5FF')}
+                    emissive={new THREE.Color(point.color || '#00F5FF')}
                     emissiveIntensity={0.5}
                   />
                 </Sphere>
@@ -123,7 +123,7 @@ function Globe({ data = [] }: { data: DataPoint[] }) {
                 {/* Value indicator */}
                 <Sphere args={[0.02 + (point.value || 0) * 0.001, 16, 16]} position={[0, 0.1, 0]}>
                   <meshPhongMaterial
-                    color="#ffffff"
+                    color={new THREE.Color("#ffffff")}
                     transparent={true}
                     opacity={0.7}
                   />
@@ -133,8 +133,8 @@ function Globe({ data = [] }: { data: DataPoint[] }) {
                 <mesh>
                   <cylinderGeometry args={[0.005, 0.005, 0.1, 8]} />
                   <meshPhongMaterial
-                    color={point.color || '#00F5FF'}
-                    emissive={point.color || '#00F5FF'}
+                    color={new THREE.Color(point.color || '#00F5FF')}
+                    emissive={new THREE.Color(point.color || '#00F5FF')}
                     emissiveIntensity={0.3}
                     transparent={true}
                     opacity={0.6}
@@ -184,12 +184,12 @@ export default function Globe3D({ data = [], title = "Global Data Visualization"
           <directionalLight
             position={[10, 10, 5]}
             intensity={1}
-            color="#ffffff"
+            color={new THREE.Color("#ffffff")}
           />
           <pointLight
             position={[-10, -10, -5]}
             intensity={0.5}
-            color="#00F5FF"
+            color={new THREE.Color("#00F5FF")}
           />
 
           {/* Controls */}

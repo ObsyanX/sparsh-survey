@@ -33,7 +33,7 @@ function AnimatedStars(props: any) {
       <Points ref={ref} positions={sphere} stride={3} frustumCulled={false} {...props}>
         <PointMaterial
           transparent
-          color="#00F5FF"
+          color={new THREE.Color("#00F5FF")}
           size={0.02}
           sizeAttenuation={true}
           depthWrite={false}
@@ -67,10 +67,10 @@ function FloatingDataNodes() {
         <Float key={index} speed={pos.speed} rotationIntensity={0.5} floatIntensity={0.5}>
           <Sphere position={[pos.x, pos.y, pos.z]} args={[0.3, 16, 16]}>
             <meshPhongMaterial
-              color="#8B5CF6"
+              color={new THREE.Color("#8B5CF6")}
               transparent
               opacity={0.3}
-              emissive="#8B5CF6"
+              emissive={new THREE.Color("#8B5CF6")}
               emissiveIntensity={0.1}
             />
           </Sphere>
@@ -95,10 +95,10 @@ function PlanetaryRings() {
         <mesh key={index} rotation={[Math.PI / 2, 0, 0]} position={[0, 0, -20]}>
           <torusGeometry args={[8 + index * 3, 0.1, 16, 100]} />
           <meshPhongMaterial
-            color={index === 0 ? "#00F5FF" : index === 1 ? "#8B5CF6" : "#00FF88"}
+            color={new THREE.Color(index === 0 ? "#00F5FF" : index === 1 ? "#8B5CF6" : "#00FF88")}
             transparent
             opacity={0.2}
-            emissive={index === 0 ? "#00F5FF" : index === 1 ? "#8B5CF6" : "#00FF88"}
+            emissive={new THREE.Color(index === 0 ? "#00F5FF" : index === 1 ? "#8B5CF6" : "#00FF88")}
             emissiveIntensity={0.1}
           />
         </mesh>
@@ -126,12 +126,12 @@ export default function ObservatoryBackground() {
         <directionalLight
           position={[10, 10, 5]}
           intensity={0.5}
-          color="#ffffff"
+          color={new THREE.Color("#ffffff")}
         />
         <pointLight
           position={[-10, -10, -5]}
           intensity={0.3}
-          color="#00F5FF"
+          color={new THREE.Color("#00F5FF")}
         />
 
         {/* Animated elements */}
@@ -142,7 +142,7 @@ export default function ObservatoryBackground() {
         {/* Background nebula effect */}
         <Sphere args={[100, 32, 32]}>
           <meshBasicMaterial
-            color="#0a0e27"
+            color={new THREE.Color("#0a0e27")}
             transparent
             opacity={0.1}
             side={THREE.BackSide}
