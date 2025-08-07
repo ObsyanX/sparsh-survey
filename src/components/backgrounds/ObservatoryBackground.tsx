@@ -33,7 +33,7 @@ function AnimatedStars(props: any) {
       <Points ref={ref} positions={sphere} stride={3} frustumCulled={false} {...props}>
         <PointMaterial
           transparent
-          color={new THREE.Color("#00F5FF")}
+          color="#00F5FF"
           size={0.02}
           sizeAttenuation={true}
           depthWrite={false}
@@ -45,11 +45,6 @@ function AnimatedStars(props: any) {
 }
 
 function FloatingDataNodes() {
-  const groupRef = useRef<THREE.Group>(null);
-  
-  const nodeColor = useMemo(() => new THREE.Color("#8B5CF6"), []);
-  const nodeEmissive = useMemo(() => new THREE.Color("#8B5CF6"), []);
-  
   const nodePositions = useMemo(() => {
     return Array.from({ length: 15 }, () => ({
       x: (Math.random() - 0.5) * 40,
@@ -71,10 +66,10 @@ function FloatingDataNodes() {
         <Float key={index} speed={pos.speed} rotationIntensity={0.5} floatIntensity={0.5}>
           <Sphere position={[pos.x, pos.y, pos.z]} args={[0.3, 16, 16]}>
             <meshPhongMaterial
-              color={nodeColor}
+              color="#8B5CF6"
               transparent
               opacity={0.3}
-              emissive={nodeEmissive}
+              emissive="#8B5CF6"
               emissiveIntensity={0.1}
             />
           </Sphere>
@@ -87,11 +82,7 @@ function FloatingDataNodes() {
 function PlanetaryRings() {
   const ringRef = useRef<THREE.Group>(null);
 
-  const ringColors = useMemo(() => [
-    new THREE.Color("#00F5FF"),
-    new THREE.Color("#8B5CF6"),
-    new THREE.Color("#00FF88")
-  ], []);
+  const ringColors = ["#00F5FF", "#8B5CF6", "#00FF88"];
 
   useFrame((state, delta) => {
     if (ringRef.current) {
@@ -120,12 +111,6 @@ function PlanetaryRings() {
 export default function ObservatoryBackground() {
   const { settings } = useTheme();
   
-  const lightColors = useMemo(() => ({
-    directional: new THREE.Color("#ffffff"),
-    point: new THREE.Color("#00F5FF"),
-    nebula: new THREE.Color("#0a0e27")
-  }), []);
-  
   if (settings.backgroundTexture !== 'starfield') {
     return null;
   }
@@ -142,12 +127,12 @@ export default function ObservatoryBackground() {
         <directionalLight
           position={[10, 10, 5]}
           intensity={0.5}
-          color={lightColors.directional}
+          color="#ffffff"
         />
         <pointLight
           position={[-10, -10, -5]}
           intensity={0.3}
-          color={lightColors.point}
+          color="#00F5FF"
         />
 
         {/* Animated elements */}
@@ -158,7 +143,7 @@ export default function ObservatoryBackground() {
         {/* Background nebula effect */}
         <Sphere args={[100, 32, 32]}>
           <meshBasicMaterial
-            color={lightColors.nebula}
+            color="#0a0e27"
             transparent
             opacity={0.1}
             side={THREE.BackSide}

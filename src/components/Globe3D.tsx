@@ -23,11 +23,6 @@ interface Globe3DProps {
 function Globe({ data = [] }: { data: DataPoint[] }) {
   const globeRef = useRef<THREE.Mesh>(null);
   const pointsRef = useRef<THREE.Group>(null);
-
-  const globeColors = useMemo(() => ({
-    emissive: new THREE.Color("#001122"),
-    atmosphere: new THREE.Color("#00F5FF")
-  }), []);
   useFrame((state) => {
     if (globeRef.current) {
       globeRef.current.rotation.y += 0.002;
@@ -75,12 +70,6 @@ function Globe({ data = [] }: { data: DataPoint[] }) {
         ctx.beginPath();
         ctx.arc(x, y, size, 0, Math.PI * 2);
         ctx.fill();
-      }
-    }
-    
-    return new THREE.CanvasTexture(canvas);
-  }, []);
-
   return (
     <group>
       {/* Globe */}
@@ -89,7 +78,7 @@ function Globe({ data = [] }: { data: DataPoint[] }) {
           map={globeTexture}
           transparent={true}
           opacity={0.8}
-          emissive={globeColors.emissive}
+          emissive="#001122"
           emissiveIntensity={0.1}
         />
       </Sphere>
@@ -97,7 +86,7 @@ function Globe({ data = [] }: { data: DataPoint[] }) {
       {/* Atmosphere */}
       <Sphere args={[2.05, 64, 64]}>
         <meshPhongMaterial
-          color={globeColors.atmosphere}
+          color="#00F5FF"
           transparent={true}
           opacity={0.1}
           side={THREE.BackSide}
@@ -112,8 +101,6 @@ function Globe({ data = [] }: { data: DataPoint[] }) {
           }
           
           const position = convertToVector3(point.lat, point.lng);
-          const pointColor = useMemo(() => new THREE.Color(point.color || '#00F5FF'), [point.color]);
-          const whiteColor = useMemo(() => new THREE.Color("#ffffff"), []);
           
           return (
             <Float key={point.id} speed={1} rotationIntensity={0.5} floatIntensity={0.5}>
@@ -121,8 +108,8 @@ function Globe({ data = [] }: { data: DataPoint[] }) {
                 {/* Data point marker */}
                 <Sphere args={[0.05, 16, 16]}>
                   <meshPhongMaterial
-                    color={pointColor}
-                    emissive={pointColor}
+                    color={point.color || '#00F5FF'}
+                    emissive={point.color || '#00F5FF'}
                     emissiveIntensity={0.5}
                   />
                 </Sphere>
@@ -130,7 +117,7 @@ function Globe({ data = [] }: { data: DataPoint[] }) {
                 {/* Value indicator */}
                 <Sphere args={[0.02 + (point.value || 0) * 0.001, 16, 16]} position={[0, 0.1, 0]}>
                   <meshPhongMaterial
-                    color={whiteColor}
+                    color="#ffffff"
                     transparent={true}
                     opacity={0.7}
                   />
@@ -140,8 +127,8 @@ function Globe({ data = [] }: { data: DataPoint[] }) {
                 <mesh>
                   <cylinderGeometry args={[0.005, 0.005, 0.1, 8]} />
                   <meshPhongMaterial
-                    color={pointColor}
-                    emissive={pointColor}
+                    color={point.color || '#00F5FF'}
+                    emissive={point.color || '#00F5FF'}
                     emissiveIntensity={0.3}
                     transparent={true}
                     opacity={0.6}
@@ -196,12 +183,12 @@ export default function Globe3D({ data = [], title = "Global Data Visualization"
           <directionalLight
             position={[10, 10, 5]}
             intensity={1}
-            color={lightColors.directional}
+            color="#ffffff"
           />
           <pointLight
             position={[-10, -10, -5]}
             intensity={0.5}
-            color={lightColors.point}
+            color="#00F5FF"
           />
 
           {/* Controls */}
@@ -230,7 +217,7 @@ export default function Globe3D({ data = [], title = "Global Data Visualization"
                 (Math.random() - 0.5) * 50
               ]}
             >
-              <meshBasicMaterial color={lightColors.starWhite} />
+              <meshBasicMaterial color="#ffffff" />
             </Sphere>
           ))}
         </Canvas>
