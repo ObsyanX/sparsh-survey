@@ -1,4 +1,5 @@
 
+
 import * as React from "react"
 import * as RechartsPrimitive from "recharts"
 
@@ -110,6 +111,8 @@ const ChartTooltipContent = React.forwardRef<
       indicator?: "line" | "dot" | "dashed"
       nameKey?: string
       labelKey?: string
+      payload?: Array<any>
+      label?: React.ReactNode
     }
 >(
   (
@@ -371,3 +374,4 @@ export {
   ChartLegendContent,
   ChartStyle,
 }
+
