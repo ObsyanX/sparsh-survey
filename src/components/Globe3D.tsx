@@ -1,3 +1,4 @@
+
 import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Sphere, Float, Text3D } from '@react-three/drei';
@@ -82,7 +83,7 @@ function Globe({ data = [] }: { data: DataPoint[] }) {
       <Sphere ref={globeRef} args={[2, 64, 64]}>
         <meshPhongMaterial
           map={globeTexture}
-          transparent
+          transparent={true}
           opacity={0.8}
           emissive="#001122"
           emissiveIntensity={0.1}
@@ -93,7 +94,7 @@ function Globe({ data = [] }: { data: DataPoint[] }) {
       <Sphere args={[2.05, 64, 64]}>
         <meshPhongMaterial
           color="#00F5FF"
-          transparent
+          transparent={true}
           opacity={0.1}
           side={THREE.BackSide}
         />
@@ -101,25 +102,29 @@ function Globe({ data = [] }: { data: DataPoint[] }) {
 
       {/* Data Points */}
       <group ref={pointsRef}>
-        {data.map((point) => {
+        {data && data.length > 0 && data.map((point) => {
+          if (!point || typeof point.lat !== 'number' || typeof point.lng !== 'number') {
+            return null;
+          }
+          
           const position = convertToVector3(point.lat, point.lng);
           return (
             <Float key={point.id} speed={1} rotationIntensity={0.5} floatIntensity={0.5}>
-              <group position={position}>
+              <group position={[position.x, position.y, position.z]}>
                 {/* Data point marker */}
                 <Sphere args={[0.05, 16, 16]}>
                   <meshPhongMaterial
-                    color={point.color}
-                    emissive={point.color}
+                    color={point.color || '#00F5FF'}
+                    emissive={point.color || '#00F5FF'}
                     emissiveIntensity={0.5}
                   />
                 </Sphere>
                 
                 {/* Value indicator */}
-                <Sphere args={[0.02 + point.value * 0.001, 16, 16]} position={[0, 0.1, 0]}>
+                <Sphere args={[0.02 + (point.value || 0) * 0.001, 16, 16]} position={[0, 0.1, 0]}>
                   <meshPhongMaterial
                     color="#ffffff"
-                    transparent
+                    transparent={true}
                     opacity={0.7}
                   />
                 </Sphere>
@@ -128,10 +133,10 @@ function Globe({ data = [] }: { data: DataPoint[] }) {
                 <mesh>
                   <cylinderGeometry args={[0.005, 0.005, 0.1, 8]} />
                   <meshPhongMaterial
-                    color={point.color}
-                    emissive={point.color}
+                    color={point.color || '#00F5FF'}
+                    emissive={point.color || '#00F5FF'}
                     emissiveIntensity={0.3}
-                    transparent
+                    transparent={true}
                     opacity={0.6}
                   />
                 </mesh>
@@ -157,7 +162,7 @@ export default function Globe3D({ data = [], title = "Global Data Visualization"
     { id: '8', name: 'Moscow', lat: 55.7558, lng: 37.6176, value: 620, color: '#00CED1' }
   ];
 
-  const displayData = data.length > 0 ? data : defaultData;
+  const displayData = data && data.length > 0 ? data : defaultData;
 
   return (
     <Card className="glass p-6 space-y-4">
@@ -172,6 +177,7 @@ export default function Globe3D({ data = [], title = "Global Data Visualization"
         <Canvas
           camera={{ position: [0, 0, 6], fov: 60 }}
           style={{ background: 'transparent' }}
+          gl={{ antialias: true, alpha: true }}
         >
           {/* Lighting */}
           <ambientLight intensity={0.3} />
@@ -242,7 +248,7 @@ export default function Globe3D({ data = [], title = "Global Data Visualization"
           >
             <div className="font-semibold mb-2">Data Points</div>
             <div className="space-y-1">
-              {displayData.slice(0, 4).map((point) => (
+              {displayData && displayData.slice(0, 4).map((point) => (
                 <div key={point.id} className="flex items-center space-x-2">
                   <div
                     className="w-2 h-2 rounded-full"
@@ -253,7 +259,7 @@ export default function Globe3D({ data = [], title = "Global Data Visualization"
                   </span>
                 </div>
               ))}
-              {displayData.length > 4 && (
+              {displayData && displayData.length > 4 && (
                 <div className="text-muted-foreground">
                   +{displayData.length - 4} more locations
                 </div>
@@ -266,24 +272,33 @@ export default function Globe3D({ data = [], title = "Global Data Visualization"
       {/* Statistics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
         <div className="text-center">
-          <div className="text-lg font-bold text-primary">{displayData.length}</div>
+          <div className="text-lg font-bold text-primary">{displayData?.length || 0}</div>
           <div className="text-xs text-muted-foreground">Locations</div>
         </div>
         <div className="text-center">
           <div className="text-lg font-bold text-quantum-purple">
-            {Math.round(displayData.reduce((sum, d) => sum + d.value, 0) / displayData.length)}
+            {displayData && displayData.length > 0 
+              ? Math.round(displayData.reduce((sum, d) => sum + (d.value || 0), 0) / displayData.length)
+              : 0
+            }
           </div>
           <div className="text-xs text-muted-foreground">Avg Value</div>
         </div>
         <div className="text-center">
           <div className="text-lg font-bold text-quantum-green">
-            {Math.max(...displayData.map(d => d.value))}
+            {displayData && displayData.length > 0 
+              ? Math.max(...displayData.map(d => d.value || 0))
+              : 0
+            }
           </div>
           <div className="text-xs text-muted-foreground">Max Value</div>
         </div>
         <div className="text-center">
           <div className="text-lg font-bold text-destructive">
-            {Math.min(...displayData.map(d => d.value))}
+            {displayData && displayData.length > 0 
+              ? Math.min(...displayData.map(d => d.value || 0))
+              : 0
+            }
           </div>
           <div className="text-xs text-muted-foreground">Min Value</div>
         </div>
