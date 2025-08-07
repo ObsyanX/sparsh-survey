@@ -24,6 +24,10 @@ function Globe({ data = [] }: { data: DataPoint[] }) {
   const globeRef = useRef<THREE.Mesh>(null);
   const pointsRef = useRef<THREE.Group>(null);
 
+  const globeColors = useMemo(() => ({
+    emissive: new THREE.Color("#001122"),
+    atmosphere: new THREE.Color("#00F5FF")
+  }), []);
   useFrame((state) => {
     if (globeRef.current) {
       globeRef.current.rotation.y += 0.002;
@@ -85,7 +89,7 @@ function Globe({ data = [] }: { data: DataPoint[] }) {
           map={globeTexture}
           transparent={true}
           opacity={0.8}
-          emissive={new THREE.Color("#001122")}
+          emissive={globeColors.emissive}
           emissiveIntensity={0.1}
         />
       </Sphere>
@@ -93,7 +97,7 @@ function Globe({ data = [] }: { data: DataPoint[] }) {
       {/* Atmosphere */}
       <Sphere args={[2.05, 64, 64]}>
         <meshPhongMaterial
-          color={new THREE.Color("#00F5FF")}
+          color={globeColors.atmosphere}
           transparent={true}
           opacity={0.1}
           side={THREE.BackSide}
@@ -108,14 +112,17 @@ function Globe({ data = [] }: { data: DataPoint[] }) {
           }
           
           const position = convertToVector3(point.lat, point.lng);
+          const pointColor = useMemo(() => new THREE.Color(point.color || '#00F5FF'), [point.color]);
+          const whiteColor = useMemo(() => new THREE.Color("#ffffff"), []);
+          
           return (
             <Float key={point.id} speed={1} rotationIntensity={0.5} floatIntensity={0.5}>
               <group position={[position.x, position.y, position.z]}>
                 {/* Data point marker */}
                 <Sphere args={[0.05, 16, 16]}>
                   <meshPhongMaterial
-                    color={new THREE.Color(point.color || '#00F5FF')}
-                    emissive={new THREE.Color(point.color || '#00F5FF')}
+                    color={pointColor}
+                    emissive={pointColor}
                     emissiveIntensity={0.5}
                   />
                 </Sphere>
@@ -123,7 +130,7 @@ function Globe({ data = [] }: { data: DataPoint[] }) {
                 {/* Value indicator */}
                 <Sphere args={[0.02 + (point.value || 0) * 0.001, 16, 16]} position={[0, 0.1, 0]}>
                   <meshPhongMaterial
-                    color={new THREE.Color("#ffffff")}
+                    color={whiteColor}
                     transparent={true}
                     opacity={0.7}
                   />
@@ -133,8 +140,8 @@ function Globe({ data = [] }: { data: DataPoint[] }) {
                 <mesh>
                   <cylinderGeometry args={[0.005, 0.005, 0.1, 8]} />
                   <meshPhongMaterial
-                    color={new THREE.Color(point.color || '#00F5FF')}
-                    emissive={new THREE.Color(point.color || '#00F5FF')}
+                    color={pointColor}
+                    emissive={pointColor}
                     emissiveIntensity={0.3}
                     transparent={true}
                     opacity={0.6}
@@ -164,6 +171,11 @@ export default function Globe3D({ data = [], title = "Global Data Visualization"
 
   const displayData = data && data.length > 0 ? data : defaultData;
 
+  const lightColors = useMemo(() => ({
+    directional: new THREE.Color("#ffffff"),
+    point: new THREE.Color("#00F5FF"),
+    starWhite: new THREE.Color("#ffffff")
+  }), []);
   return (
     <Card className="glass p-6 space-y-4">
       <div className="text-center space-y-2">
@@ -184,12 +196,12 @@ export default function Globe3D({ data = [], title = "Global Data Visualization"
           <directionalLight
             position={[10, 10, 5]}
             intensity={1}
-            color={new THREE.Color("#ffffff")}
+            color={lightColors.directional}
           />
           <pointLight
             position={[-10, -10, -5]}
             intensity={0.5}
-            color={new THREE.Color("#00F5FF")}
+            color={lightColors.point}
           />
 
           {/* Controls */}
@@ -218,7 +230,7 @@ export default function Globe3D({ data = [], title = "Global Data Visualization"
                 (Math.random() - 0.5) * 50
               ]}
             >
-              <meshBasicMaterial color="#ffffff" />
+              <meshBasicMaterial color={lightColors.starWhite} />
             </Sphere>
           ))}
         </Canvas>

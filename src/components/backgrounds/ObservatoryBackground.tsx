@@ -46,6 +46,10 @@ function AnimatedStars(props: any) {
 
 function FloatingDataNodes() {
   const groupRef = useRef<THREE.Group>(null);
+  
+  const nodeColor = useMemo(() => new THREE.Color("#8B5CF6"), []);
+  const nodeEmissive = useMemo(() => new THREE.Color("#8B5CF6"), []);
+  
   const nodePositions = useMemo(() => {
     return Array.from({ length: 15 }, () => ({
       x: (Math.random() - 0.5) * 40,
@@ -67,10 +71,10 @@ function FloatingDataNodes() {
         <Float key={index} speed={pos.speed} rotationIntensity={0.5} floatIntensity={0.5}>
           <Sphere position={[pos.x, pos.y, pos.z]} args={[0.3, 16, 16]}>
             <meshPhongMaterial
-              color={new THREE.Color("#8B5CF6")}
+              color={nodeColor}
               transparent
               opacity={0.3}
-              emissive={new THREE.Color("#8B5CF6")}
+              emissive={nodeEmissive}
               emissiveIntensity={0.1}
             />
           </Sphere>
@@ -82,6 +86,12 @@ function FloatingDataNodes() {
 
 function PlanetaryRings() {
   const ringRef = useRef<THREE.Group>(null);
+
+  const ringColors = useMemo(() => [
+    new THREE.Color("#00F5FF"),
+    new THREE.Color("#8B5CF6"),
+    new THREE.Color("#00FF88")
+  ], []);
 
   useFrame((state, delta) => {
     if (ringRef.current) {
@@ -95,10 +105,10 @@ function PlanetaryRings() {
         <mesh key={index} rotation={[Math.PI / 2, 0, 0]} position={[0, 0, -20]}>
           <torusGeometry args={[8 + index * 3, 0.1, 16, 100]} />
           <meshPhongMaterial
-            color={new THREE.Color(index === 0 ? "#00F5FF" : index === 1 ? "#8B5CF6" : "#00FF88")}
+            color={ringColors[index]}
             transparent
             opacity={0.2}
-            emissive={new THREE.Color(index === 0 ? "#00F5FF" : index === 1 ? "#8B5CF6" : "#00FF88")}
+            emissive={ringColors[index]}
             emissiveIntensity={0.1}
           />
         </mesh>
@@ -109,6 +119,12 @@ function PlanetaryRings() {
 
 export default function ObservatoryBackground() {
   const { settings } = useTheme();
+  
+  const lightColors = useMemo(() => ({
+    directional: new THREE.Color("#ffffff"),
+    point: new THREE.Color("#00F5FF"),
+    nebula: new THREE.Color("#0a0e27")
+  }), []);
   
   if (settings.backgroundTexture !== 'starfield') {
     return null;
@@ -126,12 +142,12 @@ export default function ObservatoryBackground() {
         <directionalLight
           position={[10, 10, 5]}
           intensity={0.5}
-          color={new THREE.Color("#ffffff")}
+          color={lightColors.directional}
         />
         <pointLight
           position={[-10, -10, -5]}
           intensity={0.3}
-          color={new THREE.Color("#00F5FF")}
+          color={lightColors.point}
         />
 
         {/* Animated elements */}
@@ -142,7 +158,7 @@ export default function ObservatoryBackground() {
         {/* Background nebula effect */}
         <Sphere args={[100, 32, 32]}>
           <meshBasicMaterial
-            color={new THREE.Color("#0a0e27")}
+            color={lightColors.nebula}
             transparent
             opacity={0.1}
             side={THREE.BackSide}
