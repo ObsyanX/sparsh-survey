@@ -116,7 +116,7 @@ export default function AccessibilityFeatures({ children }: AccessibilityFeature
       </div>
 
       {/* Focus Indicator Enhancement */}
-      <style jsx global>{`
+      <style>{`
         :focus-visible {
           outline: 2px solid hsl(var(--ring));
           outline-offset: 2px;
