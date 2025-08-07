@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { BarChart3, PieChart, TrendingUp, Map, Scatter3D, Eye } from 'lucide-react';
+import { BarChart3, PieChart, TrendingUp, Map, ScatterChart, Eye } from 'lucide-react';
 import { BarChart, Bar, LineChart, Line, PieChart as RechartsPie, Cell, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface ChartRecommendation {
@@ -140,7 +140,7 @@ export default function ChartEngine({ dataset = [], onChartSelect, className = '
         description: 'Scatter plot revealing the relationship between age, income, and education level.',
         score: 91,
         variables: ['age', 'income', 'education_level'],
-        icon: <Scatter3D className="w-4 h-4" />,
+        icon: <ScatterChart className="w-4 h-4" />,
         data: mockAgeIncomeData,
         preview: (
           <ResponsiveContainer width="100%" height={120}>
