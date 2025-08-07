@@ -45,6 +45,7 @@ function AnimatedStars(props: any) {
 }
 
 function FloatingDataNodes() {
+  const groupRef = useRef<THREE.Group>(null); // ADDED THIS LINE
   const nodePositions = useMemo(() => {
     return Array.from({ length: 15 }, () => ({
       x: (Math.random() - 0.5) * 40,
