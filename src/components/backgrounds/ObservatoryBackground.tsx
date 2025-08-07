@@ -1,4 +1,3 @@
-
 import React, { useRef, useMemo, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Points, PointMaterial, Sphere, Float } from '@react-three/drei';
@@ -7,21 +6,25 @@ import { useTheme } from '@/contexts/ThemeContext';
 
 function AnimatedStars(props: any) {
   const ref = useRef<THREE.Points>(null);
-  const [sphere] = useMemo(() => {
-    const sphere = new Float32Array(5000 * 3);
+
+  const sphereGeometry = useMemo(() => {
+    const positions = new Float32Array(5000 * 3);
     for (let i = 0; i < 5000; i++) {
       const radius = Math.random() * 50 + 10;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(Math.random() * 2 - 1);
-      
-      sphere[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-      sphere[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-      sphere[i * 3 + 2] = radius * Math.cos(phi);
+
+      positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+      positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+      positions[i * 3 + 2] = radius * Math.cos(phi);
     }
-    return [sphere];
+
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    return geometry;
   }, []);
 
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     if (ref.current) {
       ref.current.rotation.x -= delta / 20;
       ref.current.rotation.y -= delta / 30;
@@ -30,32 +33,33 @@ function AnimatedStars(props: any) {
 
   return (
     <group rotation={[0, 0, Math.PI / 4]}>
-      <Points ref={ref} positions={sphere} stride={3} frustumCulled={false} {...props}>
+      <points ref={ref} geometry={sphereGeometry} {...props}>
         <PointMaterial
           transparent
           color="#00F5FF"
           size={0.02}
-          sizeAttenuation={true}
+          sizeAttenuation
           depthWrite={false}
           opacity={0.8}
         />
-      </Points>
+      </points>
     </group>
   );
 }
 
 function FloatingDataNodes() {
-  const groupRef = useRef<THREE.Group>(null); // ADDED THIS LINE
+  const groupRef = useRef<THREE.Group>(null); // ✅ Fix missing ref
+
   const nodePositions = useMemo(() => {
     return Array.from({ length: 15 }, () => ({
       x: (Math.random() - 0.5) * 40,
       y: (Math.random() - 0.5) * 40,
       z: (Math.random() - 0.5) * 40,
-      speed: Math.random() * 0.5 + 0.2
+      speed: Math.random() * 0.5 + 0.2,
     }));
   }, []);
 
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     if (groupRef.current) {
       groupRef.current.rotation.y += delta * 0.1;
     }
@@ -83,9 +87,9 @@ function FloatingDataNodes() {
 function PlanetaryRings() {
   const ringRef = useRef<THREE.Group>(null);
 
-  const ringColors = ["#00F5FF", "#8B5CF6", "#00FF88"];
+  const ringColors = ['#00F5FF', '#8B5CF6', '#00FF88'];
 
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     if (ringRef.current) {
       ringRef.current.rotation.z += delta * 0.2;
     }
@@ -111,10 +115,8 @@ function PlanetaryRings() {
 
 export default function ObservatoryBackground() {
   const { settings } = useTheme();
-  
-  if (settings.backgroundTexture !== 'starfield') {
-    return null;
-  }
+
+  if (settings.backgroundTexture !== 'starfield') return null;
 
   return (
     <div className="fixed inset-0 -z-10">
@@ -123,25 +125,17 @@ export default function ObservatoryBackground() {
         gl={{ alpha: true, antialias: true }}
         style={{ background: 'transparent' }}
       >
-        {/* Ambient lighting */}
+        {/* Lights */}
         <ambientLight intensity={0.2} />
-        <directionalLight
-          position={[10, 10, 5]}
-          intensity={0.5}
-          color="#ffffff"
-        />
-        <pointLight
-          position={[-10, -10, -5]}
-          intensity={0.3}
-          color="#00F5FF"
-        />
+        <directionalLight position={[10, 10, 5]} intensity={0.5} color="#ffffff" />
+        <pointLight position={[-10, -10, -5]} intensity={0.3} color="#00F5FF" />
 
-        {/* Animated elements */}
+        {/* Scene elements */}
         <AnimatedStars />
         <FloatingDataNodes />
         <PlanetaryRings />
 
-        {/* Background nebula effect */}
+        {/* Background Sphere (Nebula effect) */}
         <Sphere args={[100, 32, 32]}>
           <meshBasicMaterial
             color="#0a0e27"
