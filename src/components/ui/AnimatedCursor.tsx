@@ -15,8 +15,8 @@ const AnimatedCursor = () => {
       const target = e.target as HTMLElement;
       const isInteractive = target.tagName === 'BUTTON' || 
                            target.tagName === 'A' || 
-                           target.closest('button') || 
-                           target.closest('a') ||
+                           !!target.closest('button') || 
+                           !!target.closest('a') ||
                            target.classList.contains('cursor-pointer');
       setIsHovering(isInteractive);
     };
