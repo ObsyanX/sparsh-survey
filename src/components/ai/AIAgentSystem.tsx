@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Brain, BarChart3, Type, BookOpen, Settings, Eye, Download, ArrowRight } from 'lucide-react';
+import { Brain, BarChart3, Type, BookOpen, Settings, Eye, Download, ArrowRight, ChevronRight, ChevronLeft } from 'lucide-react';
 
 interface AIAgent {
   id: string;
@@ -68,6 +68,7 @@ export default function AIAgentSystem({ dataset, onVisualize, onExport, isVisibl
 
   const [messages, setMessages] = useState<AIMessage[]>([]);
   const [conductorStatus, setConductorStatus] = useState('Coordinating agents...');
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   // Simulate AI agent coordination
   useEffect(() => {
@@ -147,119 +148,147 @@ export default function AIAgentSystem({ dataset, onVisualize, onExport, isVisibl
   if (!isVisible) return null;
 
   return (
-    <div className="fixed right-6 top-24 w-96 z-50 space-y-4">
-      {/* AI Conductor Status */}
-      <Card className="glass p-4 border border-primary/30">
-        <div className="flex items-center space-x-3">
-          <motion.div
-            className="w-3 h-3 rounded-full bg-primary"
-            animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          />
-          <div>
-            <div className="text-sm font-semibold">AI Conductor</div>
-            <div className="text-xs text-muted-foreground">{conductorStatus}</div>
-          </div>
-          <Settings className="w-4 h-4 text-muted-foreground ml-auto" />
-        </div>
-      </Card>
+    <>
+      {/* Collapse/Expand Button */}
+      <Button
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        size="icon"
+        variant="outline"
+        className="fixed right-2 top-32 z-50 glass border-primary/30 hover:border-primary/50 transition-all duration-300"
+      >
+        {isCollapsed ? (
+          <ChevronLeft className="h-4 w-4" />
+        ) : (
+          <ChevronRight className="h-4 w-4" />
+        )}
+      </Button>
 
-      {/* Agent Status Panel */}
-      <Card className="glass p-4 border border-border/30">
-        <div className="flex items-center justify-between mb-3">
-          <div className="text-sm font-semibold">Active Agents</div>
-          <Badge variant="outline" className="text-xs">
-            {agents.filter(a => a.status !== 'idle').length} working
-          </Badge>
-        </div>
-        
-        <div className="grid grid-cols-2 gap-2">
-          {agents.map((agent) => (
-            <div
-              key={agent.id}
-              className="flex items-center space-x-2 p-2 rounded-lg bg-gradient-to-r from-transparent to-white/5"
-            >
-              <div 
-                className="p-1.5 rounded"
-                style={{ backgroundColor: `${agent.color}20`, color: agent.color }}
-              >
-                {agent.icon}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-xs font-medium truncate">{agent.name}</div>
-                <div className="text-xs text-muted-foreground truncate">{agent.specialty}</div>
-              </div>
+      <motion.div 
+        className="fixed right-6 top-24 w-96 z-50 space-y-4"
+        animate={{ 
+          x: isCollapsed ? 400 : 0,
+          opacity: isCollapsed ? 0 : 1 
+        }}
+        transition={{ 
+          type: "spring",
+          damping: 20,
+          stiffness: 300,
+          duration: 0.4
+        }}
+      >
+        {/* AI Conductor Status */}
+        <Card className="glass p-4 border border-primary/30">
+          <div className="flex items-center space-x-3">
+            <motion.div
+              className="w-3 h-3 rounded-full bg-primary"
+              animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
+            <div>
+              <div className="text-sm font-semibold">AI Conductor</div>
+              <div className="text-xs text-muted-foreground">{conductorStatus}</div>
             </div>
-          ))}
-        </div>
-      </Card>
+            <Settings className="w-4 h-4 text-muted-foreground ml-auto" />
+          </div>
+        </Card>
 
-      {/* Agent Messages */}
-      <div className="max-h-96 overflow-y-auto space-y-3">
-        <AnimatePresence>
-          {messages.map((message) => {
-            const agent = getAgentById(message.agentId);
-            return (
-              <motion.div
-                key={message.id}
-                initial={{ opacity: 0, x: 100, scale: 0.9 }}
-                animate={{ opacity: 1, x: 0, scale: 1 }}
-                exit={{ opacity: 0, x: -100, scale: 0.9 }}
-                className="relative"
+        {/* Agent Status Panel */}
+        <Card className="glass p-4 border border-border/30">
+          <div className="flex items-center justify-between mb-3">
+            <div className="text-sm font-semibold">Active Agents</div>
+            <Badge variant="outline" className="text-xs">
+              {agents.filter(a => a.status !== 'idle').length} working
+            </Badge>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-2">
+            {agents.map((agent) => (
+              <div
+                key={agent.id}
+                className="flex items-center space-x-2 p-2 rounded-lg bg-gradient-to-r from-transparent to-white/5"
               >
-                <Card className="glass p-4 border border-border/30">
-                  {/* Agent Header */}
-                  <div className="flex items-center space-x-2 mb-3">
-                    <div 
-                      className="p-1.5 rounded"
-                      style={{ backgroundColor: `${agent?.color}20`, color: agent?.color }}
-                    >
-                      {agent?.icon}
-                    </div>
-                    <div>
-                      <div className="text-sm font-semibold">{agent?.name}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {message.timestamp.toLocaleTimeString()}
+                <div 
+                  className="p-1.5 rounded"
+                  style={{ backgroundColor: `${agent.color}20`, color: agent.color }}
+                >
+                  {agent.icon}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs font-medium truncate">{agent.name}</div>
+                  <div className="text-xs text-muted-foreground truncate">{agent.specialty}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        {/* Agent Messages */}
+        <div className="max-h-96 overflow-y-auto space-y-3">
+          <AnimatePresence>
+            {messages.map((message) => {
+              const agent = getAgentById(message.agentId);
+              return (
+                <motion.div
+                  key={message.id}
+                  initial={{ opacity: 0, x: 100, scale: 0.9 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: -100, scale: 0.9 }}
+                  className="relative"
+                >
+                  <Card className="glass p-4 border border-border/30">
+                    {/* Agent Header */}
+                    <div className="flex items-center space-x-2 mb-3">
+                      <div 
+                        className="p-1.5 rounded"
+                        style={{ backgroundColor: `${agent?.color}20`, color: agent?.color }}
+                      >
+                        {agent?.icon}
+                      </div>
+                      <div>
+                        <div className="text-sm font-semibold">{agent?.name}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {message.timestamp.toLocaleTimeString()}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Message Content */}
-                  <p className="text-sm text-foreground mb-3 leading-relaxed">
-                    {message.content}
-                  </p>
+                    {/* Message Content */}
+                    <p className="text-sm text-foreground mb-3 leading-relaxed">
+                      {message.content}
+                    </p>
 
-                  {/* Action Buttons */}
-                  {message.actions && message.actions.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {message.actions.map((action, index) => (
-                        <Button
-                          key={index}
-                          size="sm"
-                          variant={action.type === 'export' ? 'default' : 'outline'}
-                          onClick={() => handleAction(action, message)}
-                          className="text-xs h-7"
-                        >
-                          {action.type === 'visualize' && <Eye className="w-3 h-3 mr-1" />}
-                          {action.type === 'export' && <Download className="w-3 h-3 mr-1" />}
-                          {action.type === 'follow-up' && <ArrowRight className="w-3 h-3 mr-1" />}
-                          {action.label}
-                        </Button>
-                      ))}
-                    </div>
-                  )}
+                    {/* Action Buttons */}
+                    {message.actions && message.actions.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {message.actions.map((action, index) => (
+                          <Button
+                            key={index}
+                            size="sm"
+                            variant={action.type === 'export' ? 'default' : 'outline'}
+                            onClick={() => handleAction(action, message)}
+                            className="text-xs h-7"
+                          >
+                            {action.type === 'visualize' && <Eye className="w-3 h-3 mr-1" />}
+                            {action.type === 'export' && <Download className="w-3 h-3 mr-1" />}
+                            {action.type === 'follow-up' && <ArrowRight className="w-3 h-3 mr-1" />}
+                            {action.label}
+                          </Button>
+                        ))}
+                      </div>
+                    )}
 
-                  {/* Agent Color Indicator */}
-                  <div 
-                    className="absolute top-0 left-0 w-1 h-full rounded-l-lg opacity-60"
-                    style={{ backgroundColor: agent?.color }}
-                  />
-                </Card>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
-      </div>
-    </div>
+                    {/* Agent Color Indicator */}
+                    <div 
+                      className="absolute top-0 left-0 w-1 h-full rounded-l-lg opacity-60"
+                      style={{ backgroundColor: agent?.color }}
+                    />
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </div>
+      </motion.div>
+    </>
   );
 }
