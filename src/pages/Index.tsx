@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Upload, BarChart3, Brain, Settings, Headphones, Command, FileText, Globe } from "lucide-react";
-
+import Spline  from '@splinetool/react-spline';
 import FileUpload from "@/components/FileUpload";
 import ProcessingTimeline from "@/components/ProcessingTimeline";
 import LoadingScreen from "@/components/LoadingScreen";
@@ -39,7 +39,6 @@ interface Insight {
   isPinned: boolean;
   timestamp: Date;
 }
-
 const Index = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -142,7 +141,7 @@ const Index = () => {
       <div className="container mx-auto px-4 py-8">
         {!isAnalysisReady ? (
           // Welcome State - Data Navigator Introduction
-          <div className="space-y-12 mt-20">
+          <div className="space-y-12 mt-1">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -153,15 +152,31 @@ const Index = () => {
                 <Command className="w-5 h-5 text-primary" />
                 <span className="text-sm font-medium">Data Observatory • Status: Orbital</span>
               </div>
-              <h1 className="text-5xl font-bold gradient-text pb-1 leading-relaxed">
-                Welcome, Data Navigator
-              </h1>
-                            
-              <p className="text-xl text-muted-foreground max-w-3xl mx-auto mt-1">
-              Step into the Survey Deck — where your <span className="text-primary">.csv</span> file becomes a gateway to clarity. Watch AI transform raw survey data into immersive, beautifully crafted PDF insights. 
-              </p>
-              <div className="text-xl  max-w-3xl mx-auto inline-flex items-center text-primary">Decode. Discover. Deliver.</div>
 
+              <div className="relative min-h-screen flex justify-center mb-16 overflow-hidden">
+  {/* Spline Background */}
+  <div className="absolute inset-0 w-full h-full">
+    <Spline scene="https://prod.spline.design/Lws6iY4vBNT0NXoF/scene.splinecode" />
+  </div>
+  
+  {/* Overlay for better text readability (optional) */}
+  <div className="absolute inset-0 bg-black/20"></div>
+  
+  {/* Text Content in Foreground - Horizontally Centered, Top Positioned */}
+  <div className="relative z-10 text-center max-w-4xl px-6 pt-8 md:pt-12">
+    <h1 className="text-5xl md:text-6xl font-bold gradient-text pb-1 leading-relaxed">
+      Welcome, Data Navigator
+    </h1>
+    
+    <p className="text-xl md:text-2xl text-muted-foreground mt-6 leading-relaxed">
+      Step into the Survey Deck — where your <span className="text-primary">.csv</span> file becomes a gateway to clarity. Watch AI transform raw survey data into immersive, beautifully crafted PDF insights. 
+    </p>
+    
+    <div className="text-xl md:text-2xl mt-8 inline-flex items-center text-primary font-medium">
+      Decode. Discover. Deliver.
+    </div>
+  </div>
+</div>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-4xl mx-auto rounded-full">
               <motion.div
   initial={{ opacity: 0, scale: 0.8, rotateY: -90 }}
