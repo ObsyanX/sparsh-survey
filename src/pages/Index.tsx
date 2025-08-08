@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Upload, BarChart3, Brain, Settings, Headphones, Command } from "lucide-react";
+import { Upload, BarChart3, Brain, Settings, Headphones, Command, FileText, Globe } from "lucide-react";
 
 import FileUpload from "@/components/FileUpload";
 import ProcessingTimeline from "@/components/ProcessingTimeline";
@@ -22,7 +22,7 @@ import Asset3DManager from "@/components/3d/Asset3DManager";
 import ChartEngine from "@/components/charts/ChartEngine";
 
 // Enhanced background and navigation
-import CommandBridge from "@/components/navigation/CommandBridge";
+// import CommandBridge from "@/components/navigation/CommandBridge";
 import AmbientSoundSystem from "@/components/audio/AmbientSoundSystem";
 
 import { Button } from "@/components/ui/button";
@@ -124,11 +124,11 @@ const Index = () => {
       <AmbientSoundSystem isActive={isAnalysisReady} />
 
       {/* Command Bridge Navigation */}
-      <CommandBridge 
+      {/* <CommandBridge 
         activeModule={activeMode}
         onModuleSelect={handleModuleSelect}
         availableModules={['analysis', '3d', 'story', 'presentation', 'simulation']}
-      />
+      /> */}
 
       {/* AI Agent System */}
       <AIAgentSystem 
@@ -142,7 +142,7 @@ const Index = () => {
       <div className="container mx-auto px-4 py-8">
         {!isAnalysisReady ? (
           // Welcome State - Data Navigator Introduction
-          <div className="space-y-12">
+          <div className="space-y-12 mt-20">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -153,69 +153,281 @@ const Index = () => {
                 <Command className="w-5 h-5 text-primary" />
                 <span className="text-sm font-medium">Data Observatory • Status: Orbital</span>
               </div>
-              
-              <h1 className="text-5xl font-bold gradient-text">
+              <h1 className="text-5xl font-bold gradient-text pb-1 leading-relaxed">
                 Welcome, Data Navigator
               </h1>
-              
-              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                You are aboard the Quantum Survey Observatory, a cutting-edge AI-operated platform orbiting above a smart planet. 
-                Your mission: explore, refine, and interpret knowledge from massive volumes of survey signals flowing through 
-                crystalline data pipelines.
+                            
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto mt-1">
+              Step into the Survey Deck — where your <span className="text-primary">.csv</span> file becomes a gateway to clarity. Watch AI transform raw survey data into immersive, beautifully crafted PDF insights. 
               </p>
+              <div className="text-xl  max-w-3xl mx-auto inline-flex items-center text-primary">Decode. Discover. Deliver.</div>
 
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.2 }}
-                  className="glass p-6 text-center space-y-3"
-                >
-                  <div className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                    <Upload className="w-6 h-6 text-primary" />
-                  </div>
-                  <h3 className="font-semibold">Data Intake</h3>
-                  <p className="text-xs text-muted-foreground">Beam aboard your survey datasets</p>
-                </motion.div>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-4xl mx-auto rounded-full">
+              <motion.div
+  initial={{ opacity: 0, scale: 0.8, rotateY: -90 }}
+  animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+  transition={{ 
+    duration: 0.6, 
+    delay: 0.2,
+    type: "spring",
+    stiffness: 100
+  }}
+  whileHover={{ 
+    scale: 1.05,
+    rotateX: -5,
+    z: 50
+  }}
+  className="relative perspective-1000"
+>
+  <div className="glass p-6 text-center space-y-3 cursor-pointer transition-all duration-500 relative overflow-hidden group hover:border-border/50 hover:shadow-2xl rounded-3xl">
+    {/* Holographic scan lines effect */}
+    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-b from-transparent via-primary/5 to-transparent animate-pulse" />
+    
+    {/* Content */}
+    <div className="relative z-10 space-y-3 ">
+      <motion.div
+        whileHover={{ scale: 1.2, rotateY: 360 }}
+        transition={{ duration: 0.6 }}
+        className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center"
+      >
+        <Upload className="w-6 h-6 text-primary" />
+      </motion.div>
+      <h3 className="font-semibold">Data Intake</h3>
+      <p className="text-xs text-muted-foreground">Beam aboard your survey datasets</p>
+    </div>
 
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.3 }}
-                  className="glass p-6 text-center space-y-3"
-                >
-                  <div className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-quantum-purple/20 to-quantum-purple/5 flex items-center justify-center">
-                    <Brain className="w-6 h-6 text-quantum-purple" />
-                  </div>
-                  <h3 className="font-semibold">AI Analysis</h3>
-                  <p className="text-xs text-muted-foreground">Multi-agent intelligence processing</p>
-                </motion.div>
+    {/* Hover particles */}
+    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <motion.div
+          key={i}
+          initial={{ 
+            opacity: 0, 
+            scale: 0,
+            x: '50%',
+            y: '50%'
+          }}
+          animate={{ 
+            opacity: [0, 1, 0], 
+            scale: [0, 1, 0],
+            x: `${50 + (Math.random() - 0.5) * 200}%`,
+            y: `${50 + (Math.random() - 0.5) * 200}%`
+          }}
+          transition={{
+            duration: 2,
+            delay: i * 0.2,
+            repeat: Infinity,
+            repeatDelay: 1
+          }}
+          className="absolute w-1 h-1 bg-primary rounded-full"
+        />
+      ))}
+    </div>
+  </div>
+</motion.div>
 
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.4 }}
-                  className="glass p-6 text-center space-y-3"
-                >
-                  <div className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-quantum-green/20 to-quantum-green/5 flex items-center justify-center">
-                    <BarChart3 className="w-6 h-6 text-quantum-green" />
-                  </div>
-                  <h3 className="font-semibold">3D Visualization</h3>
-                  <p className="text-xs text-muted-foreground">Immersive data exploration</p>
-                </motion.div>
+<motion.div
+  initial={{ opacity: 0, scale: 0.8, rotateY: -90 }}
+  animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+  transition={{ 
+    duration: 0.6, 
+    delay: 0.3,
+    type: "spring",
+    stiffness: 100
+  }}
+  whileHover={{ 
+    scale: 1.05,
+    rotateX: -5,
+    z: 50
+  }}
+  className="relative perspective-1000"
+>
+  <div className="glass p-6 text-center space-y-3 cursor-pointer transition-all duration-500 relative overflow-hidden group hover:border-border/50 hover:shadow-2xl rounded-3xl">
+    {/* Holographic scan lines effect */}
+    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-b from-transparent via-quantum-purple/5 to-transparent animate-pulse" />
+    
+    {/* Content */}
+    <div className="relative z-10 space-y-3">
+      <motion.div
+        whileHover={{ scale: 1.2, rotateY: 360 }}
+        transition={{ duration: 0.6 }}
+        className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-quantum-purple/20 to-quantum-purple/5 flex items-center justify-center"
+      >
+        <Brain className="w-6 h-6 text-quantum-purple" />
+      </motion.div>
+      <h3 className="font-semibold">AI Analysis</h3>
+      <p className="text-xs text-muted-foreground">Multi-agent intelligence processing</p>
+    </div>
 
+    {/* Hover particles */}
+    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <motion.div
+          key={i}
+          initial={{ 
+            opacity: 0, 
+            scale: 0,
+            x: '50%',
+            y: '50%'
+          }}
+          animate={{ 
+            opacity: [0, 1, 0], 
+            scale: [0, 1, 0],
+            x: `${50 + (Math.random() - 0.5) * 200}%`,
+            y: `${50 + (Math.random() - 0.5) * 200}%`
+          }}
+          transition={{
+            duration: 2,
+            delay: i * 0.2,
+            repeat: Infinity,
+            repeatDelay: 1
+          }}
+          className="absolute w-1 h-1 bg-quantum-purple rounded-full"
+        />
+      ))}
+    </div>
+  </div>
+</motion.div>
+
+<motion.div
+  initial={{ opacity: 0, scale: 0.8, rotateY: -90 }}
+  animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+  transition={{ 
+    duration: 0.6, 
+    delay: 0.4,
+    type: "spring",
+    stiffness: 100
+  }}
+  whileHover={{ 
+    scale: 1.05,
+    rotateX: -5,
+    z: 50
+  }}
+  className="relative perspective-1000"
+>
+  <div className="glass p-6 text-center space-y-3 cursor-pointer transition-all duration-500 relative overflow-hidden group hover:border-border/50 hover:shadow-2xl rounded-3xl">
+    {/* Holographic scan lines effect */}
+    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-b from-transparent via-quantum-green/5 to-transparent animate-pulse" />
+    
+    {/* Content */}
+    <div className="relative z-10 space-y-3">
+      <motion.div
+        whileHover={{ scale: 1.2, rotateY: 360 }}
+        transition={{ duration: 0.6 }}
+        className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-quantum-green/20 to-quantum-green/5 flex items-center justify-center"
+      >
+        <BarChart3 className="w-6 h-6 text-quantum-green" />
+      </motion.div>
+      <h3 className="font-semibold">3D Visualization</h3>
+      <p className="text-xs text-muted-foreground">Immersive data exploration <span className="text-xs invisible">WithAnewIand</span></p>
+    </div>
+
+    {/* Hover particles */}
+    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <motion.div
+          key={i}
+          initial={{ 
+            opacity: 0, 
+            scale: 0,
+            x: '50%',
+            y: '50%'
+          }}
+          animate={{ 
+            opacity: [0, 1, 0], 
+            scale: [0, 1, 0],
+            x: `${50 + (Math.random() - 0.5) * 200}%`,
+            y: `${50 + (Math.random() - 0.5) * 200}%`
+          }}
+          transition={{
+            duration: 2,
+            delay: i * 0.2,
+            repeat: Infinity,
+            repeatDelay: 1
+          }}
+          className="absolute w-1 h-1 bg-quantum-green rounded-full"
+        />
+      ))}
+    </div>
+  </div>
+</motion.div>
                 <motion.div
+    initial={{ opacity: 0, scale: 0.8, rotateY: -90 }}
+    animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+    transition={{ 
+      duration: 0.6, 
+      delay: 0.2,
+      type: "spring",
+      stiffness: 100
+    }}
+    whileHover={{ 
+      scale: 1.05,
+      rotateX: -5,
+      z: 50
+    }}
+    className="relative perspective-1000"
+  >
+    <div className="glass p-6 text-center space-y-3 cursor-pointer transition-all duration-500 relative overflow-hidden group hover:border-border/50 hover:shadow-2xl rounded-3xl">
+      {/* Holographic scan lines effect */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-b from-transparent via-yellow-500/5 to-transparent animate-pulse" />
+      
+      {/* Content */}
+      <div className="relative z-10 space-y-3">
+        <motion.div
+          whileHover={{ scale: 1.2, rotateY: 360 }}
+          transition={{ duration: 0.6 }}
+          className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-yellow-500/20 to-yellow-500/5 flex items-center justify-center"
+        >
+          <FileText className="w-6 h-6 text-yellow-500" />
+        </motion.div>
+        <h3 className="font-semibold">Narrative Studio</h3>
+        <p className="text-xs text-muted-foreground">Build data stories <span className="text-xs invisible">WithAnewIand</span></p>
+        
+      </div>
+
+      {/* Hover particles */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <motion.div
+            key={i}
+            initial={{ 
+              opacity: 0, 
+              scale: 0,
+              x: '50%',
+              y: '50%'
+            }}
+            animate={{ 
+              opacity: [0, 1, 0], 
+              scale: [0, 1, 0],
+              x: `${50 + (Math.random() - 0.5) * 200}%`,
+              y: `${50 + (Math.random() - 0.5) * 200}%`
+            }}
+            transition={{
+              duration: 2,
+              delay: i * 0.2,
+              repeat: Infinity,
+              repeatDelay: 1
+            }}
+            className="absolute w-1 h-1 bg-yellow-500 rounded-full"
+          />
+        ))}
+      </div>
+    </div>
+  </motion.div>
+  
+                {/* <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.5 }}
                   className="glass p-6 text-center space-y-3"
                 >
-                  <div className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-yellow-500/20 to-yellow-500/5 flex items-center justify-center">
+                  {/* <div className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-yellow-500/20 to-yellow-500/5 flex items-center justify-center">
                     <Headphones className="w-6 h-6 text-yellow-500" />
                   </div>
                   <h3 className="font-semibold">Ambient Mode</h3>
-                  <p className="text-xs text-muted-foreground">Living data artwork experience</p>
-                </motion.div>
+                  <p className="text-xs text-muted-foreground">Living data artwork experience</p> }
+                </motion.div> */}
+                
               </div>
             </motion.div>
 
