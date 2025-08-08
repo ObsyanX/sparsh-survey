@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Brain, BarChart3, Type, BookOpen, Settings, Eye, Download, ArrowRight, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Brain, BarChart3, Type, BookOpen, Settings, Eye, Download, ArrowRight, ChevronRight, ChevronLeft, X } from 'lucide-react';
 
 interface AIAgent {
   id: string;
@@ -28,9 +28,10 @@ interface AIAgentSystemProps {
   onVisualize?: (data: any) => void;
   onExport?: (data: any) => void;
   isVisible?: boolean;
+  onClose?: () => void;
 }
 
-export default function AIAgentSystem({ dataset, onVisualize, onExport, isVisible = false }: AIAgentSystemProps) {
+export default function AIAgentSystem({ dataset, onVisualize, onExport, isVisible = false, onClose }: AIAgentSystemProps) {
   const [agents] = useState<AIAgent[]>([
     {
       id: 'insight',
@@ -177,7 +178,7 @@ export default function AIAgentSystem({ dataset, onVisualize, onExport, isVisibl
         }}
       >
         {/* AI Conductor Status */}
-        <Card className="glass p-4 border border-primary/30">
+        <Card className="glass p-4 border border-primary/30 relative">
           <div className="flex items-center space-x-3">
             <motion.div
               className="w-3 h-3 rounded-full bg-primary"
@@ -188,7 +189,19 @@ export default function AIAgentSystem({ dataset, onVisualize, onExport, isVisibl
               <div className="text-sm font-semibold">AI Conductor</div>
               <div className="text-xs text-muted-foreground">{conductorStatus}</div>
             </div>
-            <Settings className="w-4 h-4 text-muted-foreground ml-auto" />
+            <div className="ml-auto flex items-center space-x-2">
+              <Settings className="w-4 h-4 text-muted-foreground" />
+              {onClose && (
+                <Button
+                  onClick={onClose}
+                  size="icon"
+                  variant="ghost"
+                  className="h-6 w-6 hover:bg-destructive/20 hover:text-destructive"
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              )}
+            </div>
           </div>
         </Card>
 
