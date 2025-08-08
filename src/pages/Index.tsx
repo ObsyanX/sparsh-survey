@@ -21,7 +21,7 @@ import Asset3DManager from "@/components/3d/Asset3DManager";
 import ChartEngine from "@/components/charts/ChartEngine";
 
 // Enhanced background and navigation
-import ObservatoryBackground from "@/components/backgrounds/ObservatoryBackground";
+import SimpleBackground from "@/components/backgrounds/SimpleBackground";
 import CommandBridge from "@/components/navigation/CommandBridge";
 import AmbientSoundSystem from "@/components/audio/AmbientSoundSystem";
 
@@ -120,8 +120,8 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background relative">
-      {/* Enhanced 3D Background */}
-      <ObservatoryBackground />
+      {/* CSS Background */}
+      <SimpleBackground />
       
       {/* Ambient Sound System */}
       <AmbientSoundSystem isActive={isAnalysisReady} />
