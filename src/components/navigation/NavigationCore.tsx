@@ -9,7 +9,7 @@ import {
   BarChart3, 
   MessageCircle, 
   FileText, 
-  Gallery,
+  Grid3X3,
   Brain,
   Settings,
   Command
@@ -67,7 +67,7 @@ const navItems: NavItem[] = [
   {
     id: 'explorer',
     label: '3D Explorer',
-    icon: <Gallery className="w-5 h-5" />,
+    icon: <Grid3X3 className="w-5 h-5" />,
     path: '/explorer',
     color: 'from-cyan-500/30 to-cyan-500/10',
     description: 'Holographic Views',

@@ -35,16 +35,16 @@ const workflowSteps = {
     { id: 'report', label: 'Report', path: '/reports', status: 'pending' as const }
   ],
   story: [
-    { id: 'data', label: 'Data Review', status: 'completed' as const },
-    { id: 'narrative', label: 'Narrative Building', status: 'current' as const },
-    { id: 'visuals', label: 'Visual Story', status: 'pending' as const },
-    { id: 'publish', label: 'Publish', status: 'pending' as const }
+    { id: 'data', label: 'Data Review', path: '/upload', status: 'completed' as const },
+    { id: 'narrative', label: 'Narrative Building', path: '/story', status: 'current' as const },
+    { id: 'visuals', label: 'Visual Story', path: '/visualize', status: 'pending' as const },
+    { id: 'publish', label: 'Publish', path: '/reports', status: 'pending' as const }
   ],
   report: [
-    { id: 'template', label: 'Template', status: 'completed' as const },
-    { id: 'content', label: 'Content', status: 'current' as const },
-    { id: 'review', label: 'Review', status: 'pending' as const },
-    { id: 'export', label: 'Export', status: 'pending' as const }
+    { id: 'template', label: 'Template', path: '/reports', status: 'completed' as const },
+    { id: 'content', label: 'Content', path: '/reports/content', status: 'current' as const },
+    { id: 'review', label: 'Review', path: '/reports/review', status: 'pending' as const },
+    { id: 'export', label: 'Export', path: '/reports/export', status: 'pending' as const }
   ]
 };
 
