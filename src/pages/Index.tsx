@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Upload, BarChart3, Brain, Settings, Headphones, Command } from "lucide-react";
@@ -32,7 +31,7 @@ import KPICard from "@/components/KPICard";
 
 interface Insight {
   id: string;
-  type: string;
+  type: 'correlation' | 'trend' | 'anomaly' | 'statistic';
   title: string;
   description: string;
   value: number;
@@ -63,7 +62,7 @@ const Index = () => {
     },
     { 
       id: '2', 
-      type: 'outlier', 
+      type: 'anomaly', 
       title: 'Income Anomalies Found', 
       description: '12 data points exceed 3 standard deviations from mean',
       value: 12,
@@ -94,19 +93,21 @@ const Index = () => {
       setTimeout(() => {
         setIsProcessing(false);
         setIsAnalysisReady(true);
-        setShowAIPanel(true); // Activate AI agents after processing
+        setShowAIPanel(true);
       }, 3000);
     }, 1500);
   };
 
   const handleVisualize = (data: any) => {
     console.log('Visualizing:', data);
-    // Implementation for visualization requests from AI agents
   };
 
   const handleExport = (data: any) => {
     console.log('Exporting:', data);
-    // Implementation for export requests from AI agents
+  };
+
+  const handleModuleSelect = (moduleId: string) => {
+    setActiveMode(moduleId as 'analysis' | 'story' | '3d' | 'presentation' | 'simulation');
   };
 
   if (isUploading) {
@@ -128,7 +129,7 @@ const Index = () => {
       {/* Command Bridge Navigation */}
       <CommandBridge 
         activeModule={activeMode}
-        onModuleSelect={setActiveMode}
+        onModuleSelect={handleModuleSelect}
         availableModules={['analysis', '3d', 'story', 'presentation', 'simulation']}
       />
 
@@ -221,7 +222,6 @@ const Index = () => {
               </div>
             </motion.div>
 
-            {/* File Upload Section */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
