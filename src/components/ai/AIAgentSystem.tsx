@@ -179,6 +179,16 @@ export default function AIAgentSystem({ dataset, onVisualize, onExport, isVisibl
       >
         {/* AI Conductor Status */}
         <Card className="glass p-4 border border-primary/30 relative">
+          {/* Close Button */}
+          <Button
+            onClick={onClose}
+            size="icon"
+            variant="ghost"
+            className="absolute top-2 right-2 h-6 w-6 hover:bg-destructive/20 hover:text-destructive"
+          >
+            <X className="h-3 w-3" />
+          </Button>
+          
           <div className="flex items-center space-x-3">
             <motion.div
               className="w-3 h-3 rounded-full bg-primary"
@@ -191,16 +201,6 @@ export default function AIAgentSystem({ dataset, onVisualize, onExport, isVisibl
             </div>
             <div className="ml-auto flex items-center space-x-2">
               <Settings className="w-4 h-4 text-muted-foreground" />
-              {onClose && (
-                <Button
-                  onClick={onClose}
-                  size="icon"
-                  variant="ghost"
-                  className="h-6 w-6 hover:bg-destructive/20 hover:text-destructive"
-                >
-                  <X className="h-3 w-3" />
-                </Button>
-              )}
             </div>
           </div>
         </Card>
