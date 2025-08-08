@@ -14,6 +14,7 @@ import DataStoryMode from "@/components/DataStoryMode";
 import Globe3D from "@/components/Globe3D";
 import PresentationMode from "@/components/PresentationMode";
 import ScenarioSimulator from "@/components/ScenarioSimulator";
+import Footer from "@/components/ui/Footer";
 
 // New AI-powered components
 import AIAgentSystem from "@/components/ai/AIAgentSystem";
@@ -335,6 +336,9 @@ const Index = () => {
           </div>
         )}
       </div>
+
+      {/* Footer */}
+      <Footer />
 
       {/* Floating Chatbot */}
       <ChatBot />

@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import AccessibilityFeatures from "@/components/AccessibilityFeatures";
 import SettingsPanel from "@/components/SettingsPanel";
+import AnimatedCursor from "@/components/ui/AnimatedCursor";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
@@ -17,6 +18,7 @@ const App = () => (
     <ThemeProvider>
       <TooltipProvider>
         <AccessibilityFeatures>
+          <AnimatedCursor />
           <Toaster />
           <Sonner />
           <BrowserRouter>
