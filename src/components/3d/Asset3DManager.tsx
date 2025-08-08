@@ -59,7 +59,7 @@ function FallbackModel({ asset }: { asset: Asset3D }) {
             (Math.random() - 0.5) * 3
           ]}
         >
-          <meshBasicMaterial
+          <meshStandardMaterial
             color="#00F5FF"
             emissive="#00F5FF"
             emissiveIntensity={0.5}

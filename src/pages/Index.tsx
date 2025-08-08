@@ -30,6 +30,17 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import KPICard from "@/components/KPICard";
 
+interface Insight {
+  id: string;
+  type: string;
+  title: string;
+  description: string;
+  value: number;
+  priority: number;
+  isPinned: boolean;
+  timestamp: Date;
+}
+
 const Index = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -39,10 +50,37 @@ const Index = () => {
   const [showAIPanel, setShowAIPanel] = useState(false);
 
   // Mock data state
-  const [insights] = useState([
-    { id: '1', type: 'correlation', title: 'Strong Education-Employment Link', description: 'High correlation detected between education level and employment status' },
-    { id: '2', type: 'outlier', title: 'Income Anomalies Found', description: '12 data points exceed 3 standard deviations from mean' },
-    { id: '3', type: 'trend', title: 'Regional Disparity Trend', description: 'Consistent income gaps observed across urban-rural divide' }
+  const [insights] = useState<Insight[]>([
+    { 
+      id: '1', 
+      type: 'correlation', 
+      title: 'Strong Education-Employment Link', 
+      description: 'High correlation detected between education level and employment status',
+      value: 0.78,
+      priority: 1,
+      isPinned: false,
+      timestamp: new Date()
+    },
+    { 
+      id: '2', 
+      type: 'outlier', 
+      title: 'Income Anomalies Found', 
+      description: '12 data points exceed 3 standard deviations from mean',
+      value: 12,
+      priority: 2,
+      isPinned: false,
+      timestamp: new Date()
+    },
+    { 
+      id: '3', 
+      type: 'trend', 
+      title: 'Regional Disparity Trend', 
+      description: 'Consistent income gaps observed across urban-rural divide',
+      value: 3.2,
+      priority: 3,
+      isPinned: false,
+      timestamp: new Date()
+    }
   ]);
 
   const handleFileUpload = (file: File) => {
@@ -89,9 +127,9 @@ const Index = () => {
 
       {/* Command Bridge Navigation */}
       <CommandBridge 
-        activeMode={activeMode}
-        onModeChange={setActiveMode}
-        isAnalysisReady={isAnalysisReady}
+        activeModule={activeMode}
+        onModuleSelect={setActiveMode}
+        availableModules={['analysis', '3d', 'story', 'presentation', 'simulation']}
       />
 
       {/* AI Agent System */}
@@ -256,7 +294,7 @@ const Index = () => {
                 className="space-y-8"
               >
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <Globe3D title="Geographic Data Distribution" />
+                  <Globe3D data={[]} />
                   <Asset3DManager assets={[]} />
                 </div>
               </motion.div>
