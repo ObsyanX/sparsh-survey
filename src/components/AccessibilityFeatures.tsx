@@ -41,9 +41,12 @@ export default function AccessibilityFeatures({ children }: AccessibilityFeature
         }
       }
 
-      // Tab navigation enhancement
+      // Tab navigation enhancement - only when a modal is open
       if (event.key === 'Tab') {
-        const focusableElements = document.querySelectorAll(
+        const activeModal = document.querySelector('[role="dialog"][aria-modal="true"]:not([aria-hidden="true"])');
+        if (!activeModal) return; // Don't interfere with normal tab navigation
+        
+        const focusableElements = activeModal.querySelectorAll(
           'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
         );
         

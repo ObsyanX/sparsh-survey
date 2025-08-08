@@ -320,43 +320,44 @@ function InsightCard({ insight, isPinned, onTogglePin, onExpand, onExport }: Ins
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      whileHover={{ scale: 1.02 }}
+      whileHover={{ scale: 1.01 }}
       className="group"
     >
-      <Card className={`glass relative p-4 bg-gradient-to-br ${getPriorityColor(insight.priority)} quantum-glow-hover transition-all duration-300 cursor-pointer`}>
+      <Card className={`glass relative p-3 sm:p-4 bg-gradient-to-br ${getPriorityColor(insight.priority)} quantum-glow-hover transition-all duration-300 cursor-pointer`}>
         {/* Pin Button */}
         <Button
           variant="ghost"
           size="sm"
-          className={`absolute top-2 right-2 h-8 w-8 p-0 ${isPinned ? 'text-quantum-purple' : 'text-muted-foreground'}`}
+          className={`absolute top-2 right-2 h-8 w-8 p-0 touch-manipulation ${isPinned ? 'text-quantum-purple' : 'text-muted-foreground'}`}
           onClick={(e) => {
             e.stopPropagation();
             onTogglePin(insight.id);
           }}
+          aria-label={isPinned ? "Unpin insight" : "Pin insight"}
         >
           <Pin className={`w-3 h-3 ${isPinned ? 'fill-current' : ''}`} />
         </Button>
 
-        <div className="space-y-3" onClick={() => onExpand(insight.id)}>
+        <div className="space-y-2 sm:space-y-3" onClick={() => onExpand(insight.id)}>
           {/* Header */}
-          <div className="flex items-start space-x-3">
-            <div className={`p-2 rounded bg-gradient-to-br ${getPriorityColor(insight.priority)}`}>
+          <div className="flex items-start space-x-2 sm:space-x-3">
+            <div className={`p-1.5 sm:p-2 rounded bg-gradient-to-br ${getPriorityColor(insight.priority)} flex-shrink-0`}>
               {getInsightIcon(insight.type)}
             </div>
             <div className="flex-1 min-w-0">
-              <h4 className="font-semibold text-sm line-clamp-2">{insight.title}</h4>
-              <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{insight.description}</p>
+              <h4 className="font-semibold text-sm sm:text-base line-clamp-2 leading-tight">{insight.title}</h4>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1 line-clamp-2 leading-relaxed">{insight.description}</p>
             </div>
           </div>
 
           {/* Value */}
-          <div className="text-2xl font-bold gradient-text">{insight.value}</div>
+          <div className="text-xl sm:text-2xl font-bold gradient-text">{insight.value}</div>
 
           {/* Footer */}
           <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 flex-wrap gap-y-1">
               <Badge variant="outline" className="text-xs">{insight.type}</Badge>
-              <span className="text-muted-foreground">
+              <span className="text-muted-foreground text-xs">
                 {insight.timestamp.toLocaleDateString()}
               </span>
             </div>
@@ -365,11 +366,12 @@ function InsightCard({ insight, isPinned, onTogglePin, onExpand, onExport }: Ins
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-6 w-6 p-0"
+                className="h-7 w-7 sm:h-6 sm:w-6 p-0 touch-manipulation"
                 onClick={(e) => {
                   e.stopPropagation();
                   onExpand(insight.id);
                 }}
+                aria-label="Expand insight details"
               >
                 <Expand className="w-3 h-3" />
               </Button>
@@ -377,11 +379,12 @@ function InsightCard({ insight, isPinned, onTogglePin, onExpand, onExport }: Ins
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-6 w-6 p-0"
+                  className="h-7 w-7 sm:h-6 sm:w-6 p-0 touch-manipulation"
                   onClick={(e) => {
                     e.stopPropagation();
                     onExport(insight);
                   }}
+                  aria-label="Export insight"
                 >
                   <Download className="w-3 h-3" />
                 </Button>

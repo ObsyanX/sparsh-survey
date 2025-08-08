@@ -50,28 +50,28 @@ export default function KPICard({ title, value, suffix = '', icon, color, delay 
       initial={{ opacity: 0, y: 20, scale: 0.9 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.6, delay }}
-      whileHover={{ scale: 1.05 }}
+      whileHover={{ scale: 1.02 }}
       className="group"
     >
-      <Card className={`glass relative p-6 bg-gradient-to-br ${colorClasses[color]} ${glowClasses[color]} transition-all duration-300`}>
+      <Card className={`glass relative p-3 sm:p-4 md:p-6 bg-gradient-to-br ${colorClasses[color]} ${glowClasses[color]} transition-all duration-300`}>
         {/* Background glow effect */}
         <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300 bg-gradient-glow" />
         
         <div className="relative z-10">
-          <div className="flex items-center justify-between mb-4">
-            <div className={`p-3 rounded-lg bg-gradient-to-br ${colorClasses[color]}`}>
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <div className={`p-2 sm:p-3 rounded-lg bg-gradient-to-br ${colorClasses[color]}`}>
               {icon}
             </div>
-            <div className="w-12 h-2 bg-gradient-to-r from-transparent via-current to-transparent opacity-60 animate-pulse" />
+            <div className="w-8 sm:w-12 h-1 sm:h-2 bg-gradient-to-r from-transparent via-current to-transparent opacity-60 animate-pulse" />
           </div>
           
-          <div className="space-y-2">
-            <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
+          <div className="space-y-1 sm:space-y-2">
+            <h3 className="text-xs sm:text-sm font-medium text-muted-foreground uppercase tracking-wider">
               {title}
             </h3>
             <div className="flex items-baseline space-x-1">
               <motion.span 
-                className="text-2xl font-bold"
+                className="text-lg sm:text-xl md:text-2xl font-bold"
                 key={displayValue}
                 initial={{ scale: 1.2 }}
                 animate={{ scale: 1 }}
@@ -79,12 +79,12 @@ export default function KPICard({ title, value, suffix = '', icon, color, delay 
               >
                 {displayValue.toLocaleString()}
               </motion.span>
-              {suffix && <span className="text-sm opacity-60">{suffix}</span>}
+              {suffix && <span className="text-xs sm:text-sm opacity-60">{suffix}</span>}
             </div>
           </div>
           
           {/* Animated line */}
-          <div className="mt-4 h-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-30 rounded-full animate-shimmer" />
+          <div className="mt-3 sm:mt-4 h-0.5 sm:h-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-30 rounded-full animate-shimmer" />
         </div>
       </Card>
     </motion.div>

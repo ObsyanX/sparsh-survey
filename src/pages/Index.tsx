@@ -22,7 +22,6 @@ import Asset3DManager from "@/components/3d/Asset3DManager";
 import ChartEngine from "@/components/charts/ChartEngine";
 
 // Enhanced background and navigation
-import SimpleBackground from "@/components/backgrounds/SimpleBackground";
 import CommandBridge from "@/components/navigation/CommandBridge";
 import AmbientSoundSystem from "@/components/audio/AmbientSoundSystem";
 
@@ -121,9 +120,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background relative">
-      {/* CSS Background */}
-      <SimpleBackground />
-      
       {/* Ambient Sound System */}
       <AmbientSoundSystem isActive={isAnalysisReady} />
 
@@ -242,7 +238,7 @@ const Index = () => {
                 className="space-y-8"
               >
                 {/* KPI Overview */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
                   <KPICard
                     title="Total Records"
                     value={15847}
@@ -268,13 +264,13 @@ const Index = () => {
                 </div>
 
                 {/* Main Analysis Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                  <div className="lg:col-span-2 space-y-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+                  <div className="lg:col-span-2 space-y-4 sm:space-y-6 lg:space-y-8">
                     <InsightBoard insights={insights} />
                     <ChartEngine dataset={[]} />
                   </div>
                   
-                  <div className="space-y-8">
+                  <div className="space-y-4 sm:space-y-6 lg:space-y-8">
                     <DataScorecard />
                     <KnowledgeGraph insights={insights} />
                   </div>
@@ -349,7 +345,7 @@ const Index = () => {
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 1.5 }}
-          className="fixed bottom-24 right-24 z-40"
+          className="fixed bottom-20 right-4 md:bottom-24 md:right-24 z-40"
         >
           <Button
             onClick={() => setShowAIPanel(!showAIPanel)}

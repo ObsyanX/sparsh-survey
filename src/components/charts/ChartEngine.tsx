@@ -192,8 +192,8 @@ export default function ChartEngine({ dataset = [], onChartSelect, className = '
           )}
         </div>
 
-        {/* Chart Recommendations */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Chart Recommendations Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           <AnimatePresence>
             {recommendations.map((chart, index) => (
               <motion.div
@@ -206,28 +206,28 @@ export default function ChartEngine({ dataset = [], onChartSelect, className = '
                 }`}
                 onClick={() => handleChartSelect(chart)}
               >
-                <Card className="glass p-4 quantum-glow-hover border border-border/30 transition-all duration-300">
+                <Card className="glass p-3 sm:p-4 quantum-glow-hover border border-border/30 transition-all duration-300">
                   {/* Chart Preview */}
-                  <div className="mb-3 rounded-lg overflow-hidden bg-gradient-to-br from-background/50 to-transparent">
+                  <div className="mb-2 sm:mb-3 rounded-lg overflow-hidden bg-gradient-to-br from-background/50 to-transparent">
                     {chart.preview}
                   </div>
 
                   {/* Chart Info */}
-                  <div className="space-y-2">
+                  <div className="space-y-1.5 sm:space-y-2">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <div className="p-1.5 rounded bg-primary/20 text-primary">
+                      <div className="flex items-center space-x-2 min-w-0">
+                        <div className="p-1 sm:p-1.5 rounded bg-primary/20 text-primary flex-shrink-0">
                           {chart.icon}
                         </div>
-                        <h4 className="font-semibold text-sm">{chart.title}</h4>
+                        <h4 className="font-semibold text-sm truncate">{chart.title}</h4>
                       </div>
                       
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs flex-shrink-0">
                         {chart.score}% match
                       </Badge>
                     </div>
 
-                    <p className="text-xs text-muted-foreground leading-relaxed">
+                    <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
                       {chart.description}
                     </p>
 
@@ -245,7 +245,7 @@ export default function ChartEngine({ dataset = [], onChartSelect, className = '
                         )}
                       </div>
 
-                      <Button size="sm" variant="ghost" className="h-6 px-2 text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button size="sm" variant="ghost" className="h-6 px-2 text-xs opacity-0 group-hover:opacity-100 transition-opacity touch-manipulation">
                         <Eye className="w-3 h-3 mr-1" />
                         View
                       </Button>
@@ -257,9 +257,9 @@ export default function ChartEngine({ dataset = [], onChartSelect, className = '
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center"
+                      className="absolute top-2 right-2 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-primary flex items-center justify-center"
                     >
-                      <ScatterChartIcon className="w-3 h-3 text-primary-foreground" />
+                      <ScatterChartIcon className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-primary-foreground" />
                     </motion.div>
                   )}
                 </Card>
@@ -273,34 +273,34 @@ export default function ChartEngine({ dataset = [], onChartSelect, className = '
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-center space-x-3 p-4 rounded-lg bg-gradient-to-r from-primary/10 to-transparent border border-primary/20"
+            className="flex items-center justify-center space-x-2 sm:space-x-3 p-3 sm:p-4 rounded-lg bg-gradient-to-r from-primary/10 to-transparent border border-primary/20"
           >
-            <Button size="sm" variant="outline">
+            <Button size="sm" variant="outline" className="text-xs">
               View in 3D
             </Button>
-            <Button size="sm" className="bg-gradient-to-r from-primary to-quantum-purple">
+            <Button size="sm" className="bg-gradient-to-r from-primary to-quantum-purple text-xs">
               Generate Chart
             </Button>
-            <Button size="sm" variant="outline">
+            <Button size="sm" variant="outline" className="text-xs">
               Add to Story
             </Button>
           </motion.div>
         )}
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 pt-4 border-t border-border/30">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 pt-3 sm:pt-4 border-t border-border/30">
           <div className="text-center">
-            <div className="text-lg font-bold text-primary">{recommendations.length}</div>
+            <div className="text-base sm:text-lg font-bold text-primary">{recommendations.length}</div>
             <div className="text-xs text-muted-foreground">Recommendations</div>
           </div>
           <div className="text-center">
-            <div className="text-lg font-bold text-quantum-purple">
+            <div className="text-base sm:text-lg font-bold text-quantum-purple">
               {recommendations.length > 0 ? Math.round(recommendations.reduce((sum, r) => sum + r.score, 0) / recommendations.length) : 0}%
             </div>
             <div className="text-xs text-muted-foreground">Avg. Confidence</div>
           </div>
           <div className="text-center">
-            <div className="text-lg font-bold text-quantum-green">
+            <div className="text-base sm:text-lg font-bold text-quantum-green">
               {new Set(recommendations.flatMap(r => r.variables)).size}
             </div>
             <div className="text-xs text-muted-foreground">Variables Used</div>

@@ -158,40 +158,61 @@ export default function KnowledgeGraph({ insights = [], variables = [], classNam
   const selectedNodeData = selectedNode ? nodes.find(n => n.id === selectedNode) : null;
 
   return (
-    <Card className={`glass p-6 ${className}`}>
+    <Card className={`glass p-4 sm:p-6 ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
           <Network className="w-5 h-5 text-primary" />
-          <h3 className="text-lg font-semibold">Knowledge Graph</h3>
+          <h3 className="text-base sm:text-lg font-semibold">Knowledge Graph</h3>
         </div>
         
-        <div className="flex items-center space-x-2">
-          <Button variant="ghost" size="sm" onClick={handleZoomOut}>
-            <ZoomOut className="w-4 h-4" />
+        <div className="flex items-center space-x-1 sm:space-x-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleZoomIn}
+            className="h-7 w-7 sm:h-8 sm:w-8 p-0 touch-manipulation"
+            aria-label="Zoom in"
+          >
+            <ZoomIn className="w-3 h-3 sm:w-4 sm:h-4" />
           </Button>
-          <span className="text-xs text-muted-foreground min-w-[3rem] text-center">
-            {Math.round(zoom * 100)}%
-          </span>
-          <Button variant="ghost" size="sm" onClick={handleZoomIn}>
-            <ZoomIn className="w-4 h-4" />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleZoomOut}
+            className="h-7 w-7 sm:h-8 sm:w-8 p-0 touch-manipulation"
+            aria-label="Zoom out"
+          >
+            <ZoomOut className="w-3 h-3 sm:w-4 sm:h-4" />
           </Button>
-          <Button variant="ghost" size="sm" onClick={handleReset}>
-            <RotateCcw className="w-4 h-4" />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleReset}
+            className="h-7 w-7 sm:h-8 sm:w-8 p-0 touch-manipulation"
+            aria-label="Reset view"
+          >
+            <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4" />
           </Button>
-          <Button variant="ghost" size="sm">
-            <Download className="w-4 h-4" />
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 w-7 sm:h-8 sm:w-8 p-0 touch-manipulation"
+            aria-label="Export graph"
+          >
+            <Download className="w-3 h-3 sm:w-4 sm:h-4" />
           </Button>
         </div>
       </div>
 
-      {/* Graph Visualization */}
-      <div className="relative bg-background/50 rounded-lg border border-border/30 overflow-hidden" style={{ height: '400px' }}>
+      {/* Graph Container */}
+      <div className="relative bg-gradient-to-br from-background/50 to-transparent rounded-lg border border-border/30 overflow-hidden">
         <svg
           ref={svgRef}
           width="100%"
-          height="100%"
-          className="cursor-pointer"
+          height="300"
+          className="w-full h-64 sm:h-80"
+          viewBox="0 0 600 400"
           style={{ transform: `scale(${zoom}) translate(${center.x}px, ${center.y}px)` }}
         >
           {/* Connections */}
@@ -287,14 +308,14 @@ export default function KnowledgeGraph({ insights = [], variables = [], classNam
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-4 p-4 glass rounded-lg border border-border/30"
+          className="mt-3 sm:mt-4 p-3 sm:p-4 glass rounded-lg border border-border/30"
         >
           <div className="flex items-center justify-between mb-2">
-            <h4 className="font-semibold">{selectedNodeData.label}</h4>
-            <Badge variant="outline">{selectedNodeData.type}</Badge>
+            <h4 className="font-semibold text-sm sm:text-base">{selectedNodeData.label}</h4>
+            <Badge variant="outline" className="text-xs">{selectedNodeData.type}</Badge>
           </div>
           
-          <div className="space-y-2 text-sm">
+          <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
             <p className="text-muted-foreground">
               {selectedNodeData.connections.length} connections
             </p>
@@ -320,21 +341,21 @@ export default function KnowledgeGraph({ insights = [], variables = [], classNam
       )}
 
       {/* Legend */}
-      <div className="mt-4 flex items-center justify-center space-x-6 text-xs">
-        <div className="flex items-center space-x-2">
-          <div className="w-3 h-3 rounded-full bg-primary" />
+      <div className="mt-3 sm:mt-4 flex items-center justify-center space-x-3 sm:space-x-6 text-xs flex-wrap gap-y-1">
+        <div className="flex items-center space-x-1 sm:space-x-2">
+          <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-primary" />
           <span>Variables</span>
         </div>
-        <div className="flex items-center space-x-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#A855F7' }} />
+        <div className="flex items-center space-x-1 sm:space-x-2">
+          <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full" style={{ backgroundColor: '#A855F7' }} />
           <span>Correlations</span>
         </div>
-        <div className="flex items-center space-x-2">
-          <div className="w-3 h-3 rounded-full bg-quantum-green" />
+        <div className="flex items-center space-x-1 sm:space-x-2">
+          <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-quantum-green" />
           <span>Insights</span>
         </div>
-        <div className="flex items-center space-x-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#F59E0B' }} />
+        <div className="flex items-center space-x-1 sm:space-x-2">
+          <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full" style={{ backgroundColor: '#F59E0B' }} />
           <span>Actions</span>
         </div>
       </div>

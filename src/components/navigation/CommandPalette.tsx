@@ -201,13 +201,17 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
             exit={{ opacity: 0, scale: 0.95, y: -20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="fixed top-[20vh] left-1/2 -translate-x-1/2 z-[101] w-full max-w-2xl mx-4"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="command-palette-title"
+            aria-describedby="command-palette-description"
           >
             <Card className="glass border border-primary/20 quantum-glow overflow-hidden">
               <Command className="bg-transparent">
                 {/* Header */}
                 <div className="flex items-center gap-2 px-4 py-3 border-b border-border/20">
                   <CommandIcon className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium gradient-text">
+                  <span className="text-sm font-medium gradient-text" id="command-palette-title">
                     Observatory Command Center
                   </span>
                   <div className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
@@ -234,7 +238,7 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
                 </div>
 
                 <CommandList className="max-h-80 overflow-y-auto">
-                  <CommandEmpty className="py-6 text-center text-muted-foreground">
+                  <CommandEmpty className="py-6 text-center text-muted-foreground" id="command-palette-description">
                     <div className="flex flex-col items-center gap-2">
                       <Search className="w-8 h-8 opacity-50" />
                       <span>No commands found</span>

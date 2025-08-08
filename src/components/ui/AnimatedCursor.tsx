@@ -5,8 +5,22 @@ import { motion } from 'framer-motion';
 const AnimatedCursor = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
 
   useEffect(() => {
+    // Check for touch devices and reduced motion preference
+    const isCoarse = window.matchMedia?.('(pointer: coarse)').matches;
+    const prefersReduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    
+    // Only render cursor on non-touch devices and when motion is not reduced
+    if (!isCoarse && !prefersReduced) {
+      setShouldRender(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!shouldRender) return;
+
     const updateMousePosition = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
     };
@@ -28,13 +42,16 @@ const AnimatedCursor = () => {
       window.removeEventListener('mousemove', updateMousePosition);
       window.removeEventListener('mouseover', handleMouseOver);
     };
-  }, []);
+  }, [shouldRender]);
+
+  // Don't render on touch devices or when reduced motion is preferred
+  if (!shouldRender) return null;
 
   return (
     <>
       {/* Main cursor */}
       <motion.div
-        className="fixed top-0 left-0 w-4 h-4 bg-primary rounded-full pointer-events-none z-[9999] mix-blend-difference"
+        className="fixed top-0 left-0 w-4 h-4 bg-primary rounded-full pointer-events-none z-[60] mix-blend-difference"
         style={{
           x: mousePosition.x - 8,
           y: mousePosition.y - 8,
@@ -51,7 +68,7 @@ const AnimatedCursor = () => {
       
       {/* Trailing cursor */}
       <motion.div
-        className="fixed top-0 left-0 w-8 h-8 border-2 border-primary/50 rounded-full pointer-events-none z-[9998]"
+        className="fixed top-0 left-0 w-8 h-8 border-2 border-primary/50 rounded-full pointer-events-none z-[59]"
         style={{
           x: mousePosition.x - 16,
           y: mousePosition.y - 16,
@@ -70,7 +87,7 @@ const AnimatedCursor = () => {
       
       {/* Quantum particles */}
       <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9997]"
+        className="fixed top-0 left-0 pointer-events-none z-[58]"
         style={{
           x: mousePosition.x,
           y: mousePosition.y,

@@ -104,7 +104,7 @@ export default function ChatBot() {
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
-            className="fixed bottom-24 right-6 w-96 h-96 z-50"
+            className="fixed inset-x-2 bottom-20 w-auto md:inset-auto md:right-6 md:bottom-24 md:w-96 h-[60vh] md:h-96 z-50"
           >
             <Card className="glass h-full flex flex-col quantum-glow">
               {/* Header */}
@@ -123,6 +123,7 @@ export default function ChatBot() {
                   size="sm"
                   onClick={() => setIsOpen(false)}
                   className="h-8 w-8 p-0"
+                  aria-label="Close chat"
                 >
                   <X className="w-4 h-4" />
                 </Button>

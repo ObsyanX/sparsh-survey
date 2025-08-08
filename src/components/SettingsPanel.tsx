@@ -139,6 +139,10 @@ export default function SettingsPanel() {
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 20, stiffness: 300 }}
               className="fixed right-0 top-0 h-full w-full max-w-md z-50"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="settings-panel-title"
+              aria-describedby="settings-panel-description"
             >
               <Card className="glass h-full w-full rounded-l-lg rounded-r-none border-r-0 p-6 overflow-y-auto">
                 {/* Header */}
@@ -148,8 +152,8 @@ export default function SettingsPanel() {
                       <Settings className="w-5 h-5 text-primary" />
                     </div>
                     <div>
-                      <h2 className="text-lg font-semibold">Settings</h2>
-                      <p className="text-sm text-muted-foreground">Customize your experience</p>
+                      <h2 className="text-lg font-semibold" id="settings-panel-title">Settings</h2>
+                      <p className="text-sm text-muted-foreground" id="settings-panel-description">Customize your experience</p>
                     </div>
                   </div>
                   <Button
@@ -157,6 +161,7 @@ export default function SettingsPanel() {
                     variant="ghost"
                     size="sm"
                     className="h-8 w-8 p-0"
+                    aria-label="Close settings"
                   >
                     ×
                   </Button>

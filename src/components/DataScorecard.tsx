@@ -120,19 +120,19 @@ export default function DataScorecard({ dataset, className = '' }: DataScorecard
 
   if (isLoading) {
     return (
-      <Card className={`glass p-6 ${className}`}>
-        <div className="space-y-4">
+      <Card className={`glass p-4 sm:p-6 ${className}`}>
+        <div className="space-y-3 sm:space-y-4">
           <div className="flex items-center space-x-2">
             <Database className="w-5 h-5 text-primary animate-pulse" />
-            <span className="font-semibold">Analyzing Dataset Quality...</span>
+            <span className="font-semibold text-sm sm:text-base">Analyzing Dataset Quality...</span>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-muted rounded animate-pulse" />
-                <div className="flex-1 space-y-2">
-                  <div className="h-3 bg-muted rounded animate-pulse" />
-                  <div className="h-2 bg-muted rounded animate-pulse w-3/4" />
+              <div key={i} className="flex items-center space-x-2 sm:space-x-3">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-muted rounded animate-pulse" />
+                <div className="flex-1 space-y-1 sm:space-y-2">
+                  <div className="h-2.5 sm:h-3 bg-muted rounded animate-pulse" />
+                  <div className="h-1.5 sm:h-2 bg-muted rounded animate-pulse w-3/4" />
                 </div>
               </div>
             ))}
@@ -143,12 +143,12 @@ export default function DataScorecard({ dataset, className = '' }: DataScorecard
   }
 
   return (
-    <Card className={`glass p-6 ${className}`}>
+    <Card className={`glass p-4 sm:p-6 ${className}`}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4 sm:mb-6">
         <div className="flex items-center space-x-2">
           <Database className="w-5 h-5 text-primary" />
-          <h3 className="text-lg font-semibold">Data Quality Scorecard</h3>
+          <h3 className="text-base sm:text-lg font-semibold">Data Quality Scorecard</h3>
         </div>
         <motion.div
           initial={{ scale: 0 }}
@@ -156,7 +156,7 @@ export default function DataScorecard({ dataset, className = '' }: DataScorecard
           transition={{ duration: 0.5, delay: 0.5 }}
           className="text-center"
         >
-          <div className={`text-2xl font-bold ${getOverallStatusColor()}`}>
+          <div className={`text-xl sm:text-2xl font-bold ${getOverallStatusColor()}`}>
             {overallScore}%
           </div>
           <div className="text-xs text-muted-foreground">Overall Score</div>
@@ -164,30 +164,32 @@ export default function DataScorecard({ dataset, className = '' }: DataScorecard
       </div>
 
       {/* Metrics */}
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {metrics.map((metric, index) => (
           <motion.div
             key={metric.id}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: index * 0.1 }}
-            className={`glass p-4 rounded-lg bg-gradient-to-br ${getStatusColor(metric.status)} border`}
+            className={`glass p-3 sm:p-4 rounded-lg bg-gradient-to-br ${getStatusColor(metric.status)} border`}
           >
             <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 rounded bg-current/10">
+              <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+                <div className="p-1.5 sm:p-2 rounded bg-current/10 flex-shrink-0">
                   {metric.icon}
                 </div>
-                <div>
-                  <h4 className="font-medium text-sm">{metric.label}</h4>
-                  <p className="text-xs text-muted-foreground">{metric.description}</p>
+                <div className="min-w-0 flex-1">
+                  <h4 className="font-medium text-sm truncate">{metric.label}</h4>
+                  <p className="text-xs text-muted-foreground line-clamp-1">{metric.description}</p>
                 </div>
               </div>
-              {getStatusBadge(metric.status)}
+              <div className="flex-shrink-0">
+                {getStatusBadge(metric.status)}
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
+            <div className="space-y-1.5 sm:space-y-2">
+              <div className="flex items-center justify-between text-xs sm:text-sm">
                 <span className="font-medium">
                   {metric.value}
                   {metric.id === 'completeness' || metric.id === 'consistency' || metric.id === 'quality' ? '%' : ''}
@@ -205,7 +207,7 @@ export default function DataScorecard({ dataset, className = '' }: DataScorecard
               >
                 <Progress 
                   value={(metric.value / metric.maxValue) * 100} 
-                  className="h-2"
+                  className="h-1.5 sm:h-2"
                 />
               </motion.div>
             </div>
@@ -218,17 +220,17 @@ export default function DataScorecard({ dataset, className = '' }: DataScorecard
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 1 }}
-        className="mt-6 pt-4 border-t border-border/30"
+        className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-border/30"
       >
         <div className="text-center space-y-2">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs sm:text-sm text-muted-foreground">
             Your dataset is <span className={`font-semibold ${getOverallStatusColor()}`}>
               {overallScore >= 90 ? 'excellent' : 
                overallScore >= 75 ? 'good' : 
                overallScore >= 60 ? 'fair' : 'needs improvement'}
             </span> and ready for advanced analysis.
           </p>
-          <div className="flex items-center justify-center space-x-4 text-xs">
+          <div className="flex items-center justify-center space-x-2 sm:space-x-4 text-xs flex-wrap gap-y-1">
             <span className="flex items-center space-x-1">
               <CheckCircle className="w-3 h-3 text-quantum-green" />
               <span>{metrics.filter(m => m.status === 'excellent').length} Excellent</span>
