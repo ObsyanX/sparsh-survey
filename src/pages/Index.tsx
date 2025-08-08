@@ -34,8 +34,8 @@ interface Insight {
   type: 'correlation' | 'trend' | 'anomaly' | 'statistic';
   title: string;
   description: string;
-  value: number;
-  priority: number;
+  value: string | number;
+  priority: 'high' | 'medium' | 'low';
   isPinned: boolean;
   timestamp: Date;
 }
@@ -55,8 +55,8 @@ const Index = () => {
       type: 'correlation', 
       title: 'Strong Education-Employment Link', 
       description: 'High correlation detected between education level and employment status',
-      value: 0.78,
-      priority: 1,
+      value: '0.78',
+      priority: 'high',
       isPinned: false,
       timestamp: new Date()
     },
@@ -65,8 +65,8 @@ const Index = () => {
       type: 'anomaly', 
       title: 'Income Anomalies Found', 
       description: '12 data points exceed 3 standard deviations from mean',
-      value: 12,
-      priority: 2,
+      value: '12',
+      priority: 'high',
       isPinned: false,
       timestamp: new Date()
     },
@@ -75,8 +75,8 @@ const Index = () => {
       type: 'trend', 
       title: 'Regional Disparity Trend', 
       description: 'Consistent income gaps observed across urban-rural divide',
-      value: 3.2,
-      priority: 3,
+      value: '3.2x',
+      priority: 'medium',
       isPinned: false,
       timestamp: new Date()
     }
@@ -294,8 +294,14 @@ const Index = () => {
                 className="space-y-8"
               >
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <Globe3D data={[]} />
-                  <Asset3DManager assets={[]} />
+                  <Card className="glass p-8 text-center">
+                    <h3 className="text-xl font-bold mb-4">3D Globe Visualization</h3>
+                    <p className="text-muted-foreground">Interactive 3D data visualization coming soon</p>
+                  </Card>
+                  <Card className="glass p-8 text-center">
+                    <h3 className="text-xl font-bold mb-4">3D Asset Manager</h3>
+                    <p className="text-muted-foreground">3D asset management system coming soon</p>
+                  </Card>
                 </div>
               </motion.div>
             )}
