@@ -370,7 +370,9 @@ export default function NavigationCore({
             </div>
           </motion.div>
         </Card>
-      </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Mobile Navigation - Bottom Tab Bar */}
       <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">

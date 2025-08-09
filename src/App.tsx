@@ -22,6 +22,7 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isNavigationVisible, setIsNavigationVisible] = useState(true);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -39,6 +40,8 @@ const App = () => {
               <NavigationCore 
                 isCommandPaletteOpen={isCommandPaletteOpen}
                 onCommandPaletteToggle={() => setIsCommandPaletteOpen(!isCommandPaletteOpen)}
+                isVisible={isNavigationVisible}
+                onToggleVisibility={() => setIsNavigationVisible(!isNavigationVisible)}
               />
               <CommandPalette 
                 isOpen={isCommandPaletteOpen}
