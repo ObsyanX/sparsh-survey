@@ -1,23 +1,18 @@
 
-import React, { useEffect, useState, useRef } from 'react';
-import { motion, useMotionValue, useSpring } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 
 const AnimatedCursor = () => {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
-  
-  const cursorX = useMotionValue(-100);
-  const cursorY = useMotionValue(-100);
-  
-  const springConfig = { damping: 25, stiffness: 700 };
-  const cursorXSpring = useSpring(cursorX, springConfig);
-  const cursorYSpring = useSpring(cursorY, springConfig);
 
   useEffect(() => {
     // Check for touch devices and reduced motion preference
     const isCoarse = window.matchMedia?.('(pointer: coarse)').matches;
     const prefersReduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     
+    // Only render cursor on non-touch devices and when motion is not reduced
     if (!isCoarse && !prefersReduced) {
       setShouldRender(true);
     }
@@ -27,8 +22,7 @@ const AnimatedCursor = () => {
     if (!shouldRender) return;
 
     const updateMousePosition = (e: MouseEvent) => {
-      cursorX.set(e.clientX);
-      cursorY.set(e.clientY);
+      setMousePosition({ x: e.clientX, y: e.clientY });
     };
 
     const handleMouseOver = (e: MouseEvent) => {
@@ -41,22 +35,16 @@ const AnimatedCursor = () => {
       setIsHovering(isInteractive);
     };
 
-    const handleMouseLeave = () => {
-      cursorX.set(-100);
-      cursorY.set(-100);
-    };
-
-    window.addEventListener('mousemove', updateMousePosition, { passive: true });
-    window.addEventListener('mouseover', handleMouseOver, { passive: true });
-    document.addEventListener('mouseleave', handleMouseLeave);
+    window.addEventListener('mousemove', updateMousePosition);
+    window.addEventListener('mouseover', handleMouseOver);
 
     return () => {
       window.removeEventListener('mousemove', updateMousePosition);
       window.removeEventListener('mouseover', handleMouseOver);
-      document.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, [shouldRender, cursorX, cursorY]);
+  }, [shouldRender]);
 
+  // Don't render on touch devices or when reduced motion is preferred
   if (!shouldRender) return null;
 
   return (
@@ -65,10 +53,8 @@ const AnimatedCursor = () => {
       <motion.div
         className="fixed top-0 left-0 w-4 h-4 bg-primary rounded-full pointer-events-none z-[60] mix-blend-difference"
         style={{
-          x: cursorXSpring,
-          y: cursorYSpring,
-          translateX: '-50%',
-          translateY: '-50%',
+          x: mousePosition.x - 8,
+          y: mousePosition.y - 8,
         }}
         animate={{
           scale: isHovering ? 1.5 : 1,
@@ -84,10 +70,8 @@ const AnimatedCursor = () => {
       <motion.div
         className="fixed top-0 left-0 w-8 h-8 border-2 border-primary/50 rounded-full pointer-events-none z-[59]"
         style={{
-          x: cursorXSpring,
-          y: cursorYSpring,
-          translateX: '-50%',
-          translateY: '-50%',
+          x: mousePosition.x - 16,
+          y: mousePosition.y - 16,
         }}
         animate={{
           scale: isHovering ? 1.2 : 1,
@@ -105,8 +89,8 @@ const AnimatedCursor = () => {
       <motion.div
         className="fixed top-0 left-0 pointer-events-none z-[58]"
         style={{
-          x: cursorXSpring,
-          y: cursorYSpring,
+          x: mousePosition.x,
+          y: mousePosition.y,
         }}
       >
         {Array.from({ length: 3 }).map((_, i) => (

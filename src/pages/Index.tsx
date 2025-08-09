@@ -1,190 +1,575 @@
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Upload, BarChart3, Brain, Settings, Command, FileText } from "lucide-react";
+import Spline from '@splinetool/react-spline';
+import FileUpload from "@/components/FileUpload";
+import ProcessingTimeline from "@/components/ProcessingTimeline";
+import LoadingScreen from "@/components/LoadingScreen";
+import InsightBoard from "@/components/InsightBoard";
+import DataScorecard from "@/components/DataScorecard";
+import ChatBot from "@/components/ChatBot";
+import AutoInsightEngine from "@/components/AutoInsightEngine";
+import KnowledgeGraph from "@/components/KnowledgeGraph";
+import DataStoryMode from "@/components/DataStoryMode";
+import PresentationMode from "@/components/PresentationMode";
+import ScenarioSimulator from "@/components/ScenarioSimulator";
+import Footer from "@/components/ui/Footer";
 
-import React, { Suspense } from 'react';
-import { motion } from 'framer-motion';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { 
-  Upload, 
-  BarChart3, 
-  Brain, 
-  Zap,
-  ArrowRight,
-  Activity,
-  Database,
-  Sparkles
-} from 'lucide-react';
-import LazyGlobe3D from '@/components/3d/LazyGlobe3D';
-import LazyChartEngine from '@/components/charts/LazyChartEngine';
-import { usePerformanceMonitor } from '@/hooks/usePerformanceMonitor';
+// Lazy loaded components
+import LazyGlobe3D from "@/components/3d/LazyGlobe3D";
+import LazyAsset3DManager from "@/components/3d/LazyAsset3DManager";
+import LazyChartEngine from "@/components/charts/LazyChartEngine";
+
+// Enhanced background and navigation
+import AmbientSoundSystem from "@/components/audio/AmbientSoundSystem";
+
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import KPICard from "@/components/KPICard";
+
+interface Insight {
+  id: string;
+  type: 'correlation' | 'trend' | 'anomaly' | 'statistic';
+  title: string;
+  description: string;
+  value: string | number;
+  priority: 'high' | 'medium' | 'low';
+  isPinned: boolean;
+  timestamp: Date;
+}
 
 const Index = () => {
-  usePerformanceMonitor();
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isAnalysisReady, setIsAnalysisReady] = useState(false);
+  const [activeMode, setActiveMode] = useState<'analysis' | 'story' | '3d' | 'presentation' | 'simulation'>('analysis');
+  const [showAIPanel, setShowAIPanel] = useState(false);
 
-  const features = [
-    {
-      icon: <Upload className="w-6 h-6" />,
-      title: "Smart Data Intake",
-      description: "Seamlessly import and validate datasets with AI-powered quality checks",
-      color: "from-quantum-green/20 to-quantum-green/5",
-      delay: 0.1
+  // Mock data state
+  const [insights] = useState<Insight[]>([
+    { 
+      id: '1', 
+      type: 'correlation', 
+      title: 'Strong Education-Employment Link', 
+      description: 'High correlation detected between education level and employment status',
+      value: '0.78',
+      priority: 'high',
+      isPinned: false,
+      timestamp: new Date()
     },
-    {
-      icon: <Zap className="w-6 h-6" />,
-      title: "Quantum Cleaning",
-      description: "Advanced algorithms detect and resolve data inconsistencies automatically",
-      color: "from-quantum-purple/20 to-quantum-purple/5",
-      delay: 0.2
+    { 
+      id: '2', 
+      type: 'anomaly', 
+      title: 'Income Anomalies Found', 
+      description: '12 data points exceed 3 standard deviations from mean',
+      value: '12',
+      priority: 'high',
+      isPinned: false,
+      timestamp: new Date()
     },
-    {
-      icon: <BarChart3 className="w-6 h-6" />,
-      title: "Visual Intelligence",
-      description: "Generate insightful charts and visualizations with zero configuration",
-      color: "from-primary/20 to-primary/5",
-      delay: 0.3
-    },
-    {
-      icon: <Brain className="w-6 h-6" />,
-      title: "AI Insights Engine",
-      description: "Discover hidden patterns and generate actionable business intelligence",
-      color: "from-secondary/20 to-secondary/5",
-      delay: 0.4
+    { 
+      id: '3', 
+      type: 'trend', 
+      title: 'Regional Disparity Trend', 
+      description: 'Consistent income gaps observed across urban-rural divide',
+      value: '3.2x',
+      priority: 'medium',
+      isPinned: false,
+      timestamp: new Date()
     }
-  ];
+  ]);
+
+  const handleFileUpload = (file: File) => {
+    setIsUploading(true);
+    setUploadedFile(file);
+    
+    setTimeout(() => {
+      setIsUploading(false);
+      setIsProcessing(true);
+      
+      setTimeout(() => {
+        setIsProcessing(false);
+        setIsAnalysisReady(true);
+        setShowAIPanel(true);
+      }, 3000);
+    }, 1500);
+  };
+
+  const handleVisualize = (data: any) => {
+    console.log('Visualizing:', data);
+  };
+
+  const handleExport = (data: any) => {
+    console.log('Exporting:', data);
+  };
+
+  const handleModuleSelect = (moduleId: string) => {
+    setActiveMode(moduleId as 'analysis' | 'story' | '3d' | 'presentation' | 'simulation');
+  };
+
+  if (isUploading) {
+    return <LoadingScreen message="Uploading dataset to quantum processors..." />;
+  }
+
+  if (isProcessing) {
+    return <ProcessingTimeline />;
+  }
 
   return (
-    <div className="min-h-screen pb-20 md:pb-8">
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-6">
-        <div className="max-w-6xl mx-auto text-center">
+    <div className="min-h-screen bg-background relative">
+      {/* Ambient Sound System */}
+      <AmbientSoundSystem isActive={isAnalysisReady} />
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-8">
+        {!isAnalysisReady ? (
+          // Welcome State - Data Navigator Introduction
+          <div className="space-y-12 mt-1">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-center space-y-6"
+            >
+              <div className="inline-flex items-center space-x-3 px-6 py-3 rounded-full glass">
+                <Command className="w-5 h-5 text-primary" />
+                <span className="text-sm font-medium">Data Observatory • Status: Orbital</span>
+              </div>
+
+              <div className="relative min-h-screen flex justify-center mb-16 overflow-hidden">
+                {/* Spline Background with loading optimization */}
+                <div className="absolute inset-0 w-full h-full">
+                  <Spline 
+                    scene="https://prod.spline.design/Lws6iY4vBNT0NXoF/scene.splinecode"
+                    style={{ width: '100%', height: '100%' }}
+                  />
+                </div>
+                
+                {/* Overlay for better text readability */}
+                <div className="absolute inset-0 bg-black/20"></div>
+                
+                {/* Text Content in Foreground */}
+                <div className="relative z-10 text-center max-w-4xl px-6 pt-8 md:pt-12">
+                  <h1 className="text-5xl md:text-6xl font-bold gradient-text pb-1 leading-relaxed">
+                    Welcome, Data Navigator
+                  </h1>
+                  
+                  <p className="text-xl md:text-2xl text-muted-foreground mt-6 leading-relaxed">
+                    Step into the Survey Deck — where your <span className="text-primary">.csv</span> file becomes a gateway to clarity. Watch AI transform raw survey data into immersive, beautifully crafted PDF insights. 
+                  </p>
+                  
+                  <div className="text-xl md:text-2xl mt-8 inline-flex items-center text-primary font-medium">
+                    Decode. Discover. Deliver.
+                  </div>
+                </div>
+              </div>
+
+              {/* Feature cards with optimized animations */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-4xl mx-auto rounded-full">
+                <motion.div
+  initial={{ opacity: 0, scale: 0.8, rotateY: -90 }}
+  animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+  transition={{ 
+    duration: 0.6, 
+    delay: 0.2,
+    type: "spring",
+    stiffness: 100
+  }}
+  whileHover={{ 
+    scale: 1.05,
+    rotateX: -5,
+    z: 50
+  }}
+  className="relative perspective-1000"
+>
+  <div className="glass p-6 text-center space-y-3 cursor-pointer transition-all duration-500 relative overflow-hidden group hover:border-border/50 hover:shadow-2xl rounded-3xl">
+    {/* Holographic scan lines effect */}
+    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-b from-transparent via-primary/5 to-transparent animate-pulse" />
+    
+    {/* Content */}
+    <div className="relative z-10 space-y-3 ">
+      <motion.div
+        whileHover={{ scale: 1.2, rotateY: 360 }}
+        transition={{ duration: 0.6 }}
+        className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center"
+      >
+        <Upload className="w-6 h-6 text-primary" />
+      </motion.div>
+      <h3 className="font-semibold">Data Intake</h3>
+      <p className="text-xs text-muted-foreground">Beam aboard your survey datasets</p>
+    </div>
+
+    {/* Hover particles */}
+    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <motion.div
+          key={i}
+          initial={{ 
+            opacity: 0, 
+            scale: 0,
+            x: '50%',
+            y: '50%'
+          }}
+          animate={{ 
+            opacity: [0, 1, 0], 
+            scale: [0, 1, 0],
+            x: `${50 + (Math.random() - 0.5) * 200}%`,
+            y: `${50 + (Math.random() - 0.5) * 200}%`
+          }}
+          transition={{
+            duration: 2,
+            delay: i * 0.2,
+            repeat: Infinity,
+            repeatDelay: 1
+          }}
+          className="absolute w-1 h-1 bg-primary rounded-full"
+        />
+      ))}
+    </div>
+  </div>
+</motion.div>
+
+<motion.div
+  initial={{ opacity: 0, scale: 0.8, rotateY: -90 }}
+  animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+  transition={{ 
+    duration: 0.6, 
+    delay: 0.3,
+    type: "spring",
+    stiffness: 100
+  }}
+  whileHover={{ 
+    scale: 1.05,
+    rotateX: -5,
+    z: 50
+  }}
+  className="relative perspective-1000"
+>
+  <div className="glass p-6 text-center space-y-3 cursor-pointer transition-all duration-500 relative overflow-hidden group hover:border-border/50 hover:shadow-2xl rounded-3xl">
+    {/* Holographic scan lines effect */}
+    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-b from-transparent via-quantum-purple/5 to-transparent animate-pulse" />
+    
+    {/* Content */}
+    <div className="relative z-10 space-y-3">
+      <motion.div
+        whileHover={{ scale: 1.2, rotateY: 360 }}
+        transition={{ duration: 0.6 }}
+        className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-quantum-purple/20 to-quantum-purple/5 flex items-center justify-center"
+      >
+        <Brain className="w-6 h-6 text-quantum-purple" />
+      </motion.div>
+      <h3 className="font-semibold">AI Analysis</h3>
+      <p className="text-xs text-muted-foreground">Multi-agent intelligence processing</p>
+    </div>
+
+    {/* Hover particles */}
+    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <motion.div
+          key={i}
+          initial={{ 
+            opacity: 0, 
+            scale: 0,
+            x: '50%',
+            y: '50%'
+          }}
+          animate={{ 
+            opacity: [0, 1, 0], 
+            scale: [0, 1, 0],
+            x: `${50 + (Math.random() - 0.5) * 200}%`,
+            y: `${50 + (Math.random() - 0.5) * 200}%`
+          }}
+          transition={{
+            duration: 2,
+            delay: i * 0.2,
+            repeat: Infinity,
+            repeatDelay: 1
+          }}
+          className="absolute w-1 h-1 bg-quantum-purple rounded-full"
+        />
+      ))}
+    </div>
+  </div>
+</motion.div>
+
+<motion.div
+  initial={{ opacity: 0, scale: 0.8, rotateY: -90 }}
+  animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+  transition={{ 
+    duration: 0.6, 
+    delay: 0.4,
+    type: "spring",
+    stiffness: 100
+  }}
+  whileHover={{ 
+    scale: 1.05,
+    rotateX: -5,
+    z: 50
+  }}
+  className="relative perspective-1000"
+>
+  <div className="glass p-6 text-center space-y-3 cursor-pointer transition-all duration-500 relative overflow-hidden group hover:border-border/50 hover:shadow-2xl rounded-3xl">
+    {/* Holographic scan lines effect */}
+    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-b from-transparent via-quantum-green/5 to-transparent animate-pulse" />
+    
+    {/* Content */}
+    <div className="relative z-10 space-y-3">
+      <motion.div
+        whileHover={{ scale: 1.2, rotateY: 360 }}
+        transition={{ duration: 0.6 }}
+        className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-quantum-green/20 to-quantum-green/5 flex items-center justify-center"
+      >
+        <BarChart3 className="w-6 h-6 text-quantum-green" />
+      </motion.div>
+      <h3 className="font-semibold">3D Visualization</h3>
+      <p className="text-xs text-muted-foreground">Immersive data exploration <span className="text-xs invisible">WithAnewIand</span></p>
+    </div>
+
+    {/* Hover particles */}
+    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <motion.div
+          key={i}
+          initial={{ 
+            opacity: 0, 
+            scale: 0,
+            x: '50%',
+            y: '50%'
+          }}
+          animate={{ 
+            opacity: [0, 1, 0], 
+            scale: [0, 1, 0],
+            x: `${50 + (Math.random() - 0.5) * 200}%`,
+            y: `${50 + (Math.random() - 0.5) * 200}%`
+          }}
+          transition={{
+            duration: 2,
+            delay: i * 0.2,
+            repeat: Infinity,
+            repeatDelay: 1
+          }}
+          className="absolute w-1 h-1 bg-quantum-green rounded-full"
+        />
+      ))}
+    </div>
+  </div>
+</motion.div>
+                <motion.div
+    initial={{ opacity: 0, scale: 0.8, rotateY: -90 }}
+    animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+    transition={{ 
+      duration: 0.6, 
+      delay: 0.2,
+      type: "spring",
+      stiffness: 100
+    }}
+    whileHover={{ 
+      scale: 1.05,
+      rotateX: -5,
+      z: 50
+    }}
+    className="relative perspective-1000"
+  >
+    <div className="glass p-6 text-center space-y-3 cursor-pointer transition-all duration-500 relative overflow-hidden group hover:border-border/50 hover:shadow-2xl rounded-3xl">
+      {/* Holographic scan lines effect */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-b from-transparent via-yellow-500/5 to-transparent animate-pulse" />
+      
+      {/* Content */}
+      <div className="relative z-10 space-y-3">
+        <motion.div
+          whileHover={{ scale: 1.2, rotateY: 360 }}
+          transition={{ duration: 0.6 }}
+          className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-yellow-500/20 to-yellow-500/5 flex items-center justify-center"
+        >
+          <FileText className="w-6 h-6 text-yellow-500" />
+        </motion.div>
+        <h3 className="font-semibold">Narrative Studio</h3>
+        <p className="text-xs text-muted-foreground">Build data stories <span className="text-xs invisible">WithAnewIand</span></p>
+        
+      </div>
+
+      {/* Hover particles */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none">
+        {Array.from({ length: 6 }).map((_, i) => (
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="mb-8"
-          >
-            <Badge variant="outline" className="mb-4 quantum-glow">
-              <Sparkles className="w-3 h-3 mr-1" />
-              Observatory v2.0 Active
-            </Badge>
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 gradient-text leading-tight">
-              Data Science
-              <br />
-              Observatory
-            </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Transform raw data into actionable insights with our AI-powered analytics platform.
-              Experience the future of data science in a holographic interface.
-            </p>
-          </motion.div>
+            key={i}
+            initial={{ 
+              opacity: 0, 
+              scale: 0,
+              x: '50%',
+              y: '50%'
+            }}
+            animate={{ 
+              opacity: [0, 1, 0], 
+              scale: [0, 1, 0],
+              x: `${50 + (Math.random() - 0.5) * 200}%`,
+              y: `${50 + (Math.random() - 0.5) * 200}%`
+            }}
+            transition={{
+              duration: 2,
+              delay: i * 0.2,
+              repeat: Infinity,
+              repeatDelay: 1
+            }}
+            className="absolute w-1 h-1 bg-yellow-500 rounded-full"
+          />
+        ))}
+      </div>
+    </div>
+  </motion.div>
+  
+                {/* <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.5 }}
+                  className="glass p-6 text-center space-y-3"
+                >
+                  {/* <div className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-yellow-500/20 to-yellow-500/5 flex items-center justify-center">
+                    <Headphones className="w-6 h-6 text-yellow-500" />
+                  </div>
+                  <h3 className="font-semibold">Ambient Mode</h3>
+                  <p className="text-xs text-muted-foreground">Living data artwork experience</p> }
+                </motion.div> */}
+                
+              </div>
+            </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12"
-          >
-            <Button size="lg" className="quantum-glow-hover">
-              <Activity className="w-5 h-5 mr-2" />
-              Begin Analysis
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-            <Button variant="outline" size="lg">
-              <Database className="w-5 h-5 mr-2" />
-              View Demo Data
-            </Button>
-          </motion.div>
-        </div>
-      </section>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+            >
+              <FileUpload onFileUpload={handleFileUpload} />
+            </motion.div>
+          </div>
+        ) : (
+          // Analysis Interface with lazy loading
+          <div className="space-y-8">
+            {/* Mode-Specific Content */}
+            {activeMode === 'analysis' && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="space-y-8"
+              >
+                {/* KPI Overview */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+                  <KPICard
+                    title="Total Records"
+                    value={15847}
+                    icon={<BarChart3 className="w-5 h-5" />}
+                    color="cyan"
+                    delay={0.1}
+                  />
+                  <KPICard
+                    title="Data Quality"
+                    value={98}
+                    suffix="%"
+                    icon={<Brain className="w-5 h-5" />}
+                    color="green"
+                    delay={0.2}
+                  />
+                  <KPICard
+                    title="Insights Found"
+                    value={23}
+                    icon={<Settings className="w-5 h-5" />}
+                    color="purple"
+                    delay={0.3}
+                  />
+                </div>
 
-      {/* 3D Globe Section */}
-      <section className="relative py-20 px-6">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 gradient-text">
-              Global Data Visualization
-            </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Explore data patterns across the globe with our interactive 3D visualization engine
-            </p>
-          </motion.div>
+                {/* Main Analysis Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+                  <div className="lg:col-span-2 space-y-4 sm:space-y-6 lg:space-y-8">
+                    <InsightBoard insights={insights} />
+                    <LazyChartEngine dataset={[]} />
+                  </div>
+                  
+                  <div className="space-y-4 sm:space-y-6 lg:space-y-8">
+                    <DataScorecard />
+                    <KnowledgeGraph insights={insights} />
+                  </div>
+                </div>
 
-          <LazyGlobe3D className="h-96" />
-        </div>
-      </section>
+                {/* Auto-Insight Engine */}
+                <AutoInsightEngine 
+                  dataset={uploadedFile ? [uploadedFile] : undefined}
+                  isActive={true}
+                />
+              </motion.div>
+            )}
 
-      {/* Features Grid */}
-      <section className="relative py-20 px-6">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 gradient-text">
-              Observatory Capabilities
-            </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Discover the power of our integrated data science platform
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            {features.map((feature, index) => (
+            {activeMode === '3d' && (
               <motion.div
-                key={feature.title}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="space-y-8"
+              >
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <LazyGlobe3D className="w-full" />
+                  <LazyAsset3DManager className="w-full" />
+                </div>
+              </motion.div>
+            )}
+
+            {activeMode === 'story' && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+              >
+                <DataStoryMode dataset={uploadedFile} />
+              </motion.div>
+            )}
+
+            {activeMode === 'presentation' && (
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: feature.delay }}
               >
-                <Card className={`glass p-6 h-full quantum-glow-hover bg-gradient-to-br ${feature.color}`}>
-                  <div className="flex items-start gap-4">
-                    <div className="quantum-glow rounded-lg p-3">
-                      {feature.icon}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold mb-2">
-                        {feature.title}
-                      </h3>
-                      <p className="text-muted-foreground">
-                        {feature.description}
-                      </p>
-                    </div>
-                  </div>
-                </Card>
+                <PresentationMode />
               </motion.div>
-            ))}
+            )}
+
+            {activeMode === 'simulation' && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+              >
+                <ScenarioSimulator />
+              </motion.div>
+            )}
           </div>
-        </div>
-      </section>
+        )}
+      </div>
 
-      {/* Chart Engine Section */}
-      <section className="relative py-20 px-6">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-12"
+      {/* Footer */}
+      <Footer />
+
+      {/* Floating Chatbot */}
+      <ChatBot />
+      
+      {/* AI Panel Toggle */}
+      {isAnalysisReady && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 1.5 }}
+          className="fixed bottom-20 right-4 md:bottom-24 md:right-24 z-40"
+        >
+          <Button
+            onClick={() => setShowAIPanel(!showAIPanel)}
+            className={`w-12 h-12 rounded-full ${
+              showAIPanel 
+                ? 'bg-gradient-to-br from-destructive to-destructive/80' 
+                : 'bg-gradient-to-br from-quantum-purple to-quantum-purple/80'
+            } quantum-glow-hover`}
+            variant="default"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 gradient-text">
-              Intelligent Chart Generation
-            </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Our AI automatically selects the best visualization type for your data
-            </p>
-          </motion.div>
-
-          <LazyChartEngine className="w-full" />
-        </div>
-      </section>
+            <Brain className="w-5 h-5" />
+          </Button>
+        </motion.div>
+      )}
     </div>
   );
 };
