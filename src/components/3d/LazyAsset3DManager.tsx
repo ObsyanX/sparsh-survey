@@ -10,7 +10,7 @@ interface LazyAsset3DManagerProps {
   className?: string;
 }
 
-export default function LazyAsset3DManager(props: LazyAsset3DManagerProps) {
+export default function LazyAsset3DManager({ assets = [], ...props }: LazyAsset3DManagerProps) {
   const [shouldLoad, setShouldLoad] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -36,7 +36,7 @@ export default function LazyAsset3DManager(props: LazyAsset3DManagerProps) {
     <div ref={containerRef} className={props.className}>
       {shouldLoad ? (
         <Suspense fallback={<Asset3DManagerSkeleton />}>
-          <Asset3DManager {...props} />
+          <Asset3DManager assets={assets} {...props} />
         </Suspense>
       ) : (
         <Asset3DManagerSkeleton />

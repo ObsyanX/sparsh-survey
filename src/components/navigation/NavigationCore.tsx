@@ -7,11 +7,7 @@ import {
   Upload, 
   Zap, 
   BarChart3, 
-  MessageCircle, 
-  FileText, 
   Grid3X3,
-  Brain,
-  Settings,
   Command
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -78,11 +74,13 @@ const navItems: NavItem[] = [
 interface NavigationCoreProps {
   isCommandPaletteOpen?: boolean;
   onCommandPaletteToggle?: () => void;
+  isVisible?: boolean;
 }
 
 export default function NavigationCore({ 
   isCommandPaletteOpen, 
-  onCommandPaletteToggle 
+  onCommandPaletteToggle,
+  isVisible = true
 }: NavigationCoreProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTrail, setActiveTrail] = useState<string>('');
@@ -97,21 +95,19 @@ export default function NavigationCore({
     setActiveTrail(currentItem.id);
   }, [currentItem.id]);
 
-  const handleNavigation = (item: NavItem) => {
+  const handleNavigation = (item: any) => {
     if (settings.soundEnabled && item.audioNote) {
-      // Play audio note (placeholder for actual audio implementation)
       console.log(`Playing note: ${item.audioNote}`);
     }
     
     setActiveTrail(item.id);
     
-    // Smooth navigation with transition delay
     setTimeout(() => {
       navigate(item.path);
     }, 150);
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent, item: NavItem) => {
+  const handleKeyPress = (e: React.KeyboardEvent, item: any) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       handleNavigation(item);
@@ -121,161 +117,167 @@ export default function NavigationCore({
   return (
     <>
       {/* Desktop Navigation */}
-      <motion.div
-        initial={{ x: -100, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        className="fixed left-6 top-1/2 -translate-y-1/2 z-50 hidden md:block"
-      >
-        <Card 
-          className={`
-            glass p-2 transition-all duration-500 group
-            ${isExpanded ? 'w-64' : 'w-16'}
-          `}
-          onMouseEnter={() => setIsExpanded(true)}
-          onMouseLeave={() => setIsExpanded(false)}
-        >
-          {/* Command Palette Trigger */}
-          <motion.button
-            onClick={onCommandPaletteToggle}
-            className="w-12 h-12 rounded-lg glass mb-2 flex items-center justify-center quantum-glow-hover"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            aria-label="Open Command Palette (Ctrl+K)"
-          >
-            <Command className="w-5 h-5 text-primary" />
-          </motion.button>
-
-          {/* Navigation Items */}
-          <div className="space-y-2">
-            {navItems.map((item, index) => {
-              const isActive = currentItem.id === item.id;
-              const isHovered = hoveredItem === item.id;
-              
-              return (
-                <motion.button
-                  key={item.id}
-                  onClick={() => handleNavigation(item)}
-                  onKeyDown={(e) => handleKeyPress(e, item)}
-                  onMouseEnter={() => setHoveredItem(item.id)}
-                  onMouseLeave={() => setHoveredItem(null)}
-                  className={`
-                    relative w-full h-12 rounded-lg flex items-center transition-all duration-300
-                    focus:outline-none focus:ring-2 focus:ring-primary/50
-                    ${isActive 
-                      ? `bg-gradient-to-r ${item.color} quantum-glow border border-current` 
-                      : 'hover:bg-muted/20'
-                    }
-                  `}
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: index * 0.05 }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  aria-label={`Navigate to ${item.label}: ${item.description}`}
-                >
-                  {/* Trail Indicator */}
-                  <AnimatePresence>
-                    {isActive && (
-                      <motion.div
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        exit={{ scaleY: 0 }}
-                        className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r-full"
-                      />
-                    )}
-                  </AnimatePresence>
-
-                  {/* Icon */}
-                  <div className="flex items-center justify-center w-12 h-12">
-                    <motion.div
-                      animate={{ 
-                        scale: isHovered ? 1.2 : 1,
-                        rotate: isActive ? 360 : 0 
-                      }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      {item.icon}
-                    </motion.div>
-                  </div>
-
-                  {/* Label & Description */}
-                  <AnimatePresence>
-                    {isExpanded && (
-                      <motion.div
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -10 }}
-                        className="flex-1 text-left ml-2"
-                      >
-                        <div className="font-medium text-sm">
-                          {item.label}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {item.description}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Hover Particles */}
-                  <AnimatePresence>
-                    {isHovered && (
-                      <>
-                        {Array.from({ length: 4 }).map((_, i) => (
-                          <motion.div
-                            key={i}
-                            initial={{ 
-                              opacity: 0, 
-                              scale: 0,
-                              x: '0%',
-                              y: '0%'
-                            }}
-                            animate={{ 
-                              opacity: [0, 1, 0], 
-                              scale: [0, 1, 0],
-                              x: `${(Math.random() - 0.5) * 100}%`,
-                              y: `${(Math.random() - 0.5) * 100}%`
-                            }}
-                            exit={{ opacity: 0, scale: 0 }}
-                            transition={{
-                              duration: 1.5,
-                              delay: i * 0.1,
-                              repeat: Infinity,
-                              repeatDelay: 0.5
-                            }}
-                            className="absolute w-1 h-1 bg-primary rounded-full pointer-events-none"
-                          />
-                        ))}
-                      </>
-                    )}
-                  </AnimatePresence>
-                </motion.button>
-              );
-            })}
-          </div>
-
-          {/* Status Indicator */}
+      <AnimatePresence>
+        {isVisible && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="mt-4 pt-2 border-t border-border/20"
+            initial={{ x: -100, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -100, opacity: 0 }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="fixed left-6 top-1/2 -translate-y-1/2 z-50 hidden md:block"
           >
-            <div className="flex items-center justify-center space-x-2">
-              <div className="w-2 h-2 bg-quantum-green rounded-full animate-pulse" />
-              {isExpanded && (
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="text-xs text-muted-foreground"
-                >
-                  Observatory Online
-                </motion.span>
-              )}
-            </div>
+            <Card 
+              className={`
+                glass p-2 transition-all duration-500 group
+                ${isExpanded ? 'w-64' : 'w-16'}
+              `}
+              onMouseEnter={() => setIsExpanded(true)}
+              onMouseLeave={() => setIsExpanded(false)}
+            >
+              {/* Command Palette Trigger */}
+              <motion.button
+                onClick={onCommandPaletteToggle}
+                className="w-12 h-12 rounded-lg glass mb-2 flex items-center justify-center quantum-glow-hover"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                aria-label="Open Command Palette (Ctrl+K)"
+              >
+                <Command className="w-5 h-5 text-primary" />
+              </motion.button>
+
+              {/* Navigation Items */}
+              <div className="space-y-2">
+                {navItems.map((item, index) => {
+                  const isActive = currentItem.id === item.id;
+                  const isHovered = hoveredItem === item.id;
+                  
+                  return (
+                    <motion.button
+                      key={item.id}
+                      onClick={() => handleNavigation(item)}
+                      onKeyDown={(e) => handleKeyPress(e, item)}
+                      onMouseEnter={() => setHoveredItem(item.id)}
+                      onMouseLeave={() => setHoveredItem(null)}
+                      className={`
+                        relative w-full h-12 rounded-lg flex items-center transition-all duration-300
+                        focus:outline-none focus:ring-2 focus:ring-primary/50
+                        ${isActive 
+                          ? `bg-gradient-to-r ${item.color} quantum-glow border border-current` 
+                          : 'hover:bg-muted/20'
+                        }
+                      `}
+                      initial={{ x: -20, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: index * 0.05 }}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      aria-label={`Navigate to ${item.label}: ${item.description}`}
+                    >
+                      {/* Trail Indicator */}
+                      <AnimatePresence>
+                        {isActive && (
+                          <motion.div
+                            initial={{ scaleY: 0 }}
+                            animate={{ scaleY: 1 }}
+                            exit={{ scaleY: 0 }}
+                            className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r-full"
+                          />
+                        )}
+                      </AnimatePresence>
+
+                      {/* Icon */}
+                      <div className="flex items-center justify-center w-12 h-12">
+                        <motion.div
+                          animate={{ 
+                            scale: isHovered ? 1.2 : 1,
+                            rotate: isActive ? 360 : 0 
+                          }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          {item.icon}
+                        </motion.div>
+                      </div>
+
+                      {/* Label & Description */}
+                      <AnimatePresence>
+                        {isExpanded && (
+                          <motion.div
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -10 }}
+                            className="flex-1 text-left ml-2"
+                          >
+                            <div className="font-medium text-sm">
+                              {item.label}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              {item.description}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
+                      {/* Hover Particles */}
+                      <AnimatePresence>
+                        {isHovered && (
+                          <>
+                            {Array.from({ length: 4 }).map((_, i) => (
+                              <motion.div
+                                key={i}
+                                initial={{ 
+                                  opacity: 0, 
+                                  scale: 0,
+                                  x: '0%',
+                                  y: '0%'
+                                }}
+                                animate={{ 
+                                  opacity: [0, 1, 0], 
+                                  scale: [0, 1, 0],
+                                  x: `${(Math.random() - 0.5) * 100}%`,
+                                  y: `${(Math.random() - 0.5) * 100}%`
+                                }}
+                                exit={{ opacity: 0, scale: 0 }}
+                                transition={{
+                                  duration: 1.5,
+                                  delay: i * 0.1,
+                                  repeat: Infinity,
+                                  repeatDelay: 0.5
+                                }}
+                                className="absolute w-1 h-1 bg-primary rounded-full pointer-events-none"
+                              />
+                            ))}
+                          </>
+                        )}
+                      </AnimatePresence>
+                    </motion.button>
+                  );
+                })}
+              </div>
+
+              {/* Status Indicator */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+                className="mt-4 pt-2 border-t border-border/20"
+              >
+                <div className="flex items-center justify-center space-x-2">
+                  <div className="w-2 h-2 bg-quantum-green rounded-full animate-pulse" />
+                  {isExpanded && (
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="text-xs text-muted-foreground"
+                    >
+                      Observatory Online
+                    </motion.span>
+                  )}
+                </div>
+              </motion.div>
+            </Card>
           </motion.div>
-        </Card>
-      </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Mobile Navigation - Bottom Tab Bar */}
       <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">

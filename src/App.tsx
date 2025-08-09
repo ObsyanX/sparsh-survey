@@ -10,6 +10,7 @@ import AccessibilityFeatures from "@/components/AccessibilityFeatures";
 import SettingsPanel from "@/components/SettingsPanel";
 import AnimatedCursor from "@/components/ui/AnimatedCursor";
 import NavigationCore from "@/components/navigation/NavigationCore";
+import NavigationToggle from "@/components/navigation/NavigationToggle";
 import CommandPalette from "@/components/navigation/CommandPalette";
 import BreadcrumbTrail from "@/components/navigation/BreadcrumbTrail";
 import PageTransition from "@/components/layout/PageTransition";
@@ -22,6 +23,7 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isNavigationVisible, setIsNavigationVisible] = useState(true);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -39,6 +41,11 @@ const App = () => {
               <NavigationCore 
                 isCommandPaletteOpen={isCommandPaletteOpen}
                 onCommandPaletteToggle={() => setIsCommandPaletteOpen(!isCommandPaletteOpen)}
+                isVisible={isNavigationVisible}
+              />
+              <NavigationToggle
+                isVisible={isNavigationVisible}
+                onToggle={() => setIsNavigationVisible(!isNavigationVisible)}
               />
               <CommandPalette 
                 isOpen={isCommandPaletteOpen}
