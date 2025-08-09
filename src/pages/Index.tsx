@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { motion } from "framer-motion";
 import { Upload, BarChart3, Brain, Settings, Command, FileText } from "lucide-react";
 import Spline from '@splinetool/react-spline';
@@ -45,7 +45,30 @@ const Index = () => {
   const [isAnalysisReady, setIsAnalysisReady] = useState(false);
   const [activeMode, setActiveMode] = useState<'analysis' | 'story' | '3d' | 'presentation' | 'simulation'>('analysis');
   const [showAIPanel, setShowAIPanel] = useState(false);
+  useEffect(() => {
+    const forceCursorVisibility = () => {
+      const cursorElement = document.querySelector('.animated-cursor') as HTMLElement;
+      if (cursorElement) {
+        cursorElement.style.opacity = '1';
+        cursorElement.style.visibility = 'visible';
+        cursorElement.style.zIndex = '9999';
+      }
+    };
 
+    // Force cursor visibility after a delay
+    setTimeout(forceCursorVisibility, 100);
+    setTimeout(forceCursorVisibility, 500);
+    setTimeout(forceCursorVisibility, 1000);
+
+    // Also force on scroll and resize
+    window.addEventListener('scroll', forceCursorVisibility);
+    window.addEventListener('resize', forceCursorVisibility);
+
+    return () => {
+      window.removeEventListener('scroll', forceCursorVisibility);
+      window.removeEventListener('resize', forceCursorVisibility);
+    };
+  }, []);
   // Mock data state
   const [insights] = useState<Insight[]>([
     { 
@@ -120,7 +143,6 @@ const Index = () => {
     <div className="min-h-screen bg-background relative">
       {/* Ambient Sound System */}
       <AmbientSoundSystem isActive={isAnalysisReady} />
-
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         {!isAnalysisReady ? (
@@ -139,10 +161,10 @@ const Index = () => {
 
               <div className="relative min-h-screen flex justify-center mb-16 overflow-hidden">
                 {/* Spline Background with loading optimization */}
-                <div className="absolute inset-0 w-full h-full">
+                <div className="absolute inset-0 w-full h-full z-[-1]">
                   <Spline 
                     scene="https://prod.spline.design/Lws6iY4vBNT0NXoF/scene.splinecode"
-                    style={{ width: '100%', height: '100%' }}
+                    style={{ width: '100%', height: '100%',  }}
                   />
                 </div>
                 
@@ -164,7 +186,7 @@ const Index = () => {
                   </div>
                 </div>
               </div>
-
+              
               {/* Feature cards with optimized animations */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-4xl mx-auto rounded-full">
                 <motion.div
@@ -323,7 +345,8 @@ const Index = () => {
         <BarChart3 className="w-6 h-6 text-quantum-green" />
       </motion.div>
       <h3 className="font-semibold">3D Visualization</h3>
-      <p className="text-xs text-muted-foreground">Immersive data exploration <span className="text-xs invisible">WithAnewIand</span></p>
+      <p className="text-xs text-muted-foreground">Immersive and interactive data exploration
+      </p>
     </div>
 
     {/* Hover particles */}
@@ -385,7 +408,7 @@ const Index = () => {
           <FileText className="w-6 h-6 text-yellow-500" />
         </motion.div>
         <h3 className="font-semibold">Narrative Studio</h3>
-        <p className="text-xs text-muted-foreground">Build data stories <span className="text-xs invisible">WithAnewIand</span></p>
+        <p className="text-xs text-muted-foreground">Build intelligent data stories using AI</p>
         
       </div>
 

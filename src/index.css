@@ -1,43 +1,30 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 /* Futuristic Data Observatory Design System */
-
 @layer base {
   :root {
     /* Deep Space Color Palette */
     --background: 230 45% 6%;
     --foreground: 200 25% 95%;
-
     --card: 230 35% 8%;
     --card-foreground: 200 20% 92%;
-
     --popover: 230 40% 7%;
     --popover-foreground: 200 25% 95%;
-
     --primary: 184 100% 50%;
     --primary-foreground: 230 45% 6%;
-
     --secondary: 262 83% 65%;
     --secondary-foreground: 200 25% 95%;
-
     --muted: 230 25% 12%;
     --muted-foreground: 200 15% 65%;
-
     --accent: 120 100% 55%;
     --accent-foreground: 230 45% 6%;
-
     --destructive: 0 85% 60%;
     --destructive-foreground: 200 25% 95%;
-
     --border: 230 25% 20%;
     --input: 230 25% 15%;
     --ring: 184 100% 50%;
-
     --radius: 0.75rem;
-
     /* Quantum Theme Extensions */
     --quantum-glow: 184 100% 50%;
     --quantum-purple: 262 83% 65%;
@@ -66,7 +53,6 @@
     --transition-quantum: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     --transition-holographic: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-glow: box-shadow 0.2s ease-in-out;
-
     --sidebar-background: 230 35% 8%;
     --sidebar-foreground: 200 20% 92%;
     --sidebar-primary: 184 100% 50%;
@@ -77,21 +63,17 @@
     --sidebar-ring: 184 100% 50%;
   }
 }
-
 @layer base {
 @keyframes float {
   0%, 100% { transform: translateY(0px) rotate(0deg); }
   50% { transform: translateY(-20px) rotate(180deg); }
 }
-
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
-
 * {
     @apply border-border;
   }
-
   body {
     @apply bg-background text-foreground overflow-x-hidden;
     font-family: 'Inter', system-ui, sans-serif;
@@ -105,7 +87,6 @@
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--primary) / 0.3) transparent;
   }
-
   /* Optimize for better rendering performance */
   * {
     -webkit-font-smoothing: antialiased;
@@ -113,11 +94,9 @@
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
   }
-
   button, a, [role="button"], .cursor-pointer {
     cursor: none !important;
   }
-
   /* GPU acceleration for animations */
   .animate-pulse,
   .animate-spin,
@@ -128,7 +107,6 @@
     transform: translateZ(0);
   }
 }
-
 @layer components {
   /* Advanced Glassmorphism - Optimized */
   .glass {
@@ -255,7 +233,6 @@
     height: 200px;
   }
 }
-
 @layer utilities {
   /* Enhanced Animations - Performance optimized */
   @keyframes floating-enhanced {
@@ -353,4 +330,80 @@
       transform: none;
     }
   }
+}
+
+/* Global Cursor Management - Force hide default cursor everywhere */
+* {
+  cursor: none !important;
+}
+html, body {
+  cursor: none !important;
+}
+/* Ensure Spline canvas doesn't interfere with custom cursor */
+[data-spline],
+canvas[class*="spline"],
+div[class*="spline"],
+.spline-container {
+  cursor: none !important;
+  pointer-events: auto !important;
+}
+/* Hide default cursor on all interactive elements */
+button, a, [role="button"], .cursor-pointer,
+input, textarea, select, [tabindex],
+.quantum-glow-hover, .hover\:scale-105,
+.glass, .card, [class*="glass"], [class*="card"] {
+  cursor: none !important;
+}
+/* Ensure 3D canvases don't capture cursor events unnecessarily */
+canvas[class*="three"],
+div[class*="3d"] canvas {
+  pointer-events: auto;
+  cursor: none !important;
+}
+/* Force cursor to be hidden on all elements */
+* {
+  cursor: none !important;
+}
+/* Ensure no element can override the cursor */
+html, body, div, span, p, h1, h2, h3, h4, h5, h6,
+section, article, aside, header, footer, nav,
+main, form, fieldset, legend, label, input,
+textarea, select, option, button, a, img,
+table, tr, td, th, ul, ol, li, dl, dt, dd {
+  cursor: none !important;
+}
+/* Special handling for Spline area - allow interactions but hide cursor */
+div[class*="spline"] *,
+canvas[class*="spline"] {
+  cursor: none !important;
+  pointer-events: auto !important;
+}
+/* Ensure our custom cursor is always on top and visible */
+.animated-cursor {
+  pointer-events: none !important;
+  z-index: 9999 !important;
+}
+/* Force cursor visibility after Spline section */
+body:not(.spline-active) .animated-cursor {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+/* Debug: Add outline to see cursor container (remove in production) */
+/* .animated-cursor {
+  /* outline: 1px solid red;
+} */
+/* Ensure cursor is visible on all sections */
+.container, .relative, .absolute, .fixed {
+  cursor: none !important;
+}
+/* Force cursor visibility on scroll */
+html, body {
+  cursor: none !important;
+}
+/* Ensure cursor works on all interactive elements */
+[class*="hover"], [class*="cursor"], [class*="button"], [class*="card"] {
+  cursor: none !important;
+}
+canvas, .spline-canvas, .simple-background {
+  pointer-events: none !important;
 }

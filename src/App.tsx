@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import AccessibilityFeatures from "@/components/AccessibilityFeatures";
 import SettingsPanel from "@/components/SettingsPanel";
 import AnimatedCursor from "@/components/ui/AnimatedCursor";
@@ -23,7 +23,36 @@ const queryClient = new QueryClient();
 const App = () => {
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isNavigationVisible, setIsNavigationVisible] = useState(true);
+  useEffect(() => {
+    const ensureCursorVisibility = () => {
+      // Force hide default cursor everywhere
+      document.body.style.cursor = 'none';
+      
+      // Ensure custom cursor is visible
+      const cursorElement = document.querySelector('.animated-cursor') as HTMLElement;
+      if (cursorElement) {
+        cursorElement.style.opacity = '1';
+        cursorElement.style.visibility = 'visible';
+        cursorElement.style.zIndex = '9999';
+      }
+    };
 
+    // Run immediately and after delays
+    ensureCursorVisibility();
+    setTimeout(ensureCursorVisibility, 100);
+    setTimeout(ensureCursorVisibility, 1000);
+
+    // Run on various events
+    window.addEventListener('scroll', ensureCursorVisibility);
+    window.addEventListener('resize', ensureCursorVisibility);
+    window.addEventListener('mousemove', ensureCursorVisibility);
+
+    return () => {
+      window.removeEventListener('scroll', ensureCursorVisibility);
+      window.removeEventListener('resize', ensureCursorVisibility);
+      window.removeEventListener('mousemove', ensureCursorVisibility);
+    };
+  }, []);
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
@@ -37,12 +66,12 @@ const App = () => {
               <Sonner />
               
               {/* Navigation System */}
-              <NavigationCore 
+              {/* <NavigationCore 
                 isCommandPaletteOpen={isCommandPaletteOpen}
                 onCommandPaletteToggle={() => setIsCommandPaletteOpen(!isCommandPaletteOpen)}
                 isVisible={isNavigationVisible}
                 onToggleVisibility={() => setIsNavigationVisible(!isNavigationVisible)}
-              />
+              /> */}
               <CommandPalette 
                 isOpen={isCommandPaletteOpen}
                 onClose={() => setIsCommandPaletteOpen(false)}
