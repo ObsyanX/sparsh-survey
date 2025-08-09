@@ -1,5 +1,11 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { motion, useMotionValue, useSpring, MotionValue } from 'framer-motion';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
+
+// Mock performance hook since it's not available
+const usePerformance = () => ({
+  isLowPerformance: false,
+  shouldReduceAnimations: false
+});
 
 const AnimatedCursor: React.FC = () => {
   const [isHovering, setIsHovering] = useState<boolean>(false);
@@ -8,25 +14,26 @@ const AnimatedCursor: React.FC = () => {
   const [isOverSpline, setIsOverSpline] = useState<boolean>(false);
   const [splineBounds, setSplineBounds] = useState<DOMRect | null>(null);
   
-  // Use motion values for better performance
+  // Direct motion values for immediate precision
   const mouseX = useMotionValue<number>(0);
   const mouseY = useMotionValue<number>(0);
   
-  // Create smooth spring animations
-  const springX = useSpring(mouseX, { stiffness: 400, damping: 28 });
-  const springY = useSpring(mouseY, { stiffness: 400, damping: 28 });
+  // Optimized spring configs for better responsiveness
+  const springConfig = { stiffness: 800, damping: 35, mass: 0.1 };
+  const trailConfig = { stiffness: 400, damping: 25, mass: 0.2 };
   
-  // Trailing cursor with different spring config
-  const trailX = useSpring(mouseX, { stiffness: 100, damping: 20 });
-  const trailY = useSpring(mouseY, { stiffness: 100, damping: 20 });
+  const springX = useSpring(mouseX, springConfig);
+  const springY = useSpring(mouseY, springConfig);
   
-  const rafRef = useRef<number | undefined>(undefined);
+  // Faster trailing cursor
+  const trailX = useSpring(mouseX, trailConfig);
+  const trailY = useSpring(mouseY, trailConfig);
+  
   const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const splineRef = useRef<HTMLDivElement | null>(null);
   
-  // Track document dimensions
-  const [documentHeight, setDocumentHeight] = useState<number>(0);
-  const [documentWidth, setDocumentWidth] = useState<number>(0);
+  // Performance monitoring
+  const { isLowPerformance, shouldReduceAnimations } = usePerformance();
   
   useEffect(() => {
     // Check for touch devices and reduced motion preference
@@ -37,41 +44,6 @@ const AnimatedCursor: React.FC = () => {
     if (!isCoarse && !prefersReduced) {
       setShouldRender(true);
     }
-    
-    // Get full document dimensions
-    const updateDocumentDimensions = () => {
-      const docHeight = Math.max(
-        document.body.scrollHeight,
-        document.body.offsetHeight,
-        document.documentElement.clientHeight,
-        document.documentElement.scrollHeight,
-        document.documentElement.offsetHeight
-      );
-      const docWidth = Math.max(
-        document.body.scrollWidth,
-        document.body.offsetWidth,
-        document.documentElement.clientWidth,
-        document.documentElement.scrollWidth,
-        document.documentElement.offsetWidth
-      );
-      
-      setDocumentHeight(docHeight);
-      setDocumentWidth(docWidth);
-      
-      console.log('Document dimensions:', docWidth, 'x', docHeight);
-      console.log('Viewport dimensions:', window.innerWidth, 'x', window.innerHeight);
-    };
-    
-    updateDocumentDimensions();
-    
-    // Update dimensions on window resize or content changes
-    const resizeObserver = new ResizeObserver(updateDocumentDimensions);
-    resizeObserver.observe(document.body);
-    resizeObserver.observe(document.documentElement);
-    
-    return () => {
-      resizeObserver.disconnect();
-    };
   }, []);
 
   // Detect Spline canvas and its bounds
@@ -84,8 +56,16 @@ const AnimatedCursor: React.FC = () => {
     if (splineContainer) {
       splineRef.current = splineContainer as HTMLDivElement;
       const bounds = splineContainer.getBoundingClientRect();
-      setSplineBounds(bounds);
-      console.log('Spline canvas detected:', bounds);
+      const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
+      const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+      
+      const documentBounds = new DOMRect(
+        bounds.left + scrollX,
+        bounds.top + scrollY,
+        bounds.width,
+        bounds.height
+      );
+      setSplineBounds(documentBounds);
     }
   }, []);
 
@@ -99,49 +79,30 @@ const AnimatedCursor: React.FC = () => {
            y <= splineBounds.bottom;
   }, [splineBounds]);
 
-  // FIXED: Mouse position calculation including scroll offset
+  // Direct mouse position update - NO LERP for precision
   const updateMousePosition = useCallback((e: MouseEvent) => {
-    if (rafRef.current) {
-      cancelAnimationFrame(rafRef.current);
+    // Immediately update motion values for precise tracking
+    mouseX.set(e.pageX);
+    mouseY.set(e.pageY);
+    
+    setIsVisible(true);
+    
+    // Check if mouse is in Spline area
+    const inSplineArea = isMouseInSplineBounds(e.pageX, e.pageY);
+    setIsOverSpline(inSplineArea);
+    
+    // Clear existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
     }
     
-    rafRef.current = requestAnimationFrame(() => {
-      // Get mouse position relative to the entire document, not just viewport
-      const x = e.clientX;
-      const y = e.clientY + window.scrollY; // Add scroll offset for full document tracking
-      
-      // DEBUG: Log positions and scroll
-      console.log(`Mouse - ClientX: ${e.clientX}, ClientY: ${e.clientY}`);
-      console.log(`Scroll - X: ${window.scrollX}, Y: ${window.scrollY}`);
-      console.log(`Final position - X: ${x}, Y: ${y}`);
-      console.log(`Document bounds - Width: ${documentWidth}, Height: ${documentHeight}`);
-      
-      // Clamp to document boundaries
-      const clampedX = Math.max(0, Math.min(x, documentWidth));
-      const clampedY = Math.max(0, Math.min(y, documentHeight));
-      
-      // Update cursor position
-      mouseX.set(clampedX);
-      mouseY.set(clampedY);
-      setIsVisible(true);
-      
-      // Check if mouse is in Spline area (use clientX/Y for viewport-relative checks)
-      const inSplineArea = isMouseInSplineBounds(e.clientX, e.clientY);
-      setIsOverSpline(inSplineArea);
-      
-      // Clear existing timeout
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+    // Hide cursor after inactivity
+    timeoutRef.current = setTimeout(() => {
+      if (!isHovering) {
+        setIsVisible(false);
       }
-      
-      // Only hide cursor after inactivity if not hovering over interactive elements
-      timeoutRef.current = setTimeout(() => {
-        if (!isHovering) {
-          setIsVisible(false);
-        }
-      }, 5000);
-    });
-  }, [mouseX, mouseY, isMouseInSplineBounds, isHovering, documentWidth, documentHeight]);
+    }, 3000);
+  }, [mouseX, mouseY, isMouseInSplineBounds, isHovering]);
 
   // Enhanced hover detection
   const handleMouseOver = useCallback((e: MouseEvent) => {
@@ -180,76 +141,44 @@ const AnimatedCursor: React.FC = () => {
     setIsVisible(true);
   }, []);
 
+  // Handle cursor visibility
   const handleMouseEnter = useCallback(() => {
     setIsVisible(true);
   }, []);
 
-  const handleMouseLeave = useCallback(() => {
-    // Don't hide cursor on mouse leave, let the timeout handle it
-  }, []);
-
-  // Enhanced resize handler
+  // Update Spline bounds on resize and scroll
   const handleResize = useCallback(() => {
-    // Update document dimensions
-    const docHeight = Math.max(
-      document.body.scrollHeight,
-      document.body.offsetHeight,
-      document.documentElement.clientHeight,
-      document.documentElement.scrollHeight,
-      document.documentElement.offsetHeight
-    );
-    const docWidth = Math.max(
-      document.body.scrollWidth,
-      document.body.offsetWidth,
-      document.documentElement.clientWidth,
-      document.documentElement.scrollWidth,
-      document.documentElement.offsetWidth
-    );
-    
-    setDocumentHeight(docHeight);
-    setDocumentWidth(docWidth);
-    
-    console.log('Resize - New document dimensions:', docWidth, 'x', docHeight);
-    
     if (splineRef.current) {
       const bounds = splineRef.current.getBoundingClientRect();
-      setSplineBounds(bounds);
+      const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
+      const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+      
+      const documentBounds = new DOMRect(
+        bounds.left + scrollX,
+        bounds.top + scrollY,
+        bounds.width,
+        bounds.height
+      );
+      setSplineBounds(documentBounds);
     }
-  }, []);
-
-  const handleMouseMove = useCallback(() => {
-    setIsVisible(true);
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-  }, []);
-
-  // Handle scroll events to update cursor position
-  const handleScroll = useCallback(() => {
-    // Force cursor position update on scroll
-    setIsVisible(true);
   }, []);
 
   useEffect(() => {
     if (!shouldRender) return;
-    
+
     // Initial Spline detection
     detectSplineCanvas();
     
     // Retry detection after delays
     const retryTimer = setTimeout(detectSplineCanvas, 1000);
     const retryTimer2 = setTimeout(detectSplineCanvas, 2000);
-    const retryTimer3 = setTimeout(detectSplineCanvas, 3000);
-
-    // Add event listeners
+    
+    // Add event listeners with passive option for better performance
     document.addEventListener('mousemove', updateMousePosition, { passive: true });
     document.addEventListener('mouseover', handleMouseOver, { passive: true });
     document.addEventListener('mouseenter', handleMouseEnter, { passive: true });
-    document.addEventListener('mouseleave', handleMouseLeave, { passive: true });
-    document.addEventListener('mousemove', handleMouseMove, { passive: true });
-    document.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleResize, { passive: true });
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scroll', handleResize, { passive: true });
     
     // Handle window focus/blur for cursor visibility
     const handleFocus = () => setIsVisible(true);
@@ -257,123 +186,126 @@ const AnimatedCursor: React.FC = () => {
     
     window.addEventListener('focus', handleFocus);
     window.addEventListener('blur', handleBlur);
-
+    
+    // Force cursor to be visible initially
     setIsVisible(true);
 
     return () => {
       document.removeEventListener('mousemove', updateMousePosition);
       document.removeEventListener('mouseover', handleMouseOver);
       document.removeEventListener('mouseenter', handleMouseEnter);
-      document.removeEventListener('mouseleave', handleMouseLeave);
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleResize);
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', handleResize);
       window.removeEventListener('focus', handleFocus);
       window.removeEventListener('blur', handleBlur);
       
       clearTimeout(retryTimer);
       clearTimeout(retryTimer2);
-      clearTimeout(retryTimer3);
       
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
-      }
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [shouldRender, updateMousePosition, handleMouseOver, handleMouseEnter, handleMouseLeave, handleResize, detectSplineCanvas, handleMouseMove, handleScroll]);
+  }, [shouldRender, updateMousePosition, handleMouseOver, handleMouseEnter, handleResize, detectSplineCanvas]);
 
+  // Don't render on touch devices or when reduced motion is preferred
   if (!shouldRender) return null;
 
+  // Reduce particle count for low performance devices
+  const particleCount = shouldReduceAnimations ? 1 : 3;
+
   return (
-    <>
-      {/* FIXED: Container sized to full document, not just viewport */}
-      <div 
-        className={`absolute top-0 left-0 pointer-events-none z-[9999] ${
-          isVisible ? 'opacity-100' : 'opacity-0'
-        }`}
-        style={{ 
-          width: `${documentWidth}px`,
-          height: `${documentHeight}px`,
-          transition: 'opacity 0.2s ease-in-out',
+    <div 
+      className={`fixed inset-0 pointer-events-none z-[9999] transition-opacity duration-150 ${
+        isVisible ? 'opacity-100' : 'opacity-0'
+      }`}
+      style={{ 
+        willChange: 'transform',
+        contain: 'layout style paint',
+        backfaceVisibility: 'hidden',
+        perspective: '1000px'
+      }}
+    >
+      {/* Main cursor - Precise tracking */}
+      <motion.div
+        className="absolute w-4 h-4 bg-blue-500 rounded-full mix-blend-difference"
+        style={{
+          x: springX,
+          y: springY,
+          left: -8,
+          top: -8,
+          willChange: 'transform',
+          backfaceVisibility: 'hidden'
         }}
-      >
-        {/* Main cursor */}
-        <motion.div
-          className="absolute w-4 h-4 bg-blue-500 rounded-full mix-blend-difference"
-          style={{
-            x: springX,
-            y: springY,
-            translateX: -8,
-            translateY: -8,
-          }}
-          animate={{
-            scale: isHovering ? 1.5 : 1,
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 500,
-            damping: 30,
-            mass: 0.5,
-          }}
-        />
-        
-        {/* Trailing cursor */}
-        <motion.div
-          className="absolute w-8 h-8 border-2 border-blue-500/50 rounded-full"
-          style={{
-            x: trailX,
-            y: trailY,
-            translateX: -16,
-            translateY: -16,
-          }}
-          animate={{
-            scale: isHovering ? 1.2 : 1,
-            opacity: isHovering ? 0.8 : 0.5,
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 200,
-            damping: 20,
-            mass: 0.8,
-          }}
-        />
-        
-        {/* Optimized quantum particles */}
+        animate={{
+          scale: isHovering ? 1.5 : 1,
+        }}
+        transition={{
+          type: "spring",
+          stiffness: 600,
+          damping: 25,
+          mass: 0.1,
+        }}
+      />
+      
+      {/* Trailing cursor - Smooth follow */}
+      <motion.div
+        className="absolute w-8 h-8 border-2 border-blue-500/50 rounded-full"
+        style={{
+          x: trailX,
+          y: trailY,
+          left: -16,
+          top: -16,
+          willChange: 'transform',
+          backfaceVisibility: 'hidden'
+        }}
+        animate={{
+          scale: isHovering ? 1.2 : 1,
+          opacity: isHovering ? 0.8 : 0.5,
+        }}
+        transition={{
+          type: "spring",
+          stiffness: 300,
+          damping: 20,
+          mass: 0.2,
+        }}
+      />
+      
+      {/* Optimized quantum particles */}
+      {isHovering && !shouldReduceAnimations && (
         <motion.div
           className="absolute"
           style={{
             x: springX,
             y: springY,
-            translateX: -2,
-            translateY: -2,
+            left: -2,
+            top: -2,
+            willChange: 'transform'
           }}
         >
-          {isHovering && Array.from({ length: 3 }).map((_, i) => (
+          {Array.from({ length: particleCount }).map((_, i) => (
             <motion.div
               key={i}
               className="absolute w-1 h-1 bg-purple-400 rounded-full"
               initial={{ opacity: 0, scale: 0 }}
               animate={{
-                x: [0, (Math.random() - 0.5) * 40],
-                y: [0, (Math.random() - 0.5) * 40],
+                x: [0, (Math.random() - 0.5) * 30],
+                y: [0, (Math.random() - 0.5) * 30],
                 opacity: [0, 1, 0],
                 scale: [0, 1, 0],
               }}
               transition={{
-                duration: 1.5,
+                duration: 1.2,
                 repeat: Infinity,
-                delay: i * 0.2,
+                delay: i * 0.15,
                 ease: "easeOut",
-                repeatDelay: 0.5,
+                repeatDelay: 0.3,
               }}
             />
           ))}
         </motion.div>
-      </div>
-    </>
+      )}
+    </div>
   );
 };
 

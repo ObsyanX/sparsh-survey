@@ -294,6 +294,33 @@
     transform: translateZ(0);
   }
   
+  .will-change-transform {
+    will-change: transform;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+  
+  .will-change-opacity {
+    will-change: opacity;
+  }
+  
+  .will-change-scroll-position {
+    will-change: scroll-position;
+  }
+  
+  /* Smooth scrolling optimizations */
+  .smooth-scroll {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Reduce motion for performance */
+  .reduce-motion {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
   /* Reduced Motion Support */
   @media (prefers-reduced-motion: reduce) {
     .animate-glow-pulse,

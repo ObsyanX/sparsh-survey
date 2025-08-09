@@ -16,6 +16,7 @@ import {
   Menu,
   X
 } from 'lucide-react';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 
 interface NavItem {
   id: string;
@@ -101,6 +102,8 @@ export default function NavigationCore({
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [screenSize, setScreenSize] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
+  const [sidebarListRef] = useAutoAnimate({ duration: 150 });
+  const [overlayListRef] = useAutoAnimate({ duration: 150 });
   
   const currentItem = navItems.find(item => item.path === currentPath) || navItems[0];
 
@@ -382,7 +385,7 @@ export default function NavigationCore({
                   </motion.button>
 
                   {/* Navigation Items */}
-                  <div className="space-y-2 max-h-96 overflow-y-auto">
+                  <div ref={overlayListRef} className="space-y-2 max-h-96 overflow-y-auto">
                     {navItems.map((item, index) => {
                       const isActive = currentItem.id === item.id;
                       const isItemHovered = hoveredItem === item.id;
@@ -542,7 +545,7 @@ export default function NavigationCore({
             </div>
 
             {/* Navigation Items */}
-            <div className="space-y-2 w-full max-h-96 overflow-y-auto">
+            <div ref={sidebarListRef} className="space-y-2 w-full max-h-96 overflow-y-auto">
               {navItems.map((item, index) => {
                 const isActive = currentItem.id === item.id;
                 const isItemHovered = hoveredItem === item.id;

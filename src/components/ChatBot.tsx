@@ -4,6 +4,7 @@ import { MessageCircle, Send, X, Bot, User } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 interface Message {
   id: string;
   type: 'user' | 'bot';
@@ -21,6 +22,7 @@ export default function ChatBot() {
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [messagesParentRef] = useAutoAnimate({ duration: 160 });
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({
       behavior: 'smooth'
@@ -107,7 +109,7 @@ export default function ChatBot() {
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              <div ref={messagesParentRef} className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.map(message => <motion.div key={message.id} initial={{
               opacity: 0,
               y: 10

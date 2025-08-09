@@ -1,29 +1,41 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
-import Spline  from '@splinetool/react-spline';
+import Spline from '@splinetool/react-spline';
+import { usePerformance } from '@/hooks/usePerformance';
 
 export default function SimpleBackground() {
   const { settings } = useTheme();
+  const { isLowPerformance, shouldReduceAnimations } = usePerformance();
+  const splineRef = useRef<HTMLDivElement>(null);
 
   if (settings.backgroundTexture !== 'starfield') return null;
 
   return (
     <div
-    style={{
-      position: "absolute", // or fixed if needed
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100%",
-      zIndex: -1, // push it behind everything
-      pointerEvents: "none", // let mouse events pass through
-    }}
-  >
-  <Spline 
-                    scene="https://prod.spline.design/Lws6iY4vBNT0NXoF/scene.splinecode"
-                    style={{ width: '100%', height: '100%',  }}
-                  />
-  </div>
+      ref={splineRef}
+      className="will-change-transform gpu-accelerated"
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        zIndex: -1,
+        pointerEvents: "none",
+        willChange: "transform",
+        transform: "translateZ(0)"
+      }}
+    >
+      <Spline 
+        scene="https://prod.spline.design/Lws6iY4vBNT0NXoF/scene.splinecode"
+        style={{ 
+          width: '100%', 
+          height: '100%',
+          willChange: "transform",
+          transform: "translateZ(0)"
+        }}
+      />
+    </div>
   );
   //   <div className="fixed inset-0 -z-10">
   //     {/* CSS-only starfield effect */}

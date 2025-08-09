@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react";
+import { useState,useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Upload, BarChart3, Brain, Settings, Command, FileText } from "lucide-react";
 import Spline from '@splinetool/react-spline';
@@ -14,6 +14,7 @@ import DataStoryMode from "@/components/DataStoryMode";
 import PresentationMode from "@/components/PresentationMode";
 import ScenarioSimulator from "@/components/ScenarioSimulator";
 import Footer from "@/components/ui/Footer";
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 
 // Lazy loaded components
 import LazyGlobe3D from "@/components/3d/LazyGlobe3D";
@@ -45,6 +46,7 @@ const Index = () => {
   const [isAnalysisReady, setIsAnalysisReady] = useState(false);
   const [activeMode, setActiveMode] = useState<'analysis' | 'story' | '3d' | 'presentation' | 'simulation'>('analysis');
   const [showAIPanel, setShowAIPanel] = useState(false);
+  const [analysisGridRef] = useAutoAnimate({ duration: 180 });
   useEffect(() => {
     const forceCursorVisibility = () => {
       const cursorElement = document.querySelector('.animated-cursor') as HTMLElement;
@@ -503,7 +505,7 @@ const Index = () => {
                 </div>
 
                 {/* Main Analysis Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+                <div ref={analysisGridRef} className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                   <div className="lg:col-span-2 space-y-4 sm:space-y-6 lg:space-y-8">
                     <InsightBoard insights={insights} />
                     <LazyChartEngine dataset={[]} />

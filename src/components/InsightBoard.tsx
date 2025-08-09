@@ -4,6 +4,7 @@ import { Pin, TrendingUp, AlertTriangle, BarChart3, Download, Expand, X, Filter 
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 
 interface Insight {
   id: string;
@@ -28,6 +29,9 @@ export default function InsightBoard({ insights = [], onExportInsight }: Insight
   const [expandedInsight, setExpandedInsight] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'priority' | 'timestamp' | 'type'>('priority');
   const [filterType, setFilterType] = useState<string>('all');
+
+  const [pinnedListRef] = useAutoAnimate({ duration: 200 });
+  const [allListRef] = useAutoAnimate({ duration: 200 });
 
   // Mock insights if none provided
   const defaultInsights: Insight[] = [
@@ -167,7 +171,7 @@ export default function InsightBoard({ insights = [], onExportInsight }: Insight
             <span>Pinned Insights</span>
           </h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div ref={pinnedListRef} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {pinnedInsights.map((insight) => (
               <InsightCard
                 key={`pinned-${insight.id}`}
@@ -186,7 +190,7 @@ export default function InsightBoard({ insights = [], onExportInsight }: Insight
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">All Insights ({filteredInsights.length})</h3>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div ref={allListRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredInsights.map((insight) => (
             <InsightCard
               key={insight.id}
