@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Upload, BarChart3, Brain, Settings, Headphones, Command, FileText, Globe } from "lucide-react";
-import Spline  from '@splinetool/react-spline';
+import { Upload, BarChart3, Brain, Settings, Command, FileText } from "lucide-react";
+import Spline from '@splinetool/react-spline';
 import FileUpload from "@/components/FileUpload";
 import ProcessingTimeline from "@/components/ProcessingTimeline";
 import LoadingScreen from "@/components/LoadingScreen";
@@ -11,18 +11,16 @@ import ChatBot from "@/components/ChatBot";
 import AutoInsightEngine from "@/components/AutoInsightEngine";
 import KnowledgeGraph from "@/components/KnowledgeGraph";
 import DataStoryMode from "@/components/DataStoryMode";
-import Globe3D from "@/components/Globe3D";
 import PresentationMode from "@/components/PresentationMode";
 import ScenarioSimulator from "@/components/ScenarioSimulator";
 import Footer from "@/components/ui/Footer";
 
-// New AI-powered components
-import AIAgentSystem from "@/components/ai/AIAgentSystem";
-import Asset3DManager from "@/components/3d/Asset3DManager";
-import ChartEngine from "@/components/charts/ChartEngine";
+// Lazy loaded components
+import LazyGlobe3D from "@/components/3d/LazyGlobe3D";
+import LazyAsset3DManager from "@/components/3d/LazyAsset3DManager";
+import LazyChartEngine from "@/components/charts/LazyChartEngine";
 
 // Enhanced background and navigation
-// import CommandBridge from "@/components/navigation/CommandBridge";
 import AmbientSoundSystem from "@/components/audio/AmbientSoundSystem";
 
 import { Button } from "@/components/ui/button";
@@ -39,6 +37,7 @@ interface Insight {
   isPinned: boolean;
   timestamp: Date;
 }
+
 const Index = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -122,21 +121,6 @@ const Index = () => {
       {/* Ambient Sound System */}
       <AmbientSoundSystem isActive={isAnalysisReady} />
 
-      {/* Command Bridge Navigation */}
-      {/* <CommandBridge 
-        activeModule={activeMode}
-        onModuleSelect={handleModuleSelect}
-        availableModules={['analysis', '3d', 'story', 'presentation', 'simulation']}
-      /> */}
-
-      {/* AI Agent System */}
-      <AIAgentSystem 
-        dataset={uploadedFile ? [uploadedFile] : undefined}
-        onVisualize={handleVisualize}
-        onExport={handleExport}
-        isVisible={showAIPanel}
-      />
-
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         {!isAnalysisReady ? (
@@ -154,31 +138,36 @@ const Index = () => {
               </div>
 
               <div className="relative min-h-screen flex justify-center mb-16 overflow-hidden">
-  {/* Spline Background */}
-  <div className="absolute inset-0 w-full h-full">
-    <Spline scene="https://prod.spline.design/Lws6iY4vBNT0NXoF/scene.splinecode" />
-  </div>
-  
-  {/* Overlay for better text readability (optional) */}
-  <div className="absolute inset-0 bg-black/20"></div>
-  
-  {/* Text Content in Foreground - Horizontally Centered, Top Positioned */}
-  <div className="relative z-10 text-center max-w-4xl px-6 pt-8 md:pt-12">
-    <h1 className="text-5xl md:text-6xl font-bold gradient-text pb-1 leading-relaxed">
-      Welcome, Data Navigator
-    </h1>
-    
-    <p className="text-xl md:text-2xl text-muted-foreground mt-6 leading-relaxed">
-      Step into the Survey Deck — where your <span className="text-primary">.csv</span> file becomes a gateway to clarity. Watch AI transform raw survey data into immersive, beautifully crafted PDF insights. 
-    </p>
-    
-    <div className="text-xl md:text-2xl mt-8 inline-flex items-center text-primary font-medium">
-      Decode. Discover. Deliver.
-    </div>
-  </div>
-</div>
+                {/* Spline Background with loading optimization */}
+                <div className="absolute inset-0 w-full h-full">
+                  <Spline 
+                    scene="https://prod.spline.design/Lws6iY4vBNT0NXoF/scene.splinecode"
+                    style={{ width: '100%', height: '100%' }}
+                  />
+                </div>
+                
+                {/* Overlay for better text readability */}
+                <div className="absolute inset-0 bg-black/20"></div>
+                
+                {/* Text Content in Foreground */}
+                <div className="relative z-10 text-center max-w-4xl px-6 pt-8 md:pt-12">
+                  <h1 className="text-5xl md:text-6xl font-bold gradient-text pb-1 leading-relaxed">
+                    Welcome, Data Navigator
+                  </h1>
+                  
+                  <p className="text-xl md:text-2xl text-muted-foreground mt-6 leading-relaxed">
+                    Step into the Survey Deck — where your <span className="text-primary">.csv</span> file becomes a gateway to clarity. Watch AI transform raw survey data into immersive, beautifully crafted PDF insights. 
+                  </p>
+                  
+                  <div className="text-xl md:text-2xl mt-8 inline-flex items-center text-primary font-medium">
+                    Decode. Discover. Deliver.
+                  </div>
+                </div>
+              </div>
+
+              {/* Feature cards with optimized animations */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-4xl mx-auto rounded-full">
-              <motion.div
+                <motion.div
   initial={{ opacity: 0, scale: 0.8, rotateY: -90 }}
   animate={{ opacity: 1, scale: 1, rotateY: 0 }}
   transition={{ 
@@ -455,7 +444,7 @@ const Index = () => {
             </motion.div>
           </div>
         ) : (
-          // Analysis Interface
+          // Analysis Interface with lazy loading
           <div className="space-y-8">
             {/* Mode-Specific Content */}
             {activeMode === 'analysis' && (
@@ -494,7 +483,7 @@ const Index = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                   <div className="lg:col-span-2 space-y-4 sm:space-y-6 lg:space-y-8">
                     <InsightBoard insights={insights} />
-                    <ChartEngine dataset={[]} />
+                    <LazyChartEngine dataset={[]} />
                   </div>
                   
                   <div className="space-y-4 sm:space-y-6 lg:space-y-8">
@@ -518,14 +507,8 @@ const Index = () => {
                 className="space-y-8"
               >
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <Card className="glass p-8 text-center">
-                    <h3 className="text-xl font-bold mb-4">3D Globe Visualization</h3>
-                    <p className="text-muted-foreground">Interactive 3D data visualization coming soon</p>
-                  </Card>
-                  <Card className="glass p-8 text-center">
-                    <h3 className="text-xl font-bold mb-4">3D Asset Manager</h3>
-                    <p className="text-muted-foreground">3D asset management system coming soon</p>
-                  </Card>
+                  <LazyGlobe3D className="w-full" />
+                  <LazyAsset3DManager className="w-full" />
                 </div>
               </motion.div>
             )}
