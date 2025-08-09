@@ -73,33 +73,6 @@ const navItems: NavItem[] = [
     description: 'Holographic Views',
     audioNote: 'B4'
   },
-  {
-    id: 'chat',
-    label: 'AI Interface',
-    icon: <MessageCircle className="w-5 h-5" />,
-    path: '/chat',
-    color: 'from-pink-500/30 to-pink-500/10',
-    description: 'Intelligence Hub',
-    audioNote: 'D5'
-  },
-  {
-    id: 'reports',
-    label: 'Report Dome',
-    icon: <FileText className="w-5 h-5" />,
-    path: '/reports',
-    color: 'from-orange-500/30 to-orange-500/10',
-    description: 'Generate Reports',
-    audioNote: 'F5'
-  },
-  {
-    id: 'models',
-    label: 'Model Studio',
-    icon: <Brain className="w-5 h-5" />,
-    path: '/models',
-    color: 'from-destructive/30 to-destructive/10',
-    description: 'AI Laboratory',
-    audioNote: 'A5'
-  }
 ];
 
 interface NavigationCoreProps {
