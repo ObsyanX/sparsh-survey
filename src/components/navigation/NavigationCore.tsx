@@ -78,11 +78,15 @@ const navItems: NavItem[] = [
 interface NavigationCoreProps {
   isCommandPaletteOpen?: boolean;
   onCommandPaletteToggle?: () => void;
+  isVisible?: boolean;
+  onToggleVisibility?: () => void;
 }
 
 export default function NavigationCore({ 
   isCommandPaletteOpen, 
-  onCommandPaletteToggle 
+  onCommandPaletteToggle,
+  isVisible = true,
+  onToggleVisibility
 }: NavigationCoreProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTrail, setActiveTrail] = useState<string>('');
@@ -120,19 +124,110 @@ export default function NavigationCore({
 
   return (
     <>
-      {/* Desktop Navigation */}
+      {/* Desktop Navigation Toggle Button */}
       <motion.div
-        initial={{ x: -100, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        className="fixed left-6 top-1/2 -translate-y-1/2 z-50 hidden md:block"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="fixed top-6 right-6 z-50 hidden md:block"
       >
-        <Card 
+        <motion.button
+          onClick={onToggleVisibility}
           className={`
-            glass p-2 transition-all duration-500 group
-            ${isExpanded ? 'w-64' : 'w-16'}
+            relative w-12 h-12 rounded-xl glass border border-border/30 
+            flex items-center justify-center group overflow-hidden
+            transition-all duration-300 quantum-glow-hover
+            ${isVisible ? 'bg-gradient-to-br from-primary/20 to-primary/5' : 'hover:bg-muted/20'}
           `}
-          onMouseEnter={() => setIsExpanded(true)}
-          onMouseLeave={() => setIsExpanded(false)}
+          whileHover={{ scale: 1.05, rotateY: 10 }}
+          whileTap={{ scale: 0.95 }}
+          aria-label={isVisible ? "Hide navigation" : "Show navigation"}
+        >
+          {/* Animated background effect */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-br from-primary/10 to-quantum-purple/10 rounded-xl"
+            animate={{ 
+              opacity: isVisible ? [0.3, 0.6, 0.3] : 0,
+              scale: isVisible ? [1, 1.05, 1] : 1
+            }}
+            transition={{ duration: 2, repeat: Infinity }}
+          />
+          
+          {/* Icon with rotation animation */}
+          <motion.div
+            animate={{ 
+              rotate: isVisible ? 0 : 180,
+              scale: isVisible ? 1 : 0.8
+            }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="relative z-10"
+          >
+            <svg 
+              width="20" 
+              height="20" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              className={`transition-colors duration-300 ${isVisible ? 'text-primary' : 'text-muted-foreground'}`}
+            >
+              <motion.path
+                d="M3 12h18M3 6h18M3 18h18"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              />
+            </svg>
+          </motion.div>
+          
+          {/* Hover particles */}
+          <AnimatePresence>
+            {Array.from({ length: 4 }).map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{ 
+                  opacity: 0, 
+                  scale: 0,
+                  x: '50%',
+                  y: '50%'
+                }}
+                animate={{ 
+                  opacity: [0, 1, 0], 
+                  scale: [0, 1, 0],
+                  x: `${50 + (Math.random() - 0.5) * 100}%`,
+                  y: `${50 + (Math.random() - 0.5) * 100}%`
+                }}
+                transition={{
+                  duration: 1.5,
+                  delay: i * 0.1,
+                  repeat: Infinity,
+                  repeatDelay: 0.5
+                }}
+                className="absolute w-1 h-1 bg-primary rounded-full pointer-events-none opacity-0 group-hover:opacity-100"
+              />
+            ))}
+          </AnimatePresence>
+        </motion.button>
+      </motion.div>
+
+      {/* Desktop Navigation */}
+      <AnimatePresence>
+        {isVisible && (
+          <motion.div
+            initial={{ x: -100, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -100, opacity: 0 }}
+            transition={{ type: "spring", damping: 20, stiffness: 300 }}
+            className="fixed left-6 top-1/2 -translate-y-1/2 z-50 hidden md:block"
+          >
+            <Card 
+              className={`
+                glass p-2 transition-all duration-500 group
+                ${isExpanded ? 'w-64' : 'w-16'}
+              `}
+              onMouseEnter={() => setIsExpanded(true)}
+              onMouseLeave={() => setIsExpanded(false)}
+            >
         >
           {/* Command Palette Trigger */}
           <motion.button
