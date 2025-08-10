@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { LoadingProvider } from "@/contexts/LoadingContext";
 import { useState, useEffect } from "react";
 import AccessibilityFeatures from "@/components/AccessibilityFeatures";
 import SettingsPanel from "@/components/SettingsPanel";
@@ -18,6 +19,7 @@ import { usePerformance } from "@/hooks/usePerformance";
 import Index from "./pages/Index";
 import DataUpload from "./pages/DataUpload";
 import NotFound from "./pages/NotFound";
+import LoadingScreenDemo from "./components/LoadingScreenDemo";
 
 const queryClient = new QueryClient();
 
@@ -58,9 +60,10 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <TooltipProvider>
-          <AccessibilityFeatures>
-            <BrowserRouter>
+        <LoadingProvider>
+          <TooltipProvider>
+            <AccessibilityFeatures>
+              <BrowserRouter>
               <div className={shouldReduceAnimations ? 'reduce-motion' : ''}>
                 {/* Global UI Elements */}
                 <AnimatedCursor />
@@ -86,6 +89,7 @@ const App = () => {
                   <Routes>
                     <Route path="/" element={<Index />} />
                     <Route path="/upload" element={<DataUpload />} />
+                    <Route path="/loading-demo" element={<LoadingScreenDemo />} />
                     <Route path="/cleaning" element={<div className="min-h-screen flex items-center justify-center"><h1 className="text-4xl gradient-text">Data Cleaning Chamber</h1></div>} />
                     <Route path="/visualize" element={<div className="min-h-screen flex items-center justify-center"><h1 className="text-4xl gradient-text">Insight Gallery</h1></div>} />
                     <Route path="/explorer" element={<div className="min-h-screen flex items-center justify-center"><h1 className="text-4xl gradient-text">3D Data Explorer</h1></div>} />
@@ -101,8 +105,9 @@ const App = () => {
             </BrowserRouter>
           </AccessibilityFeatures>
         </TooltipProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+      </LoadingProvider>
+    </ThemeProvider>
+  </QueryClientProvider>
   );
 };
 

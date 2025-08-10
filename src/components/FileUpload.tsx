@@ -4,33 +4,33 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, FileSpreadsheet, CheckCircle, AlertCircle } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 
+import { uploadDataset } from '@/lib/api';
+
 interface FileUploadProps {
-  onFileUpload: (file: File) => void;
+  onUploaded?: (result: { dataset_id: string; filename: string; preview: any[] }) => void;
 }
 
-export default function FileUpload({ onFileUpload }: FileUploadProps) {
+export default function FileUpload({ onUploaded }: FileUploadProps) {
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle');
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
-    if (file) {
-      setUploadStatus('uploading');
-      setUploadedFile(file);
-      
-      // Simulate processing time
+    if (!file) return;
+    setUploadStatus('uploading');
+    setUploadedFile(file);
+    try {
+      const result = await uploadDataset(file);
+      setUploadStatus('success');
+      onUploaded?.(result);
       setTimeout(() => {
-        setUploadStatus('success');
-        onFileUpload(file);
-        
-        // Reset after 3 seconds
-        setTimeout(() => {
-          setUploadStatus('idle');
-          setUploadedFile(null);
-        }, 3000);
+        setUploadStatus('idle');
+        setUploadedFile(null);
       }, 1500);
+    } catch (e) {
+      setUploadStatus('error');
     }
-  }, [onFileUpload]);
+  }, [onUploaded]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,

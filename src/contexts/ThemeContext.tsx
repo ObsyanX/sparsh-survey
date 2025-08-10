@@ -77,9 +77,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const toggleTheme = () => {
     setIsTransitioning(true);
-    const themes: Theme[] = ['dark', 'light', 'high-contrast'];
-    const currentIndex = themes.indexOf(settings.theme);
-    const nextTheme = themes[(currentIndex + 1) % themes.length];
+    // Simplified toggle between dark and light only
+    const nextTheme = settings.theme === 'dark' ? 'light' : 'dark';
     
     updateSettings({ theme: nextTheme });
     

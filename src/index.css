@@ -4,7 +4,7 @@
 /* Futuristic Data Observatory Design System */
 @layer base {
   :root {
-    /* Deep Space Color Palette */
+    /* Deep Space Color Palette - Dark Mode */
     --background: 230 45% 6%;
     --foreground: 200 25% 95%;
     --card: 230 35% 8%;
@@ -32,6 +32,19 @@
     --quantum-surface: 230 35% 8%;
     --quantum-surface-elevated: 230 30% 12%;
     --quantum-glass: 230 35% 8% / 0.6;
+    
+    /* Liquid Glass Effects - Dark Mode */
+    --liquid-primary: 184 100% 50%;
+    --liquid-secondary: 262 83% 65%;
+    --liquid-accent: 120 100% 55%;
+    --glass-bg: 230 35% 8% / 0.8;
+    --glass-border: 230 25% 20% / 0.3;
+    --glass-shadow: 0 8px 32px hsl(230 45% 6% / 0.5);
+    --liquid-flow: linear-gradient(45deg, 
+      hsl(184 100% 50% / 0.1), 
+      hsl(262 83% 65% / 0.1), 
+      hsl(120 100% 55% / 0.1),
+      hsl(184 100% 50% / 0.1));
     
     /* Gradients */
     --gradient-quantum: linear-gradient(135deg, hsl(184 100% 50% / 0.8), hsl(262 83% 65% / 0.8));
@@ -62,6 +75,76 @@
     --sidebar-border: 230 25% 20%;
     --sidebar-ring: 184 100% 50%;
   }
+
+  /* Light Mode Theme */
+  [data-theme="light"] {
+    --background: 0 0% 98%;
+    --foreground: 220 25% 15%;
+    --card: 0 0% 95%;
+    --card-foreground: 220 25% 15%;
+    --popover: 0 0% 97%;
+    --popover-foreground: 220 25% 15%;
+    --primary: 200 100% 40%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 280 80% 60%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 90%;
+    --muted-foreground: 220 15% 45%;
+    --accent: 160 80% 45%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 85%;
+    --input: 0 0% 92%;
+    --ring: 200 100% 40%;
+    
+    /* Quantum Theme Extensions - Light Mode */
+    --quantum-glow: 45 100% 50%;
+    --quantum-purple: 280 80% 60%;
+    --quantum-green: 160 80% 45%;
+    --quantum-surface: 0 0% 95%;
+    --quantum-surface-elevated: 0 0% 90%;
+    --quantum-glass: 0 0% 95% / 0.6;
+    
+    /* Liquid Glass Effects - Light Mode */
+    --liquid-primary: 45 100% 50%;
+    --liquid-secondary: 200 100% 40%;
+    --liquid-accent: 160 80% 45%;
+    --glass-bg: 0 0% 95% / 0.8;
+    --glass-border: 0 0% 90% / 0.3;
+    --glass-shadow: 0 8px 32px hsl(0 0% 0% / 0.1);
+    --liquid-flow: linear-gradient(45deg, 
+      hsl(45 100% 50% / 0.1), 
+      hsl(200 100% 40% / 0.1), 
+      hsl(160 80% 45% / 0.1),
+      hsl(45 100% 50% / 0.1));
+    
+    /* Gradients - Light Mode */
+    --gradient-quantum: linear-gradient(135deg, hsl(200 100% 40% / 0.8), hsl(280 80% 60% / 0.8));
+    --gradient-surface: linear-gradient(145deg, hsl(0 0% 95%), hsl(0 0% 90%));
+    --gradient-glow: radial-gradient(circle, hsl(45 100% 50% / 0.3), transparent 70%);
+    --gradient-holographic: linear-gradient(45deg, 
+      hsl(45 100% 50% / 0.1), 
+      hsl(200 100% 40% / 0.1), 
+      hsl(160 80% 45% / 0.1),
+      hsl(45 100% 50% / 0.1));
+    
+    /* Shadows & Effects - Light Mode */
+    --shadow-quantum: 0 0 40px hsl(45 100% 50% / 0.3);
+    --shadow-holographic: 0 0 80px hsl(45 100% 50% / 0.2), 0 0 120px hsl(200 100% 40% / 0.1);
+    --shadow-glass: 0 8px 32px hsl(0 0% 0% / 0.1);
+    --shadow-elevated: 0 16px 64px hsl(0 0% 0% / 0.15);
+    
+    /* Sidebar - Light Mode */
+    --sidebar-background: 0 0% 95%;
+    --sidebar-foreground: 220 25% 15%;
+    --sidebar-primary: 200 100% 40%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 0 0% 90%;
+    --sidebar-accent-foreground: 220 25% 15%;
+    --sidebar-border: 0 0% 85%;
+    --sidebar-ring: 200 100% 40%;
+  }
 }
 @layer base {
 @keyframes float {
@@ -78,6 +161,26 @@
     @apply bg-background text-foreground overflow-x-hidden;
     font-family: 'Inter', system-ui, sans-serif;
     cursor: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  /* Enhanced text contrast for better readability */
+  [data-theme="light"] {
+    color-scheme: light;
+  }
+  
+  [data-theme="dark"] {
+    color-scheme: dark;
+  }
+  
+  /* Ensure proper contrast for all text elements */
+  h1, h2, h3, h4, h5, h6, p, span, div {
+    transition: color 0.3s ease;
+  }
+  
+  /* Enhanced glass effect for better text readability */
+  .glass {
+    backdrop-filter: blur(20px) saturate(180%);
   }
   
   html {
@@ -126,15 +229,27 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: var(--gradient-holographic);
+    background: var(--liquid-flow);
+    background-size: 200% 200%;
     opacity: 0;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.3s ease;
     border-radius: inherit;
     pointer-events: none;
+    animation: liquid-flow 8s ease-in-out infinite;
   }
   
   .glass:hover::before {
-    opacity: 0.5;
+    opacity: 0.8;
+  }
+  
+  /* Liquid flow animation */
+  @keyframes liquid-flow {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
   }
   
   /* Quantum Glow Effects - Optimized */
@@ -356,6 +471,271 @@
     .magnetic-snap:hover {
       transform: none;
     }
+    
+    /* Adjust theme toggle for mobile */
+    .fixed.top-6.left-6 {
+      top: 1rem;
+      left: 1rem;
+    }
+  }
+  
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .glass {
+      border-width: 2px;
+      backdrop-filter: blur(10px);
+    }
+    
+    [data-theme="light"] .glass {
+      border-color: hsl(0 0% 20%);
+      background: hsl(0 0% 95% / 0.95);
+    }
+    
+    [data-theme="dark"] .glass {
+      border-color: hsl(0 0% 80%);
+      background: hsl(0 0% 10% / 0.95);
+    }
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .liquid-flow {
+      animation: none;
+    }
+    
+    .glass::before {
+      animation: none;
+    }
+    
+    * {
+      transition-duration: 0.1s !important;
+      animation-duration: 0.1s !important;
+    }
+  }
+}
+
+/* Enhanced Loading Screen Animations */
+@keyframes core-pulse {
+  0%, 100% { 
+    transform: scale(1); 
+    opacity: 0.8; 
+    box-shadow: 0 0 40px hsl(184 100% 50% / 0.5), 0 0 80px hsl(262 83% 65% / 0.3);
+  }
+  50% { 
+    transform: scale(1.1); 
+    opacity: 1; 
+    box-shadow: 0 0 60px hsl(184 100% 50% / 0.8), 0 0 120px hsl(262 83% 65% / 0.5);
+  }
+}
+
+@keyframes orbital-rotation {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes quantum-shift {
+  0%, 100% { 
+    filter: hue-rotate(0deg) brightness(1);
+    transform: scale(1);
+  }
+  50% { 
+    filter: hue-rotate(180deg) brightness(1.2);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes particle-float {
+  0% { 
+    transform: translateY(0px) rotate(0deg) scale(0); 
+    opacity: 0; 
+  }
+  25% { 
+    opacity: 1; 
+    transform: translateY(-25px) rotate(90deg) scale(1);
+  }
+  75% { 
+    opacity: 1; 
+    transform: translateY(-75px) rotate(270deg) scale(1);
+  }
+  100% { 
+    transform: translateY(-100px) rotate(360deg) scale(0); 
+    opacity: 0; 
+  }
+}
+
+@keyframes particle-trail {
+  0% { 
+    transform: scale(0) rotate(0deg); 
+    opacity: 0;
+  }
+  50% { 
+    transform: scale(1) rotate(180deg); 
+    opacity: 1;
+  }
+  100% { 
+    transform: scale(0) rotate(360deg); 
+    opacity: 0;
+  }
+}
+
+@keyframes ripple-expand {
+  0% { 
+    transform: scale(0); 
+    opacity: 0.8; 
+    border-width: 2px;
+  }
+  100% { 
+    transform: scale(3); 
+    opacity: 0; 
+    border-width: 1px;
+  }
+}
+
+@keyframes energy-wave {
+  0% { 
+    transform: translateX(-100%) skewX(-15deg); 
+    opacity: 0;
+  }
+  50% { 
+    transform: translateX(0%) skewX(-15deg); 
+    opacity: 1;
+  }
+  100% { 
+    transform: translateX(100%) skewX(-15deg); 
+    opacity: 0;
+  }
+}
+
+@keyframes holographic-scan {
+  0% { 
+    transform: translateY(-100%); 
+    opacity: 0;
+  }
+  50% { 
+    opacity: 0.3;
+  }
+  100% { 
+    transform: translateY(100%); 
+    opacity: 0;
+  }
+}
+
+@keyframes energy-flow {
+  0% { 
+    opacity: 0; 
+    transform: scaleY(0);
+  }
+  50% { 
+    opacity: 1; 
+    transform: scaleY(1);
+  }
+  100% { 
+    opacity: 0; 
+    transform: scaleY(0);
+  }
+}
+
+@keyframes quantum-glow-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 20px hsl(184 100% 50% / 0.5);
+  }
+  50% { 
+    box-shadow: 0 0 40px hsl(184 100% 50% / 0.8), 0 0 60px hsl(262 83% 65% / 0.4);
+  }
+}
+
+/* Loading Screen Specific Classes */
+.loading-core {
+  animation: core-pulse 2s ease-in-out infinite;
+}
+
+.loading-orbital {
+  animation: orbital-rotation 8s linear infinite;
+}
+
+.loading-orbital-reverse {
+  animation: orbital-rotation 6s linear infinite reverse;
+}
+
+.loading-quantum-shift {
+  animation: quantum-shift 4s ease-in-out infinite;
+}
+
+.loading-particle {
+  animation: particle-float 3s ease-in-out infinite;
+}
+
+.loading-ripple {
+  animation: ripple-expand 2s ease-out infinite;
+}
+
+.loading-energy-wave {
+  animation: energy-wave 2s ease-in-out infinite;
+}
+
+.loading-holographic-scan {
+  animation: holographic-scan 3s linear infinite;
+}
+
+.loading-energy-flow {
+  animation: energy-flow 2s ease-in-out infinite;
+}
+
+.loading-quantum-glow {
+  animation: quantum-glow-pulse 1.5s ease-in-out infinite;
+}
+
+/* Responsive Loading Screen Adjustments */
+@media (max-width: 768px) {
+  .loading-core {
+    animation-duration: 1.5s;
+  }
+  
+  .loading-orbital {
+    animation-duration: 6s;
+  }
+  
+  .loading-particle {
+    animation-duration: 2.5s;
+  }
+}
+
+@media (max-width: 480px) {
+  .loading-core {
+    animation-duration: 1.2s;
+  }
+  
+  .loading-orbital {
+    animation-duration: 5s;
+  }
+  
+  .loading-particle {
+    animation-duration: 2s;
+  }
+}
+
+/* Reduced Motion Support for Loading Screen */
+@media (prefers-reduced-motion: reduce) {
+  .loading-core,
+  .loading-orbital,
+  .loading-orbital-reverse,
+  .loading-quantum-shift,
+  .loading-particle,
+  .loading-ripple,
+  .loading-energy-wave,
+  .loading-holographic-scan,
+  .loading-energy-flow,
+  .loading-quantum-glow {
+    animation: none;
+  }
+  
+  .loading-core {
+    opacity: 0.8;
+  }
+  
+  .loading-orbital,
+  .loading-orbital-reverse {
+    opacity: 0.6;
   }
 }
 
