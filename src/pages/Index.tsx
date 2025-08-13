@@ -40,8 +40,8 @@ const Index = () => {
   // Detect theme changes
   useEffect(() => {
     const checkTheme = () => {
-      const isDark = document.documentElement.classList.contains('dark') || 
-                    window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDark = document.documentElement.classList.contains('dark') ||
+        window.matchMedia('(prefers-color-scheme: dark)').matches;
       setIsDarkMode(isDark);
     };
     // Initial check
@@ -107,9 +107,9 @@ const Index = () => {
 
   // Get appropriate Spline URL based on theme
   const getSplineURL = () => {
-    return isDarkMode 
-      ? "https://prod.spline.design/Lws6iY4vBNT0NXoF/scene.splinecode"  // Night mode (original)
-      : "https://my.spline.design/celestialflowabstractdigitalform-L97Y3gllTjo31hSiXkOJpA51/";  // Day mode (new)
+    return isDarkMode
+      ? "https://prod.spline.design/Lws6iY4vBNT0NXoF/scene.splinecode" // Night mode (original)
+      : "https://my.spline.design/celestialflowabstractdigitalform-L97Y3gllTjo31hSiXkOJpA51/"; // Day mode (new)
   };
 
   // Get theme-appropriate gradient colors
@@ -169,10 +169,10 @@ const Index = () => {
     }`}>
       {/* Theme Toggle */}
       <ThemeToggle />
-      
+
       {/* Ambient Sound System */}
       <AmbientSoundSystem isActive={isAnalysisReady} />
-      
+
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         {!isAnalysisReady ? (
@@ -185,26 +185,26 @@ const Index = () => {
               className="text-center space-y-6"
             >
               <div className={`inline-flex items-center space-x-3 px-6 py-3 rounded-full transition-all duration-300 ${
-                isDarkMode 
-                  ? 'glass border-white/10 bg-black/20 text-white/90' 
+                isDarkMode
+                  ? 'glass border-white/10 bg-black/20 text-white/90'
                   : 'bg-white/80 border-black/10 text-slate-700 shadow-lg backdrop-blur-sm'
               }`}>
                 <Command className={`w-5 h-5 ${isDarkMode ? 'text-primary' : 'text-blue-600'}`} />
                 <span className="text-sm font-medium">Data Observatory • Status: Orbital</span>
               </div>
-              
+
               <div className="relative min-h-screen flex justify-center mb-16 overflow-hidden">
                 {/* Conditional Background - Spline for md/lg screens, Gradient for mobile */}
                 {!isMobile ? (
                   // Optimized Spline for md/lg screens with theme-based URLs
                   <div className="absolute inset-0 w-full h-full z-[-1]">
                     {!splineError && (
-                      <Spline 
+                      <Spline
                         key={isDarkMode ? 'dark' : 'light'} // Force re-render on theme change
                         ref={splineRef}
                         scene={getSplineURL()}
-                        style={{ 
-                          width: '100%', 
+                        style={{
+                          width: '100%',
                           height: '100%',
                           pointerEvents: 'none', // Disable interactions for performance
                           willChange: 'transform', // Optimize for animations
@@ -255,8 +255,8 @@ const Index = () => {
                         initial={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         className={`absolute inset-0 flex items-center justify-center ${
-                          isDarkMode 
-                            ? 'bg-gradient-to-br from-background/90 to-background/70' 
+                          isDarkMode
+                            ? 'bg-gradient-to-br from-background/90 to-background/70'
                             : 'bg-gradient-to-br from-white/95 to-slate-50/90'
                         }`}
                       >
@@ -321,21 +321,21 @@ const Index = () => {
                 {/* Text Content in Foreground */}
                 <div className="relative z-10 text-center max-w-4xl px-6 pt-8 md:pt-12">
                   <h1 className={`text-5xl md:text-6xl font-bold pb-3 leading-relaxed transition-all duration-500 ${
-                    isDarkMode 
-                      ? 'gradient-text' 
+                    isDarkMode
+                      ? 'gradient-text'
                       : 'bg-gradient-to-r from-slate-800 via-blue-800 to-purple-800 bg-clip-text text-transparent'
                   }`}>
-                   Hey Data Navigator — <span className={`${
-                     isDarkMode ? 'text-primary' : 'text-blue-600'
-                   }`}>Metryx</span> has you covered.
+                    Hey Data Navigator — <span className={`${
+                      isDarkMode ? 'text-primary' : 'text-blue-600'
+                    }`}>Metryx</span> has you covered.
                   </h1>
 
                   <p className={`text-xl md:text-2xl mt-6 leading-relaxed transition-colors duration-500 ${
                     isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
                   }`}>
-                   Turn your <span className={`font-semibold ${
-                     isDarkMode ? 'text-primary' : 'text-blue-600'
-                   }`}>.csv</span> file into instant, AI-powered data, beautifully crafted into immersive PDF insights.
+                    Turn your <span className={`font-semibold ${
+                      isDarkMode ? 'text-primary' : 'text-blue-600'
+                    }`}>.csv</span> file into instant, AI-powered data, beautifully crafted into immersive PDF insights.
                   </p>
 
                   <div className={`text-xl md:text-2xl mt-8 inline-flex items-center font-medium transition-colors duration-500 ${
@@ -349,33 +349,33 @@ const Index = () => {
               {/* Feature cards with enhanced theme support */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-4xl mx-auto rounded-full">
                 {[
-                  { 
-                    icon: Upload, 
-                    title: "Data Intake", 
+                  {
+                    icon: Upload,
+                    title: "Data Intake",
                     description: "Beam aboard your survey datasets",
                     color: isDarkMode ? 'text-primary' : 'text-blue-600',
                     bgColor: isDarkMode ? 'from-primary/20 to-primary/5' : 'from-blue-500/20 to-blue-500/5',
                     particleColor: isDarkMode ? 'bg-primary' : 'bg-blue-500'
                   },
-                  { 
-                    icon: Brain, 
-                    title: "AI Analysis", 
+                  {
+                    icon: Brain,
+                    title: "AI Analysis",
                     description: "Multi-agent intelligence processing",
                     color: isDarkMode ? 'text-quantum-purple' : 'text-purple-600',
                     bgColor: isDarkMode ? 'from-quantum-purple/20 to-quantum-purple/5' : 'from-purple-500/20 to-purple-500/5',
                     particleColor: isDarkMode ? 'bg-quantum-purple' : 'bg-purple-500'
                   },
-                  { 
-                    icon: BarChart3, 
-                    title: "3D Visualization", 
+                  {
+                    icon: BarChart3,
+                    title: "3D Visualization",
                     description: "Immersive and interactive data exploration",
                     color: isDarkMode ? 'text-quantum-green' : 'text-emerald-600',
                     bgColor: isDarkMode ? 'from-quantum-green/20 to-quantum-green/5' : 'from-emerald-500/20 to-emerald-500/5',
                     particleColor: isDarkMode ? 'bg-quantum-green' : 'bg-emerald-500'
                   },
-                  { 
-                    icon: FileText, 
-                    title: "Narrative Studio", 
+                  {
+                    icon: FileText,
+                    title: "Narrative Studio",
                     description: "Build intelligent data stories using AI",
                     color: isDarkMode ? 'text-yellow-500' : 'text-orange-600',
                     bgColor: isDarkMode ? 'from-yellow-500/20 to-yellow-500/5' : 'from-orange-500/20 to-orange-500/5',
@@ -386,13 +386,13 @@ const Index = () => {
                     key={`${isDarkMode}-${index}`}
                     initial={{ opacity: 0, scale: 0.8, rotateY: -90 }}
                     animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-                    transition={{ 
-                      duration: 0.6, 
+                    transition={{
+                      duration: 0.6,
                       delay: 0.2 + index * 0.1,
                       type: "spring",
                       stiffness: 100
                     }}
-                    whileHover={{ 
+                    whileHover={{
                       scale: 1.05,
                       rotateX: -5,
                       z: 50
@@ -400,14 +400,14 @@ const Index = () => {
                     className="relative perspective-1000"
                   >
                     <div className={`p-6 text-center space-y-3 cursor-pointer transition-all duration-500 relative overflow-hidden group rounded-3xl ${
-                      isDarkMode 
-                        ? 'glass hover:border-border/50 hover:shadow-2xl' 
+                      isDarkMode
+                        ? 'glass hover:border-border/50 hover:shadow-2xl'
                         : 'bg-white/90 border border-black/10 hover:border-black/20 shadow-lg hover:shadow-2xl backdrop-blur-sm'
                     }`}>
                       {/* Holographic scan lines effect */}
                       <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-pulse ${
-                        isDarkMode 
-                          ? 'bg-gradient-to-b from-transparent via-primary/5 to-transparent' 
+                        isDarkMode
+                          ? 'bg-gradient-to-b from-transparent via-primary/5 to-transparent'
                           : 'bg-gradient-to-b from-transparent via-white/20 to-transparent'
                       }`} />
 
@@ -427,20 +427,20 @@ const Index = () => {
                           isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
                         }`}>{item.description}</p>
                       </div>
-                      
+
                       {/* Hover particles */}
                       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none">
                         {Array.from({ length: 6 }).map((_, i) => (
                           <motion.div
                             key={i}
-                            initial={{ 
-                              opacity: 0, 
+                            initial={{
+                              opacity: 0,
                               scale: 0,
                               x: '50%',
                               y: '50%'
                             }}
-                            animate={{ 
-                              opacity: [0, 1, 0], 
+                            animate={{
+                              opacity: [0, 1, 0],
                               scale: [0, 1, 0],
                               x: `${50 + (Math.random() - 0.5) * 200}%`,
                               y: `${50 + (Math.random() - 0.5) * 200}%`
@@ -460,7 +460,7 @@ const Index = () => {
                 ))}
               </div>
             </motion.div>
-            
+
             {/* Interactive Upload Portal Section - Enhanced theme support */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -476,16 +476,16 @@ const Index = () => {
                 className="space-y-4"
               >
                 <div className={`inline-flex items-center space-x-3 px-6 py-3 rounded-full transition-all duration-300 ${
-                  isDarkMode 
-                    ? 'glass border-white/10 bg-black/20 text-white/90' 
+                  isDarkMode
+                    ? 'glass border-white/10 bg-black/20 text-white/90'
                     : 'bg-white/90 border-black/10 text-slate-700 shadow-lg backdrop-blur-sm'
                 }`}>
                   <Upload className={`w-5 h-5 ${isDarkMode ? 'text-quantum-green' : 'text-emerald-600'}`} />
                   <span className="text-sm font-medium">Data Portal • Status: Ready for Upload</span>
                 </div>
                 <h2 className={`text-3xl md:text-4xl font-bold transition-all duration-500 ${
-                  isDarkMode 
-                    ? 'gradient-text' 
+                  isDarkMode
+                    ? 'gradient-text'
                     : 'bg-gradient-to-r from-slate-800 via-blue-800 to-purple-800 bg-clip-text text-transparent'
                 }`}>
                   Initialize Data Transfer
@@ -494,28 +494,28 @@ const Index = () => {
                 <p className={`text-lg leading-relaxed transition-colors duration-500 ${
                   isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
                 }`}>
-                  Access the dedicated upload chamber where your datasets undergo 
+                  Access the dedicated upload chamber where your datasets undergo
                   processing and AI-driven analysis
                 </p>
               </motion.div>
-              
+
               {/* Main Portal Button */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ 
-                  duration: 0.6, 
+                transition={{
+                  duration: 0.6,
                   delay: 1,
                   type: "spring",
                   stiffness: 100
                 }}
                 className="relative"
-              > 
+              >
                 <motion.button
                   onClick={() => window.location.href = 'https://fancy-babka-8c3992.netlify.app/upload'}
-                  whileHover={{ 
+                  whileHover={{
                     scale: 1.02,
-                    boxShadow: isDarkMode 
+                    boxShadow: isDarkMode
                       ? "0 20px 40px rgba(59, 130, 246, 0.2)"
                       : "0 20px 40px rgba(37, 99, 235, 0.15)",
                   }}
@@ -533,8 +533,8 @@ const Index = () => {
                 >
                   {/* Subtle hover glow */}
                   <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
-                    isDarkMode 
-                      ? 'bg-gradient-to-r from-primary/10 to-quantum-purple/10' 
+                    isDarkMode
+                      ? 'bg-gradient-to-r from-primary/10 to-quantum-purple/10'
                       : 'bg-gradient-to-r from-blue-500/20 to-purple-500/20'
                   }`} />
 
@@ -550,7 +550,7 @@ const Index = () => {
                       →
                     </motion.div>
                   </span>
-                  
+
                   {/* Subtle particle effect */}
                   <div className="absolute inset-0 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                     {Array.from({ length: 3 }).map((_, i) => (
@@ -575,8 +575,8 @@ const Index = () => {
                     ))}
                   </div>
                 </motion.button>
-              </motion.div> 
-              
+              </motion.div>
+
               {/* Elegant Text Below Button */}
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
@@ -629,8 +629,8 @@ const Index = () => {
                     <span className={isDarkMode ? 'text-white/80' : 'text-slate-700'}>Upload</span>
                   </div>
                   <div className={`w-8 h-0.5 ${
-                    isDarkMode 
-                      ? 'bg-gradient-to-r from-quantum-green to-quantum-purple' 
+                    isDarkMode
+                      ? 'bg-gradient-to-r from-quantum-green to-quantum-purple'
                       : 'bg-gradient-to-r from-emerald-500 to-purple-500'
                   }`}></div>
                   <div className="text-center">
@@ -640,8 +640,8 @@ const Index = () => {
                     <span className={isDarkMode ? 'text-white/80' : 'text-slate-700'}>Process</span>
                   </div>
                   <div className={`w-8 h-0.5 ${
-                    isDarkMode 
-                      ? 'bg-gradient-to-r from-quantum-purple to-primary' 
+                    isDarkMode
+                      ? 'bg-gradient-to-r from-quantum-purple to-primary'
                       : 'bg-gradient-to-r from-purple-500 to-blue-500'
                   }`}></div>
                   <div className="text-center">
@@ -651,7 +651,7 @@ const Index = () => {
                     <span className={isDarkMode ? 'text-white/80' : 'text-slate-700'}>Analyze</span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
           </div>
         ) : (
@@ -663,8 +663,8 @@ const Index = () => {
               className="text-center"
             >
               <h2 className={`text-3xl font-bold mb-4 transition-all duration-500 ${
-                isDarkMode 
-                  ? 'gradient-text' 
+                isDarkMode
+                  ? 'gradient-text'
                   : 'bg-gradient-to-r from-slate-800 via-blue-800 to-purple-800 bg-clip-text text-transparent'
               }`}>Analysis Dashboard</h2>
               <p className={`transition-colors duration-500 ${
@@ -674,7 +674,7 @@ const Index = () => {
           </div>
         )}
       </div>
-      
+
       {/* Footer with theme support */}
       <div className="transition-colors duration-500">
         <Footer />
