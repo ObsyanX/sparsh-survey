@@ -209,7 +209,7 @@ const Index = () => {
                     {!splineError && (
                       <Spline 
                         ref={splineRef}
-                        scene="https://prod.spline.design/Lws6iY4vBNT0NXoF/scene.splinecode"
+                        scene="https://prod.spline.design/Lws6iY4vBNT0NXoF/scene.splinecode" 
                         style={{ 
                           width: '100%', 
                           height: '100%',
