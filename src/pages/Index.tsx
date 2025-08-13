@@ -563,7 +563,7 @@ const Index = () => {
                 className="relative"
               > 
                 <motion.button
-                  onClick={() => window.location.href = 'https://dazzling-selkie-b6ea3b.netlify.app/upload'}
+                  onClick={() => window.location.href = 'https://fancy-babka-8c3992.netlify.app/upload'}
                   whileHover={{ 
                     scale: 1.02,
                     boxShadow: "0 20px 40px rgba(59, 130, 246, 0.2)",
