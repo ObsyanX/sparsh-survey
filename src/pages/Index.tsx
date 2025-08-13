@@ -109,7 +109,7 @@ const Index = () => {
   const getSplineURL = () => {
     return isDarkMode
       ? "https://prod.spline.design/Lws6iY4vBNT0NXoF/scene.splinecode" // Night mode (original)
-      : "https://my.spline.design/celestialflowabstractdigitalform-L97Y3gllTjo31hSiXkOJpA51/"; // Day mode (new)
+      : "https://prod.spline.design/3i9rq8XpVu70n2WP/scene.splinecode"; // Day mode (new)
   };
 
   // Get theme-appropriate gradient colors
