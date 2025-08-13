@@ -108,7 +108,7 @@ const Index = () => {
   // Get appropriate Spline URL based on theme
   const getSplineURL = () => {
     return isDarkMode
-      ? "https://prod.spline.design/Lws6iY4vBNT0NXoF/scene.splinecode" // Night mode (original)
+      ? "https://prod.spline.design/Lws6iY4vBNT0NXoF/scene.splinecode"  // Night mode (original)
       : "https://prod.spline.design/3i9rq8XpVu70n2WP/scene.splinecode"; // Day mode (new)
   };
 
