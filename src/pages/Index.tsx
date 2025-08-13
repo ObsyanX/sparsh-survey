@@ -357,7 +357,8 @@ const Index = () => {
                     description: "Beam aboard your survey datasets",
                     color: isDarkMode ? 'text-primary' : 'text-blue-600',
                     bgColor: isDarkMode ? 'from-primary/20 to-primary/5' : 'from-blue-500/20 to-blue-500/5',
-                    particleColor: isDarkMode ? 'bg-primary' : 'bg-blue-500'
+                    particleColor: isDarkMode ? 'bg-primary' : 'bg-blue-500',
+                    viaColor: isDarkMode ? 'primary' : 'blue-500'
                   },
                   { 
                     icon: Brain, 
@@ -365,7 +366,8 @@ const Index = () => {
                     description: "Multi-agent intelligence processing",
                     color: isDarkMode ? 'text-quantum-purple' : 'text-purple-600',
                     bgColor: isDarkMode ? 'from-quantum-purple/20 to-quantum-purple/5' : 'from-purple-500/20 to-purple-500/5',
-                    particleColor: isDarkMode ? 'bg-quantum-purple' : 'bg-purple-500'
+                    particleColor: isDarkMode ? 'bg-quantum-purple' : 'bg-purple-500',
+                    viaColor: isDarkMode ? 'quantum-purple' : 'purple-500'
                   },
                   { 
                     icon: BarChart3, 
@@ -373,7 +375,8 @@ const Index = () => {
                     description: "Immersive and interactive data exploration",
                     color: isDarkMode ? 'text-quantum-green' : 'text-emerald-600',
                     bgColor: isDarkMode ? 'from-quantum-green/20 to-quantum-green/5' : 'from-emerald-500/20 to-emerald-500/5',
-                    particleColor: isDarkMode ? 'bg-quantum-green' : 'bg-emerald-500'
+                    particleColor: isDarkMode ? 'bg-quantum-green' : 'bg-emerald-500',
+                    viaColor: isDarkMode ? 'quantum-green' : 'emerald-500'
                   },
                   { 
                     icon: FileText, 
@@ -381,7 +384,8 @@ const Index = () => {
                     description: "Build intelligent data stories using AI",
                     color: isDarkMode ? 'text-yellow-500' : 'text-orange-600',
                     bgColor: isDarkMode ? 'from-yellow-500/20 to-yellow-500/5' : 'from-orange-500/20 to-orange-500/5',
-                    particleColor: isDarkMode ? 'bg-yellow-500' : 'bg-orange-500'
+                    particleColor: isDarkMode ? 'bg-yellow-500' : 'bg-orange-500',
+                    viaColor: isDarkMode ? 'yellow-500' : 'orange-500'
                   }
                 ].map((item, index) => (
                   <motion.div
@@ -409,7 +413,7 @@ const Index = () => {
                       {/* Holographic scan lines effect */}
                       <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-pulse ${
                         isDarkMode
-                          ? `bg-gradient-to-b from-transparent via-${item.color.split('-')[1]}/5 to-transparent`
+                          ? `bg-gradient-to-b from-transparent via-${item.viaColor}/5 to-transparent`
                           : 'bg-gradient-to-b from-transparent via-white/20 to-transparent'
                       }`} />
 
