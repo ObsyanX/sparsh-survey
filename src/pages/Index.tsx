@@ -406,7 +406,9 @@ const Index = () => {
                     }`}>
                       {/* Holographic scan lines effect */}
                       <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-pulse ${
-                        isDarkMode ? 'bg-gradient-to-b from-transparent via-primary/5 to-transparent' : 'bg-gradient-to-b from-transparent via-white/20 to-transparent'
+                        isDarkMode 
+                          ? 'bg-gradient-to-b from-transparent via-primary/5 to-transparent' 
+                          : 'bg-gradient-to-b from-transparent via-white/20 to-transparent'
                       }`} />
 
                       {/* Content */}
