@@ -1,87 +1,61 @@
-{/* Enhanced Upload Portal Section */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-                className="text-center space-y-8 max-w-3xl mx-auto"
-              >
-                {/* Elegant Text Above Button */}
-                <motion.div
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.8 }}
-                  className="space-y-4"
-                >
-                  <div className="inline-flex items-center space-x-3 px-6 py-3 rounded-full glass">
-                    <Upload className="w-5 h-5 text-green-500" />
-                    <span className="text-sm font-medium">Data Portal • Status: Ready for Upload • Theme: {isDarkMode ? '🌙' : '☀️'}</span>
-                  </div>
-
-                  <h2 className="text-3xl md:text-4xl font-bold gradient-text">
-                    Initialiimport { useState, useEffect, useRef } from "react";
+import { useState,useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Upload, BarChart3, Brain, Settings, Command, FileText } from "lucide-react";
 import Spline from '@splinetool/react-spline';
+import ProcessingTimeline from "@/components/ProcessingTimeline";
+import LoadingScreen from "@/components/LoadingScreen";
+import InsightBoard from "@/components/InsightBoard";
+import DataScorecard from "@/components/DataScorecard";
+import ChatBot from "@/components/ChatBot";
+import AutoInsightEngine from "@/components/AutoInsightEngine";
+import KnowledgeGraph from "@/components/KnowledgeGraph";
+import DataStoryMode from "@/components/DataStoryMode";
+import PresentationMode from "@/components/PresentationMode";
+import ScenarioSimulator from "@/components/ScenarioSimulator";
+import Footer from "@/components/ui/Footer";
+import ThemeToggle from "@/components/ThemeToggle";
+import { useAutoAnimate } from '@formkit/auto-animate/react';
+
+// Lazy loaded components
+import LazyGlobe3D from "@/components/3d/LazyGlobe3D";
+import LazyAsset3DManager from "@/components/3d/LazyAsset3DManager";
+import LazyChartEngine from "@/components/charts/LazyChartEngine";
+
+// Enhanced background and navigation
+import AmbientSoundSystem from "@/components/audio/AmbientSoundSystem";
+
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import KPICard from "@/components/KPICard";
+
+interface Insight {
+  id: string;
+  type: 'correlation' | 'trend' | 'anomaly' | 'statistic';
+  title: string;
+  description: string;
+  value: string | number;
+  priority: 'high' | 'medium' | 'low';
+  isPinned: boolean;
+  timestamp: Date;
+}
 
 const Index = () => {
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState(null);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isAnalysisReady, setIsAnalysisReady] = useState(false);
-  const [activeMode, setActiveMode] = useState('analysis');
+  const [activeMode, setActiveMode] = useState<'analysis' | 'story' | '3d' | 'presentation' | 'simulation'>('analysis');
   const [showAIPanel, setShowAIPanel] = useState(false);
+  const [analysisGridRef] = useAutoAnimate({ duration: 180 });
   
   // Add state for DataUpload integration
-  const [uploadedData, setUploadedData] = useState(null);
+  const [uploadedData, setUploadedData] = useState<{ id: string; filename: string; preview: any[] } | null>(null);
 
-  // Add state for background optimization and theme detection
+  // Add state for background optimization
   const [splineLoaded, setSplineLoaded] = useState(false);
   const [splineError, setSplineError] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(true); // Default to dark mode
-  const splineRef = useRef(null);
-
-  // Theme detection - check for dark mode
-  useEffect(() => {
-    const detectTheme = () => {
-      // Check for theme preference in various ways
-      const htmlElement = document.documentElement;
-      const hasThemeClass = htmlElement.classList.contains('dark');
-      const themeAttribute = htmlElement.getAttribute('data-theme');
-      const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      
-      // Priority: class > data-theme > system preference > default
-      if (hasThemeClass) {
-        setIsDarkMode(true);
-      } else if (htmlElement.classList.contains('light')) {
-        setIsDarkMode(false);
-      } else if (themeAttribute === 'dark') {
-        setIsDarkMode(true);
-      } else if (themeAttribute === 'light') {
-        setIsDarkMode(false);
-      } else {
-        setIsDarkMode(systemPreference);
-      }
-    };
-
-    detectTheme();
-
-    // Listen for theme changes
-    const observer = new MutationObserver(detectTheme);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class', 'data-theme']
-    });
-
-    // Listen for system preference changes
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    mediaQuery.addEventListener('change', detectTheme);
-
-    return () => {
-      observer.disconnect();
-      mediaQuery.removeEventListener('change', detectTheme);
-    };
-  }, []);
+  const splineRef = useRef<any>(null);
 
   // Check if device is mobile and handle resize
   useEffect(() => {
@@ -95,24 +69,9 @@ const Index = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Get the appropriate Spline scene URL based on theme
-  const getSplineScene = () => {
-    if (isDarkMode) {
-      return "https://prod.spline.design/Lws6iY4vBNT0NXoF/scene.splinecode"; // Night mode
-    } else {
-      return "https://my.spline.design/celestialflowabstractdigitalform-L97Y3gllTjo31hSiXkOJpA51/"; // Day mode
-    }
-  };
-
-  // Reset Spline loading state when theme changes
-  useEffect(() => {
-    setSplineLoaded(false);
-    setSplineError(false);
-  }, [isDarkMode]);
-
   useEffect(() => {
     const forceCursorVisibility = () => {
-      const cursorElement = document.querySelector('.animated-cursor');
+      const cursorElement = document.querySelector('.animated-cursor') as HTMLElement;
       if (cursorElement) {
         cursorElement.style.opacity = '1';
         cursorElement.style.visibility = 'visible';
@@ -136,7 +95,7 @@ const Index = () => {
   }, []);
 
   // Mock data state
-  const [insights] = useState([
+  const [insights] = useState<Insight[]>([
     { 
       id: '1', 
       type: 'correlation', 
@@ -170,7 +129,7 @@ const Index = () => {
   ]);
 
   // Updated handler for DataUpload component
-  const handleDataUploaded = (data) => {
+  const handleDataUploaded = (data: { dataset_id: string; filename: string; preview: any[] }) => {
     console.log('Data uploaded successfully:', data);
     setUploadedData({ id: data.dataset_id, filename: data.filename, preview: data.preview });
     
@@ -184,7 +143,7 @@ const Index = () => {
   };
 
   // Keep the old handleFileUpload for backward compatibility if needed
-  const handleFileUpload = (file) => {
+  const handleFileUpload = (file: File) => {
     setIsUploading(true);
     setUploadedFile(file);
     
@@ -200,20 +159,32 @@ const Index = () => {
     }, 1500);
   };
 
-  const handleVisualize = (data) => {
+  const handleVisualize = (data: any) => {
     console.log('Visualizing:', data);
   };
 
-  const handleExport = (data) => {
+  const handleExport = (data: any) => {
     console.log('Exporting:', data);
   };
 
-  const handleModuleSelect = (moduleId) => {
-    setActiveMode(moduleId);
+  const handleModuleSelect = (moduleId: string) => {
+    setActiveMode(moduleId as 'analysis' | 'story' | '3d' | 'presentation' | 'simulation');
   };
+
+  if (isUploading) {
+    return <LoadingScreen message="Uploading dataset to quantum processors..." />;
+  }
+
+  if (isProcessing) {
+    return <ProcessingTimeline />;
+  }
 
   return (
     <div className="min-h-screen bg-background relative">
+      {/* Theme Toggle */}
+      <ThemeToggle />
+      {/* Ambient Sound System */}
+      <AmbientSoundSystem isActive={isAnalysisReady} />
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         {!isAnalysisReady ? (
@@ -227,20 +198,18 @@ const Index = () => {
             >
               <div className="inline-flex items-center space-x-3 px-6 py-3 rounded-full glass">
                 <Command className="w-5 h-5 text-primary" />
-                <span className="text-sm font-medium">
-                  Data Observatory • Status: Orbital • Theme: {isDarkMode ? 'Night' : 'Day'}
-                </span>
+                <span className="text-sm font-medium">Data Observatory • Status: Orbital</span>
               </div>
 
               <div className="relative min-h-screen flex justify-center mb-16 overflow-hidden">
                 {/* Conditional Background - Spline for md/lg screens, Gradient for mobile */}
                 {!isMobile ? (
-                  // Theme-aware Spline for md/lg screens
+                  // Optimized Spline for md/lg screens
                   <div className="absolute inset-0 w-full h-full z-[-1]">
                     {!splineError && (
                       <Spline 
                         ref={splineRef}
-                        scene={getSplineScene()}
+                        scene="https://prod.spline.design/Lws6iY4vBNT0NXoF/scene.splinecode"
                         style={{ 
                           width: '100%', 
                           height: '100%',
@@ -249,7 +218,7 @@ const Index = () => {
                           backfaceVisibility: 'hidden', // Optimize 3D rendering
                         }}
                         onLoad={() => {
-                          console.log(`Spline loaded successfully - ${isDarkMode ? 'Night' : 'Day'} mode`);
+                          console.log('Spline loaded successfully');
                           setSplineLoaded(true);
                           
                           // Additional performance optimizations after load
@@ -277,26 +246,19 @@ const Index = () => {
                       />
                     )}
                     
-                    {/* Theme-aware fallback gradient for failed Spline loads */}
+                    {/* Fallback gradient for failed Spline loads */}
                     {splineError && (
                       <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="absolute inset-0 w-full h-full"
+                        className="absolute inset-0 w-full h-full bg-gradient-to-br from-primary/20 via-quantum-purple/10 to-quantum-green/15"
                         style={{
-                          background: isDarkMode 
-                            ? `
-                                radial-gradient(circle at 20% 80%, rgba(120, 53, 255, 0.4) 0%, transparent 50%),
-                                radial-gradient(circle at 80% 20%, rgba(0, 255, 135, 0.3) 0%, transparent 50%),
-                                radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.3) 0%, transparent 50%),
-                                linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.4) 100%)
-                              `
-                            : `
-                                radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.3) 0%, transparent 50%),
-                                radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.2) 0%, transparent 50%),
-                                radial-gradient(circle at 40% 40%, rgba(139, 92, 246, 0.2) 0%, transparent 50%),
-                                linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.8) 100%)
-                              `,
+                          background: `
+                            radial-gradient(circle at 20% 80%, rgba(120, 53, 255, 0.4) 0%, transparent 50%),
+                            radial-gradient(circle at 80% 20%, rgba(0, 255, 135, 0.3) 0%, transparent 50%),
+                            radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.3) 0%, transparent 50%),
+                            linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.4) 100%)
+                          `,
                         }}
                       />
                     )}
@@ -310,37 +272,28 @@ const Index = () => {
                       >
                         <div className="text-center space-y-4">
                           <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
-                          <p className="text-sm text-muted-foreground">
-                            Loading 3D environment... ({isDarkMode ? 'Night' : 'Day'} Mode)
-                          </p>
+                          <p className="text-sm text-muted-foreground">Loading 3D environment...</p>
                         </div>
                       </motion.div>
                     )}
                   </div>
                 ) : (
-                  // Theme-aware gradient background for mobile
+                  // Optimized gradient background for mobile
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 1.5 }}
                     className="absolute inset-0 w-full h-full z-[-1]"
                     style={{
-                      background: isDarkMode
-                        ? `
-                            radial-gradient(circle at 25% 75%, rgba(120, 53, 255, 0.3) 0%, transparent 60%),
-                            radial-gradient(circle at 75% 25%, rgba(0, 255, 135, 0.2) 0%, transparent 60%),
-                            radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.2) 0%, transparent 60%),
-                            linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.3) 100%)
-                          `
-                        : `
-                            radial-gradient(circle at 25% 75%, rgba(59, 130, 246, 0.2) 0%, transparent 60%),
-                            radial-gradient(circle at 75% 25%, rgba(16, 185, 129, 0.15) 0%, transparent 60%),
-                            radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 60%),
-                            linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.7) 50%, rgba(241, 245, 249, 0.5) 100%)
-                          `,
+                      background: `
+                        radial-gradient(circle at 25% 75%, rgba(120, 53, 255, 0.3) 0%, transparent 60%),
+                        radial-gradient(circle at 75% 25%, rgba(0, 255, 135, 0.2) 0%, transparent 60%),
+                        radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.2) 0%, transparent 60%),
+                        linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.3) 100%)
+                      `,
                     }}
                   >
-                    {/* Theme-aware animated particles for mobile */}
+                    {/* Animated particles for mobile */}
                     <div className="absolute inset-0 overflow-hidden">
                       {Array.from({ length: 15 }).map((_, i) => (
                         <motion.div
@@ -361,13 +314,9 @@ const Index = () => {
                             ease: "linear",
                             delay: Math.random() * 5,
                           }}
-                          className={`absolute w-1 h-1 rounded-full ${
-                            isDarkMode ? 'bg-primary/60' : 'bg-blue-500/40'
-                          }`}
+                          className="absolute w-1 h-1 bg-primary/60 rounded-full"
                           style={{
-                            boxShadow: isDarkMode
-                              ? `0 0 ${Math.random() * 10 + 5}px rgba(59, 130, 246, 0.3)`
-                              : `0 0 ${Math.random() * 8 + 3}px rgba(59, 130, 246, 0.2)`,
+                            boxShadow: `0 0 ${Math.random() * 10 + 5}px rgba(59, 130, 246, 0.3)`,
                           }}
                         />
                       ))}
@@ -375,15 +324,11 @@ const Index = () => {
                   </motion.div>
                 )}
                 
-                {/* Theme-aware enhanced overlay */}
+                {/* Enhanced overlay - different for mobile vs desktop */}
                 <div className={`absolute inset-0 ${
                   isMobile 
-                    ? (isDarkMode 
-                        ? 'bg-gradient-to-b from-black/20 via-transparent to-black/40' 
-                        : 'bg-gradient-to-b from-white/10 via-transparent to-white/20')
-                    : (isDarkMode
-                        ? 'bg-gradient-to-b from-black/30 via-black/5 to-black/20'
-                        : 'bg-gradient-to-b from-white/20 via-white/5 to-white/10')
+                    ? 'bg-gradient-to-b from-black/20 via-transparent to-black/40' 
+                    : 'bg-gradient-to-b from-black/30 via-black/5 to-black/20'
                 }`} />
                 
                 {/* Text Content in Foreground */}
@@ -467,7 +412,6 @@ const Index = () => {
                   </div>
                 </motion.div>
 
-                {/* Other feature cards would be similar - I'll include just one more for brevity */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8, rotateY: -90 }}
                   animate={{ opacity: 1, scale: 1, rotateY: 0 }}
@@ -485,54 +429,20 @@ const Index = () => {
                   className="relative perspective-1000"
                 >
                   <div className="glass p-6 text-center space-y-3 cursor-pointer transition-all duration-500 relative overflow-hidden group hover:border-border/50 hover:shadow-2xl rounded-3xl">
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-b from-transparent via-purple-500/5 to-transparent animate-pulse" />
-                    
-                    <div className="relative z-10 space-y-3">
-                      <motion.div
-                        whileHover={{ scale: 1.2, rotateY: 360 }}
-                        transition={{ duration: 0.6 }}
-                        className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-purple-500/20 to-purple-500/5 flex items-center justify-center"
-                      >
-                        <Brain className="w-6 h-6 text-purple-500" />
-                      </motion.div>
-                      <h3 className="font-semibold">AI Analysis</h3>
-                      <p className="text-xs text-muted-foreground">Multi-agent intelligence processing</p>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Add other cards similarly */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8, rotateY: -90 }}
-                  animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-                  transition={{ 
-                    duration: 0.6, 
-                    delay: 0.4,
-                    type: "spring",
-                    stiffness: 100
-                  }}
-                  whileHover={{ 
-                    scale: 1.05,
-                    rotateX: -5,
-                    z: 50
-                  }}
-                  className="relative perspective-1000"
-                >
-                  <div className="glass p-6 text-center space-y-3 cursor-pointer transition-all duration-500 relative overflow-hidden group hover:border-border/50 hover:shadow-2xl rounded-3xl">
                     {/* Holographic scan lines effect */}
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-b from-transparent via-green-500/5 to-transparent animate-pulse" />
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-b from-transparent via-quantum-purple/5 to-transparent animate-pulse" />
                     
                     {/* Content */}
                     <div className="relative z-10 space-y-3">
                       <motion.div
                         whileHover={{ scale: 1.2, rotateY: 360 }}
                         transition={{ duration: 0.6 }}
-                        className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-green-500/20 to-green-500/5 flex items-center justify-center"
+                        className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-quantum-purple/20 to-quantum-purple/5 flex items-center justify-center"
                       >
-                        <BarChart3 className="w-6 h-6 text-green-500" />
+                        <Brain className="w-6 h-6 text-quantum-purple" />
                       </motion.div>
-                      <h3 className="font-semibold">3D Visualization</h3>
-                      <p className="text-xs text-muted-foreground">Immersive and interactive data exploration</p>
+                      <h3 className="font-semibold">AI Analysis</h3>
+                      <p className="text-xs text-muted-foreground">Multi-agent intelligence processing</p>
                     </div>
 
                     {/* Hover particles */}
@@ -558,7 +468,71 @@ const Index = () => {
                             repeat: Infinity,
                             repeatDelay: 1
                           }}
-                          className="absolute w-1 h-1 bg-green-500 rounded-full"
+                          className="absolute w-1 h-1 bg-quantum-purple rounded-full"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8, rotateY: -90 }}
+                  animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+                  transition={{ 
+                    duration: 0.6, 
+                    delay: 0.4,
+                    type: "spring",
+                    stiffness: 100
+                  }}
+                  whileHover={{ 
+                    scale: 1.05,
+                    rotateX: -5,
+                    z: 50
+                  }}
+                  className="relative perspective-1000"
+                >
+                  <div className="glass p-6 text-center space-y-3 cursor-pointer transition-all duration-500 relative overflow-hidden group hover:border-border/50 hover:shadow-2xl rounded-3xl">
+                    {/* Holographic scan lines effect */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-b from-transparent via-quantum-green/5 to-transparent animate-pulse" />
+                    
+                    {/* Content */}
+                    <div className="relative z-10 space-y-3">
+                      <motion.div
+                        whileHover={{ scale: 1.2, rotateY: 360 }}
+                        transition={{ duration: 0.6 }}
+                        className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-quantum-green/20 to-quantum-green/5 flex items-center justify-center"
+                      >
+                        <BarChart3 className="w-6 h-6 text-quantum-green" />
+                      </motion.div>
+                      <h3 className="font-semibold">3D Visualization</h3>
+                      <p className="text-xs text-muted-foreground">Immersive and interactive data exploration
+                      </p>
+                    </div>
+
+                    {/* Hover particles */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none">
+                      {Array.from({ length: 6 }).map((_, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ 
+                            opacity: 0, 
+                            scale: 0,
+                            x: '50%',
+                            y: '50%'
+                          }}
+                          animate={{ 
+                            opacity: [0, 1, 0], 
+                            scale: [0, 1, 0],
+                            x: `${50 + (Math.random() - 0.5) * 200}%`,
+                            y: `${50 + (Math.random() - 0.5) * 200}%`
+                          }}
+                          transition={{
+                            duration: 2,
+                            delay: i * 0.2,
+                            repeat: Infinity,
+                            repeatDelay: 1
+                          }}
+                          className="absolute w-1 h-1 bg-quantum-green rounded-full"
                         />
                       ))}
                     </div>
@@ -631,7 +605,8 @@ const Index = () => {
               </div>
             </motion.div>
 
-            {/* Upload Portal Section */}
+            {/* Replace FileUpload with DataUpload */}
+            {/* Interactive Upload Portal Section - Matching Site Theme */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -646,7 +621,7 @@ const Index = () => {
                 className="space-y-4"
               >
                 <div className="inline-flex items-center space-x-3 px-6 py-3 rounded-full glass">
-                  <Upload className="w-5 h-5 text-green-500" />
+                  <Upload className="w-5 h-5 text-quantum-green" />
                   <span className="text-sm font-medium">Data Portal • Status: Ready for Upload</span>
                 </div>
 
@@ -687,7 +662,7 @@ const Index = () => {
                   }}
                 >
                   {/* Subtle hover glow */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-quantum-purple/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   
                   {/* Button Content */}
                   <span className="relative z-10 flex items-center justify-center space-x-3">
@@ -696,12 +671,92 @@ const Index = () => {
                     <motion.div
                       animate={{ x: [0, 3, 0] }}
                       transition={{ duration: 2, repeat: Infinity }}
-                      className="text-green-500"
+                      className="text-quantum-green"
                     >
                       →
                     </motion.div>
                   </span>
+
+                  {/* Subtle particle effect */}
+                  <div className="absolute inset-0 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{
+                          opacity: [0, 0.6, 0],
+                          scale: [0, 1, 0],
+                          x: Math.random() * 100 - 50,
+                          y: Math.random() * 60 - 30,
+                        }}
+                        transition={{
+                          duration: 3,
+                          delay: i * 0.8,
+                          repeat: Infinity,
+                        }}
+                        className="absolute w-1 h-1 bg-quantum-green rounded-full top-1/2 left-1/2"
+                      />
+                    ))}
+                  </div>
                 </motion.button>
+              </motion.div> 
+
+              {/* Elegant Text Below Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 1.2 }}
+                className="space-y-4"
+              >
+                <div className="flex justify-center items-center space-x-6 text-2xl opacity-60">
+                  <motion.span
+                    animate={{ opacity: [0.4, 1, 0.4] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 0 }}
+                  >
+                    📊
+                  </motion.span>
+                  <span className="text-quantum-green text-sm">→</span>
+                  <motion.span
+                    animate={{ opacity: [0.4, 1, 0.4] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 0.7 }}
+                  >
+                    🧠
+                  </motion.span>
+                  <span className="text-quantum-purple text-sm">→</span>
+                  <motion.span
+                    animate={{ opacity: [0.4, 1, 0.4] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 1.4 }}
+                  >
+                    📄
+                  </motion.span>
+                </div>
+
+                <div className="text-center space-y-2">
+                  <p className="text-quantum-green font-medium">
+                    Advanced Analytics • Quantum Processing • Instant Reports
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Experience next-generation data transformation in our dedicated upload environment
+                  </p>
+                </div>
+
+                {/* Process flow indicators */}
+                <div className="flex justify-center items-center space-x-8 text-xs font-medium opacity-70">
+                  <div className="text-center">
+                    <div className="w-2 h-2 bg-quantum-green rounded-full mx-auto mb-1"></div>
+                    <span>Upload</span>
+                  </div>
+                  <div className="w-8 h-0.5 bg-gradient-to-r from-quantum-green to-quantum-purple"></div>
+                  <div className="text-center">
+                    <div className="w-2 h-2 bg-quantum-purple rounded-full mx-auto mb-1"></div>
+                    <span>Process</span>
+                  </div>
+                  <div className="w-8 h-0.5 bg-gradient-to-r from-quantum-purple to-primary"></div>
+                  <div className="text-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mx-auto mb-1"></div>
+                    <span>Analyze</span>
+                  </div>
+                </div>
               </motion.div>
             </motion.div>
           </div>
@@ -719,6 +774,9 @@ const Index = () => {
           </div>
         )}
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };
