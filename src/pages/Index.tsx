@@ -631,7 +631,7 @@ const Index = () => {
                 
                 <p className="text-lg text-muted-foreground leading-relaxed">
                   Access the dedicated upload chamber where your datasets undergo 
-                  quantum processing and AI-driven analysis
+                  processing and AI-driven analysis
                 </p>
               </motion.div>
 
