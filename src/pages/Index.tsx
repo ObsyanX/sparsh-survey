@@ -7,7 +7,6 @@ import LoadingScreen from "@/components/LoadingScreen";
 import Footer from "@/components/ui/Footer";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useAutoAnimate } from '@formkit/auto-animate/react';
-
 // Enhanced background and navigation
 import AmbientSoundSystem from "@/components/audio/AmbientSoundSystem";
 
@@ -18,10 +17,9 @@ const Index = () => {
   const [activeMode, setActiveMode] = useState<'analysis' | 'story' | '3d' | 'presentation' | 'simulation'>('analysis');
   const [showAIPanel, setShowAIPanel] = useState(false);
   const [analysisGridRef] = useAutoAnimate({ duration: 180 });
-  
+
   // Add state for DataUpload integration
   const [uploadedData, setUploadedData] = useState<{ id: string; filename: string; preview: any[] } | null>(null);
-
   // Add state for background optimization and theme detection
   const [splineLoaded, setSplineLoaded] = useState(false);
   const [splineError, setSplineError] = useState(false);
@@ -34,10 +32,10 @@ const Index = () => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
+
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
@@ -48,21 +46,17 @@ const Index = () => {
                     window.matchMedia('(prefers-color-scheme: dark)').matches;
       setIsDarkMode(isDark);
     };
-
     // Initial check
     checkTheme();
-
     // Listen for theme changes
     const observer = new MutationObserver(checkTheme);
     observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['class']
     });
-
     // Listen for system theme changes
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     mediaQuery.addListener(checkTheme);
-
     return () => {
       observer.disconnect();
       mediaQuery.removeListener(checkTheme);
@@ -78,16 +72,13 @@ const Index = () => {
         cursorElement.style.zIndex = '9999';
       }
     };
-
     // Force cursor visibility after a delay
     setTimeout(forceCursorVisibility, 100);
     setTimeout(forceCursorVisibility, 500);
     setTimeout(forceCursorVisibility, 1000);
-
     // Also force on scroll and resize
     window.addEventListener('scroll', forceCursorVisibility);
     window.addEventListener('resize', forceCursorVisibility);
-
     return () => {
       window.removeEventListener('scroll', forceCursorVisibility);
       window.removeEventListener('resize', forceCursorVisibility);
@@ -98,7 +89,7 @@ const Index = () => {
   const handleDataUploaded = (data: { dataset_id: string; filename: string; preview: any[] }) => {
     console.log('Data uploaded successfully:', data);
     setUploadedData({ id: data.dataset_id, filename: data.filename, preview: data.preview });
-    
+
     // Automatically transition to analysis ready state
     setIsAnalysisReady(true);
     setShowAIPanel(true);
@@ -180,8 +171,10 @@ const Index = () => {
     }`}>
       {/* Theme Toggle */}
       <ThemeToggle />
+      
       {/* Ambient Sound System */}
       <AmbientSoundSystem isActive={isAnalysisReady} />
+      
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         {!isAnalysisReady ? (
@@ -201,7 +194,7 @@ const Index = () => {
                 <Command className={`w-5 h-5 ${isDarkMode ? 'text-primary' : 'text-blue-600'}`} />
                 <span className="text-sm font-medium">Data Observatory • Status: Orbital</span>
               </div>
-
+              
               <div className="relative min-h-screen flex justify-center mb-16 overflow-hidden">
                 {/* Conditional Background - Spline for md/lg screens, Gradient for mobile */}
                 {!isMobile ? (
@@ -222,14 +215,14 @@ const Index = () => {
                         onLoad={() => {
                           console.log('Spline loaded successfully for', isDarkMode ? 'dark' : 'light', 'mode');
                           setSplineLoaded(true);
-                          
+
                           // Additional performance optimizations after load
                           const canvas = document.querySelector('canvas');
                           if (canvas) {
                             // Enable hardware acceleration
                             canvas.style.transform = 'translateZ(0)';
                             canvas.style.transformStyle = 'preserve-3d';
-                            
+
                             // Optimize for different screen sizes
                             if (window.innerWidth >= 1024) {
                               // Full quality for large screens
@@ -247,7 +240,7 @@ const Index = () => {
                         }}
                       />
                     )}
-                    
+
                     {/* Fallback gradient for failed Spline loads */}
                     {splineError && (
                       <motion.div
@@ -257,7 +250,7 @@ const Index = () => {
                         style={{ background: themeColors.background }}
                       />
                     )}
-                    
+
                     {/* Loading indicator for Spline */}
                     {!splineLoaded && !splineError && (
                       <motion.div
@@ -321,12 +314,12 @@ const Index = () => {
                     </div>
                   </motion.div>
                 )}
-                
+
                 {/* Enhanced overlay - different for mobile vs desktop and theme */}
                 <div className={`absolute inset-0 ${
                   isMobile ? themeColors.mobileOverlay : themeColors.overlay
                 }`} />
-                
+
                 {/* Text Content in Foreground */}
                 <div className="relative z-10 text-center max-w-4xl px-6 pt-8 md:pt-12">
                   <h1 className={`text-5xl md:text-6xl font-bold pb-3 leading-relaxed transition-all duration-500 ${
@@ -338,7 +331,7 @@ const Index = () => {
                      isDarkMode ? 'text-primary' : 'text-blue-600'
                    }`}>Metryx</span> has you covered.
                   </h1>
-                  
+
                   <p className={`text-xl md:text-2xl mt-6 leading-relaxed transition-colors duration-500 ${
                     isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
                   }`}>
@@ -346,7 +339,7 @@ const Index = () => {
                      isDarkMode ? 'text-primary' : 'text-blue-600'
                    }`}>.csv</span> file into instant, AI-powered data, beautifully crafted into immersive PDF insights.
                   </p>
-                  
+
                   <div className={`text-xl md:text-2xl mt-8 inline-flex items-center font-medium transition-colors duration-500 ${
                     isDarkMode ? 'text-primary' : 'text-blue-600'
                   }`}>
@@ -354,7 +347,7 @@ const Index = () => {
                   </div>
                 </div>
               </div>
-              
+
               {/* Feature cards with enhanced theme support */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-4xl mx-auto rounded-full">
                 {[
@@ -419,7 +412,7 @@ const Index = () => {
                           ? `bg-gradient-to-b from-transparent via-${item.color.split('-')[1]}/5 to-transparent`
                           : 'bg-gradient-to-b from-transparent via-white/20 to-transparent'
                       }`} />
-                      
+
                       {/* Content */}
                       <div className="relative z-10 space-y-3">
                         <motion.div
@@ -436,7 +429,7 @@ const Index = () => {
                           isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
                         }`}>{item.description}</p>
                       </div>
-
+                      
                       {/* Hover particles */}
                       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none">
                         {Array.from({ length: 6 }).map((_, i) => (
@@ -469,7 +462,7 @@ const Index = () => {
                 ))}
               </div>
             </motion.div>
-
+            
             {/* Interactive Upload Portal Section - Enhanced theme support */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -478,6 +471,115 @@ const Index = () => {
               className="text-center space-y-8 max-w-3xl mx-auto"
             >
               {/* Elegant Text Above Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.8 }}
+                className="space-y-4"
+              >
+                <div className={`inline-flex items-center space-x-3 px-6 py-3 rounded-full transition-all duration-300 ${
+                  isDarkMode 
+                    ? 'glass border-white/10 bg-black/20 text-white/90' 
+                    : 'bg-white/90 border-black/10 text-slate-700 shadow-lg backdrop-blur-sm'
+                }`}>
+                  <Upload className={`w-5 h-5 ${isDarkMode ? 'text-quantum-green' : 'text-emerald-600'}`} />
+                  <span className="text-sm font-medium">Data Portal • Status: Ready for Upload</span>
+                </div>
+                <h2 className={`text-3xl md:text-4xl font-bold transition-all duration-500 ${
+                  isDarkMode 
+                    ? 'gradient-text' 
+                    : 'bg-gradient-to-r from-slate-800 via-blue-800 to-purple-800 bg-clip-text text-transparent'
+                }`}>
+                  Initialize Data Transfer
+                </h2>
+
+                <p className={`text-lg leading-relaxed transition-colors duration-500 ${
+                  isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
+                }`}>
+                  Access the dedicated upload chamber where your datasets undergo 
+                  processing and AI-driven analysis
+                </p>
+              </motion.div>
+              
+              {/* Main Portal Button */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ 
+                  duration: 0.6, 
+                  delay: 1,
+                  type: "spring",
+                  stiffness: 100
+                }}
+                className="relative"
+              > 
+                <motion.button
+                  onClick={() => window.location.href = 'https://fancy-babka-8c3992.netlify.app/upload'}
+                  whileHover={{ 
+                    scale: 1.02,
+                    boxShadow: isDarkMode 
+                      ? "0 20px 40px rgba(59, 130, 246, 0.2)"
+                      : "0 20px 40px rgba(37, 99, 235, 0.15)",
+                  }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`group relative px-8 py-4 text-lg font-semibold rounded-xl overflow-hidden transition-all duration-300 ${
+                    isDarkMode
+                      ? 'text-white glass hover:border-primary/50'
+                      : 'text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 border border-blue-500/20 shadow-xl'
+                  }`}
+                  style={isDarkMode ? {
+                    background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(147, 51, 234, 0.2) 100%)',
+                    backdropFilter: 'blur(20px)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                  } : {}}
+                >
+                  {/* Subtle hover glow */}
+                  <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
+                    isDarkMode 
+                      ? 'bg-gradient-to-r from-primary/10 to-quantum-purple/10' 
+                      : 'bg-gradient-to-r from-blue-500/20 to-purple-500/20'
+                  }`} />
+
+                  {/* Button Content */}
+                  <span className="relative z-10 flex items-center justify-center space-x-3">
+                    <Upload className="w-5 h-5" />
+                    <span>Enter Upload Portal</span>
+                    <motion.div
+                      animate={{ x: [0, 3, 0] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className={isDarkMode ? 'text-quantum-green' : 'text-blue-200'}
+                    >
+                      →
+                    </motion.div>
+                  </span>
+                  
+                  {/* Subtle particle effect */}
+                  <div className="absolute inset-0 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{
+                          opacity: [0, 0.6, 0],
+                          scale: [0, 1, 0],
+                          x: Math.random() * 100 - 50,
+                          y: Math.random() * 60 - 30,
+                        }}
+                        transition={{
+                          duration: 3,
+                          delay: i * 0.8,
+                          repeat: Infinity,
+                        }}
+                        className={`absolute w-1 h-1 rounded-full top-1/2 left-1/2 ${
+                          isDarkMode ? 'bg-quantum-green' : 'bg-blue-200'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </motion.button>
+              </motion.div> 
+              
+              {/* Elegant Text Below Button */}
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -506,7 +608,6 @@ const Index = () => {
                     📄
                   </motion.span>
                 </div>
-
                 <div className="text-center space-y-2">
                   <p className={`font-medium transition-colors duration-300 ${
                     isDarkMode ? 'text-quantum-green' : 'text-emerald-600'
@@ -519,7 +620,6 @@ const Index = () => {
                     Experience next-generation data transformation in our dedicated upload environment
                   </p>
                 </div>
-
                 {/* Process flow indicators */}
                 <div className={`flex justify-center items-center space-x-8 text-xs font-medium transition-colors duration-300 ${
                   isDarkMode ? 'opacity-70' : 'opacity-80'
@@ -553,7 +653,7 @@ const Index = () => {
                     <span className={isDarkMode ? 'text-white/80' : 'text-slate-700'}>Analyze</span>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             </motion.div>
           </div>
         ) : (
@@ -576,7 +676,7 @@ const Index = () => {
           </div>
         )}
       </div>
-
+      
       {/* Footer with theme support */}
       <div className="transition-colors duration-500">
         <Footer />
