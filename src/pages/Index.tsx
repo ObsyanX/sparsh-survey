@@ -648,7 +648,7 @@ const Index = () => {
                 className="relative"
               > 
                 <motion.button
-                  onClick={() => window.location.href = 'http://localhost:8080/upload'}
+                  onClick={() => window.location.href = 'https://dazzling-selkie-b6ea3b.netlify.app/upload'}
                   whileHover={{ 
                     scale: 1.02,
                     boxShadow: "0 20px 40px rgba(59, 130, 246, 0.2)",
@@ -733,7 +733,7 @@ const Index = () => {
 
                 <div className="text-center space-y-2">
                   <p className="text-quantum-green font-medium">
-                    Advanced Analytics • Quantum Processing • Instant Reports
+                    Advanced Analytics • Processing • Instant Reports
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Experience next-generation data transformation in our dedicated upload environment
