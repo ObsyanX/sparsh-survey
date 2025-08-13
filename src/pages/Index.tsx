@@ -334,11 +334,11 @@ const Index = () => {
                 {/* Text Content in Foreground */}
                 <div className="relative z-10 text-center max-w-4xl px-6 pt-8 md:pt-12">
                   <h1 className="text-5xl md:text-6xl font-bold gradient-text pb-3 leading-relaxed">
-                    Welcome, Data Navigator
+                   Hey Data Navigator — <span className="text-primary">Metryx</span> has you covered.
                   </h1>
                   
                   <p className="text-xl md:text-2xl text-muted-foreground mt-6 leading-relaxed">
-                    Step into the Survey Deck — where your <span className="text-primary">.csv</span> file becomes a gateway to clarity. Watch AI transform raw survey data into immersive, beautifully crafted PDF insights. 
+                   Turn your <span className="text-primary">.csv</span> file into instant, AI-powered data, beautifully crafted into immersive PDF insights.
                   </p>
                   
                   <div className="text-xl md:text-2xl mt-8 inline-flex items-center text-primary font-medium">
