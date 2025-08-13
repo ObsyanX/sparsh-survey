@@ -88,7 +88,7 @@ const Index = () => {
   };
 
   if (isUploading) {
-    return <LoadingScreen message="Uploading dataset to quantum processors..." />;
+    return <LoadingScreen message="Uploading dataset to processors..." />;
   }
 
   if (isProcessing) {
