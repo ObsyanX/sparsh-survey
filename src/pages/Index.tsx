@@ -1,47 +1,18 @@
-import { useState,useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { Upload, BarChart3, Brain, Settings, Command, FileText } from "lucide-react";
+import { Upload, BarChart3, Brain, Command, FileText } from "lucide-react";
 import Spline from '@splinetool/react-spline';
 import ProcessingTimeline from "@/components/ProcessingTimeline";
 import LoadingScreen from "@/components/LoadingScreen";
-import InsightBoard from "@/components/InsightBoard";
-import DataScorecard from "@/components/DataScorecard";
-import ChatBot from "@/components/ChatBot";
-import AutoInsightEngine from "@/components/AutoInsightEngine";
-import KnowledgeGraph from "@/components/KnowledgeGraph";
-import DataStoryMode from "@/components/DataStoryMode";
-import PresentationMode from "@/components/PresentationMode";
-import ScenarioSimulator from "@/components/ScenarioSimulator";
 import Footer from "@/components/ui/Footer";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 
-// Lazy loaded components
-import LazyGlobe3D from "@/components/3d/LazyGlobe3D";
-import LazyAsset3DManager from "@/components/3d/LazyAsset3DManager";
-import LazyChartEngine from "@/components/charts/LazyChartEngine";
-
 // Enhanced background and navigation
 import AmbientSoundSystem from "@/components/audio/AmbientSoundSystem";
 
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import KPICard from "@/components/KPICard";
-
-interface Insight {
-  id: string;
-  type: 'correlation' | 'trend' | 'anomaly' | 'statistic';
-  title: string;
-  description: string;
-  value: string | number;
-  priority: 'high' | 'medium' | 'low';
-  isPinned: boolean;
-  timestamp: Date;
-}
-
 const Index = () => {
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isAnalysisReady, setIsAnalysisReady] = useState(false);
   const [activeMode, setActiveMode] = useState<'analysis' | 'story' | '3d' | 'presentation' | 'simulation'>('analysis');
@@ -94,69 +65,14 @@ const Index = () => {
     };
   }, []);
 
-  // Mock data state
-  const [insights] = useState<Insight[]>([
-    { 
-      id: '1', 
-      type: 'correlation', 
-      title: 'Strong Education-Employment Link', 
-      description: 'High correlation detected between education level and employment status',
-      value: '0.78',
-      priority: 'high',
-      isPinned: false,
-      timestamp: new Date()
-    },
-    { 
-      id: '2', 
-      type: 'anomaly', 
-      title: 'Income Anomalies Found', 
-      description: '12 data points exceed 3 standard deviations from mean',
-      value: '12',
-      priority: 'high',
-      isPinned: false,
-      timestamp: new Date()
-    },
-    { 
-      id: '3', 
-      type: 'trend', 
-      title: 'Regional Disparity Trend', 
-      description: 'Consistent income gaps observed across urban-rural divide',
-      value: '3.2x',
-      priority: 'medium',
-      isPinned: false,
-      timestamp: new Date()
-    }
-  ]);
-
-  // Updated handler for DataUpload component
+  // Handler for DataUpload component
   const handleDataUploaded = (data: { dataset_id: string; filename: string; preview: any[] }) => {
     console.log('Data uploaded successfully:', data);
     setUploadedData({ id: data.dataset_id, filename: data.filename, preview: data.preview });
     
-    // Create a mock File object for compatibility with existing code
-    const mockFile = new File([], data.filename, { type: 'text/csv' });
-    setUploadedFile(mockFile);
-    
     // Automatically transition to analysis ready state
     setIsAnalysisReady(true);
     setShowAIPanel(true);
-  };
-
-  // Keep the old handleFileUpload for backward compatibility if needed
-  const handleFileUpload = (file: File) => {
-    setIsUploading(true);
-    setUploadedFile(file);
-    
-    setTimeout(() => {
-      setIsUploading(false);
-      setIsProcessing(true);
-      
-      setTimeout(() => {
-        setIsProcessing(false);
-        setIsAnalysisReady(true);
-        setShowAIPanel(true);
-      }, 3000);
-    }, 1500);
   };
 
   const handleVisualize = (data: any) => {
@@ -605,7 +521,6 @@ const Index = () => {
               </div>
             </motion.div>
 
-            {/* Replace FileUpload with DataUpload */}
             {/* Interactive Upload Portal Section - Matching Site Theme */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
