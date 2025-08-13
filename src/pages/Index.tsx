@@ -6,7 +6,6 @@ import ProcessingTimeline from "@/components/ProcessingTimeline";
 import LoadingScreen from "@/components/LoadingScreen";
 import Footer from "@/components/ui/Footer";
 import ThemeToggle from "@/components/ThemeToggle";
-import { useAutoAnimate } from '@formkit/auto-animate/react';
 // Enhanced background and navigation
 import AmbientSoundSystem from "@/components/audio/AmbientSoundSystem";
 
@@ -16,7 +15,6 @@ const Index = () => {
   const [isAnalysisReady, setIsAnalysisReady] = useState(false);
   const [activeMode, setActiveMode] = useState<'analysis' | 'story' | '3d' | 'presentation' | 'simulation'>('analysis');
   const [showAIPanel, setShowAIPanel] = useState(false);
-  const [analysisGridRef] = useAutoAnimate({ duration: 180 });
 
   // Add state for DataUpload integration
   const [uploadedData, setUploadedData] = useState<{ id: string; filename: string; preview: any[] } | null>(null);
