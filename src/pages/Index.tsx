@@ -6,8 +6,6 @@ import ProcessingTimeline from "@/components/ProcessingTimeline";
 import LoadingScreen from "@/components/LoadingScreen";
 import Footer from "@/components/ui/Footer";
 import ThemeToggle from "@/components/ThemeToggle";
-// Enhanced background and navigation
-import AmbientSoundSystem from "@/components/audio/AmbientSoundSystem";
 
 const Index = () => {
   const [isUploading, setIsUploading] = useState(false);
