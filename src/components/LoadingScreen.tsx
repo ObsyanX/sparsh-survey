@@ -47,9 +47,9 @@ export default function LoadingScreen({
       scale: [1, 1.1, 1],
       opacity: [0.8, 1, 0.8],
       transition: {
-        duration: 3, // Slower for better performance
+        duration: 3,
         repeat: Infinity,
-        ease: "easeInOut"
+        ease: [0.4, 0, 0.2, 1]
       }
     }
   };
@@ -58,7 +58,7 @@ export default function LoadingScreen({
     animate: {
       rotate: 360,
       transition: {
-        duration: 12, // Slower for better performance
+        duration: 12,
         repeat: Infinity,
         ease: "linear"
       }
@@ -72,10 +72,10 @@ export default function LoadingScreen({
       opacity: [0, 1, 0],
       scale: [0, 1, 0],
       transition: {
-        duration: 4 + Math.random() * 2, // Slower for better performance
+        duration: 4 + Math.random() * 2,
         repeat: Infinity,
-        delay: i * 0.5, // Increased delay
-        ease: "easeInOut"
+        delay: i * 0.5,
+        ease: [0.4, 0, 0.2, 1]
       }
     })
   };
@@ -85,10 +85,10 @@ export default function LoadingScreen({
       scale: [0, 3],
       opacity: [0.8, 0],
       transition: {
-        duration: 3, // Slower for better performance
+        duration: 3,
         repeat: Infinity,
-        delay: i * 0.8, // Increased delay
-        ease: "easeOut"
+        delay: i * 0.8,
+        ease: [0.4, 0, 0.6, 1]
       }
     })
   };
@@ -110,19 +110,28 @@ export default function LoadingScreen({
     >
       {/* Background Quantum Particles */}
       <div className="absolute inset-0 pointer-events-none" style={{ contain: 'layout style paint' }}>
-        {!isReducedMotion && Array.from({ length: particleCount }).map((_, i) => (
-          <motion.div
-            key={`bg-particle-${i}`}
-            className="absolute w-1 h-1 bg-primary/30 rounded-full"
-            custom={i}
-            variants={particleVariants}
-            animate="animate"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-          />
-        ))}
+          {!isReducedMotion && Array.from({ length: particleCount }).map((_, i) => (
+            <motion.div
+              key={`bg-particle-${i}`}
+              className="absolute w-1 h-1 bg-primary/30 rounded-full"
+              animate={{
+                y: [-20, -100],
+                x: [0, Math.sin(i) * 50],
+                opacity: [0, 1, 0],
+                scale: [0, 1, 0],
+              }}
+              transition={{
+                duration: 4 + Math.random() * 2,
+                repeat: Infinity,
+                delay: i * 0.5,
+                ease: [0.4, 0, 0.2, 1]
+              }}
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+              }}
+            />
+          ))}
       </div>
 
       {/* Main Loading Container */}
@@ -132,9 +141,16 @@ export default function LoadingScreen({
           {/* Inner Core */}
           <motion.div
             className="absolute inset-0 rounded-full bg-gradient-to-br from-primary via-quantum-purple to-quantum-green"
-            variants={coreVariants}
-            initial="initial"
-            animate="animate"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{
+              scale: [1, 1.1, 1],
+              opacity: [0.8, 1, 0.8],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: [0.4, 0, 0.2, 1]
+            }}
             style={{
               boxShadow: '0 0 40px hsl(184 100% 50% / 0.5), 0 0 80px hsl(262 83% 65% / 0.3)'
             }}
@@ -161,19 +177,30 @@ export default function LoadingScreen({
           {/* Orbital Rings */}
           <motion.div
             className="absolute inset-0 rounded-full border-2 border-primary/40"
-            variants={orbitalVariants}
-            animate="animate"
+            animate={{ rotate: 360 }}
+            transition={{
+              duration: 12,
+              repeat: Infinity,
+              ease: "linear"
+            }}
           />
           <motion.div
             className="absolute inset-2 rounded-full border border-quantum-purple/60"
-            variants={orbitalVariants}
-            animate="animate"
-            style={{ animationDirection: 'reverse' }}
+            animate={{ rotate: -360 }}
+            transition={{
+              duration: 12,
+              repeat: Infinity,
+              ease: "linear"
+            }}
           />
           <motion.div
             className="absolute inset-4 rounded-full border border-quantum-green/40"
-            variants={orbitalVariants}
-            animate="animate"
+            animate={{ rotate: 360 }}
+            transition={{
+              duration: 12,
+              repeat: Infinity,
+              ease: "linear"
+            }}
           />
 
           {/* Ripple Waves */}
@@ -181,9 +208,16 @@ export default function LoadingScreen({
             <motion.div
               key={`wave-${i}`}
               className="absolute inset-0 rounded-full border border-primary/20"
-              custom={i}
-              variants={waveVariants}
-              animate="animate"
+              animate={{
+                scale: [0, 3],
+                opacity: [0.8, 0],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                delay: i * 0.8,
+                ease: [0.4, 0, 0.6, 1]
+              }}
             />
           ))}
 
@@ -239,9 +273,9 @@ export default function LoadingScreen({
               <div className="w-full bg-muted/50 rounded-full h-3 overflow-hidden backdrop-blur-sm">
                 <motion.div
                   className="h-full bg-gradient-to-r from-primary via-quantum-purple to-quantum-green rounded-full relative"
-                  variants={progressVariants}
-                  initial="initial"
-                  animate="animate"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progress || 0}%` }}
+                  transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
                 >
                   {/* Progress Glow Effect */}
                   <motion.div
@@ -271,9 +305,18 @@ export default function LoadingScreen({
             <motion.div
               key={`float-particle-${i}`}
               className="absolute w-1 h-1 bg-gradient-to-r from-primary to-quantum-purple rounded-full"
-              custom={i}
-              variants={particleVariants}
-              animate="animate"
+              animate={{
+                y: [-20, -100],
+                x: [0, Math.sin(i) * 50],
+                opacity: [0, 1, 0],
+                scale: [0, 1, 0],
+              }}
+              transition={{
+                duration: 4 + Math.random() * 2,
+                repeat: Infinity,
+                delay: i * 0.5,
+                ease: [0.4, 0, 0.2, 1]
+              }}
               style={{
                 left: `${50 + Math.cos(i * 30) * 30}%`,
                 top: `${50 + Math.sin(i * 30) * 30}%`,

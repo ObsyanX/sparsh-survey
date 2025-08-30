@@ -5,7 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 const Asset3DManager = lazy(() => import('@/components/3d/Asset3DManager'));
 
 interface LazyAsset3DManagerProps {
-  assets?: any[];
+  assets: any[];
   onAssetUpdate?: (asset: any) => void;
   className?: string;
 }
