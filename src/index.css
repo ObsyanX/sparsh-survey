@@ -194,8 +194,20 @@
   * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Apply GPU acceleration only to animated elements */
+  .gpu-accelerated,
+  .animate-pulse,
+  .animate-spin,
+  .animate-bounce,
+  .animate-ping,
+  .floating,
+  .quantum-glow-hover,
+  .glass {
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
+    will-change: transform;
   }
   button, a, [role="button"], .cursor-pointer {
     cursor: none !important;
@@ -205,7 +217,7 @@
   .animate-spin,
   .animate-bounce,
   .animate-ping {
-    will-change: transform, opacity;
+    will-change: transform;
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
   }
@@ -216,10 +228,7 @@
     @apply bg-quantum-glass backdrop-blur-xl border border-border/30;
     box-shadow: var(--shadow-glass);
     position: relative;
-    /* Optimize for performance */
-    will-change: transform;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
+    contain: layout style;
   }
   
   .glass::before {
@@ -236,6 +245,7 @@
     border-radius: inherit;
     pointer-events: none;
     animation: liquid-flow 8s ease-in-out infinite;
+    will-change: background-position;
   }
   
   .glass:hover::before {
@@ -256,12 +266,12 @@
   .quantum-glow {
     box-shadow: var(--shadow-quantum);
     position: relative;
-    will-change: box-shadow, transform;
+    contain: layout style;
   }
   
   .quantum-glow-hover {
     transition: var(--transition-glow);
-    will-change: box-shadow, transform;
+    contain: layout style;
   }
   
   .quantum-glow-hover:hover {
@@ -273,7 +283,7 @@
   .holographic {
     background: var(--gradient-holographic);
     background-size: 150% 150%;
-    animation: holographic-shift 3s ease-in-out infinite;
+    animation: holographic-shift 4s ease-in-out infinite;
     will-change: background-position;
   }
   
@@ -382,7 +392,7 @@
   /* Utility Classes - Optimized */
   .animate-glow-pulse {
     animation: glow-pulse 2s ease-in-out infinite;
-    will-change: box-shadow;
+    contain: layout style;
   }
   
   .animate-shimmer {
@@ -394,7 +404,7 @@
     );
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
-    will-change: background-position;
+    contain: layout style;
   }
   
   .animate-holographic {
@@ -404,9 +414,10 @@
   
   /* Performance optimizations */
   .gpu-accelerated {
-    will-change: transform, opacity;
+    will-change: transform;
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
+    contain: layout style paint;
   }
   
   .will-change-transform {
@@ -417,10 +428,12 @@
   
   .will-change-opacity {
     will-change: opacity;
+    contain: layout style;
   }
   
   .will-change-scroll-position {
     will-change: scroll-position;
+    contain: layout style;
   }
   
   /* Smooth scrolling optimizations */
@@ -431,9 +444,9 @@
   
   /* Reduce motion for performance */
   .reduce-motion {
-    animation-duration: 0.01ms !important;
+    animation-duration: 0.1s !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    transition-duration: 0.1s !important;
   }
   
   /* Reduced Motion Support */
@@ -510,6 +523,7 @@
     * {
       transition-duration: 0.1s !important;
       animation-duration: 0.1s !important;
+      animation-iteration-count: 1 !important;
     }
   }
 }
@@ -646,71 +660,71 @@
 
 /* Loading Screen Specific Classes */
 .loading-core {
-  animation: core-pulse 2s ease-in-out infinite;
+  animation: core-pulse 3s ease-in-out infinite;
 }
 
 .loading-orbital {
-  animation: orbital-rotation 8s linear infinite;
+  animation: orbital-rotation 12s linear infinite;
 }
 
 .loading-orbital-reverse {
-  animation: orbital-rotation 6s linear infinite reverse;
+  animation: orbital-rotation 10s linear infinite reverse;
 }
 
 .loading-quantum-shift {
-  animation: quantum-shift 4s ease-in-out infinite;
+  animation: quantum-shift 6s ease-in-out infinite;
 }
 
 .loading-particle {
-  animation: particle-float 3s ease-in-out infinite;
+  animation: particle-float 4s ease-in-out infinite;
 }
 
 .loading-ripple {
-  animation: ripple-expand 2s ease-out infinite;
+  animation: ripple-expand 3s ease-out infinite;
 }
 
 .loading-energy-wave {
-  animation: energy-wave 2s ease-in-out infinite;
+  animation: energy-wave 3s ease-in-out infinite;
 }
 
 .loading-holographic-scan {
-  animation: holographic-scan 3s linear infinite;
+  animation: holographic-scan 4s linear infinite;
 }
 
 .loading-energy-flow {
-  animation: energy-flow 2s ease-in-out infinite;
+  animation: energy-flow 3s ease-in-out infinite;
 }
 
 .loading-quantum-glow {
-  animation: quantum-glow-pulse 1.5s ease-in-out infinite;
+  animation: quantum-glow-pulse 2s ease-in-out infinite;
 }
 
 /* Responsive Loading Screen Adjustments */
 @media (max-width: 768px) {
   .loading-core {
-    animation-duration: 1.5s;
+    animation-duration: 2s;
   }
   
   .loading-orbital {
-    animation-duration: 6s;
+    animation-duration: 8s;
   }
   
   .loading-particle {
-    animation-duration: 2.5s;
+    animation-duration: 3s;
   }
 }
 
 @media (max-width: 480px) {
   .loading-core {
-    animation-duration: 1.2s;
+    animation-duration: 1.8s;
   }
   
   .loading-orbital {
-    animation-duration: 5s;
+    animation-duration: 7s;
   }
   
   .loading-particle {
-    animation-duration: 2s;
+    animation-duration: 2.5s;
   }
 }
 

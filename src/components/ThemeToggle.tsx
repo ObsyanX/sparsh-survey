@@ -6,6 +6,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 export default function ThemeToggle() {
   const { settings, toggleTheme, isTransitioning } = useTheme();
   const isDark = settings.theme === 'dark';
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <motion.div
@@ -17,6 +18,8 @@ export default function ThemeToggle() {
       <motion.button
         onClick={toggleTheme}
         disabled={isTransitioning}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         className={`
           relative w-12 h-12 rounded-full glass overflow-hidden
           flex items-center justify-center
@@ -45,6 +48,7 @@ export default function ThemeToggle() {
         }}
       >
         {/* Liquid background effect */}
+        {isHovered && (
         <motion.div
           className="absolute inset-0 rounded-full"
           style={{
@@ -57,11 +61,12 @@ export default function ThemeToggle() {
             backgroundPosition: ['0% 50%', '100% 50%', '0% 50%']
           }}
           transition={{
-            duration: 8,
+            duration: 6, // Faster for better responsiveness
             repeat: Infinity,
             ease: 'easeInOut'
           }}
         />
+        )}
         
         {/* Icon container with glass effect */}
         <motion.div
@@ -116,7 +121,7 @@ export default function ThemeToggle() {
               exit={{ opacity: 0 }}
               className="absolute inset-0 pointer-events-none"
             >
-              {Array.from({ length: 6 }).map((_, i) => (
+              {Array.from({ length: 4 }).map((_, i) => ( // Reduced particle count
                 <motion.div
                   key={i}
                   className="absolute w-1 h-1 rounded-full"
@@ -140,7 +145,7 @@ export default function ThemeToggle() {
                     y: Math.sin((i * 60) * Math.PI / 180) * 30
                   }}
                   transition={{
-                    duration: 0.6,
+                    duration: 0.4, // Faster for better responsiveness
                     delay: i * 0.1,
                     ease: 'easeOut'
                   }}

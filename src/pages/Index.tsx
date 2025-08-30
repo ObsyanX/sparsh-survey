@@ -1,12 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Upload, BarChart3, Brain, Command, FileText, Sun, Moon } from "lucide-react";
-import Spline from '@splinetool/react-spline';
+import { lazy, Suspense } from "react";
 import ProcessingTimeline from "@/components/ProcessingTimeline";
 import LoadingScreen from "@/components/LoadingScreen";
 import Footer from "@/components/ui/Footer";
 import ThemeToggle from "@/components/ThemeToggle";
 import AmbientSoundSystem from "@/components/audio/AmbientSoundSystem"
+
+// Lazy load Spline for better performance
+const Spline = lazy(() => import('@splinetool/react-spline'));
+
 const Index = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -19,31 +23,45 @@ const Index = () => {
   // Add state for background optimization and theme detection
   const [splineLoaded, setSplineLoaded] = useState(false);
   const [splineError, setSplineError] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isDarkMode, setIsDarkMode] = useState(
+    document.documentElement.classList.contains('dark') ||
+    window.matchMedia('(prefers-color-scheme: dark)').matches
+  );
   const splineRef = useRef<any>(null);
+  const [shouldLoadSpline, setShouldLoadSpline] = useState(false);
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const intersectionRef = useRef<HTMLDivElement>(null);
 
-  // Check if device is mobile and handle resize
+  // Optimized resize handler with debouncing
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        setIsMobile(window.innerWidth < 768);
+      }, 100);
     };
 
-    checkMobile();
     window.addEventListener('resize', checkMobile);
-
-    return () => window.removeEventListener('resize', checkMobile);
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      clearTimeout(timeoutId);
+    };
   }, []);
 
-  // Detect theme changes
+  // Optimized theme detection with debouncing
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
     const checkTheme = () => {
-      const isDark = document.documentElement.classList.contains('dark') ||
-        window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setIsDarkMode(isDark);
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        const isDark = document.documentElement.classList.contains('dark') ||
+          window.matchMedia('(prefers-color-scheme: dark)').matches;
+        setIsDarkMode(isDark);
+      }, 50);
     };
-    // Initial check
-    checkTheme();
+    
     // Listen for theme changes
     const observer = new MutationObserver(checkTheme);
     observer.observe(document.documentElement, {
@@ -56,9 +74,16 @@ const Index = () => {
     return () => {
       observer.disconnect();
       mediaQuery.removeListener(checkTheme);
+      clearTimeout(timeoutId);
     };
   }, []);
 
+  // Intersection observer for lazy loading Spline
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsIntersecting(true);
   useEffect(() => {
     const forceCursorVisibility = () => {
       const cursorElement = document.querySelector('.animated-cursor') as HTMLElement;
@@ -209,36 +234,58 @@ const Index = () => {
                           backfaceVisibility: 'hidden', // Optimize 3D rendering
                         }}
                         onLoad={() => {
-                          console.log('Spline loaded successfully for', isDarkMode ? 'dark' : 'light', 'mode');
-                          setSplineLoaded(true);
+                  <div className="absolute inset-0 w-full h-full z-[-1]" style={{ contain: 'layout style paint' }}>
+                    {shouldLoadSpline && !splineError && (
+                      <Suspense fallback={
+                        <div className="absolute inset-0 w-full h-full" style={{ background: themeColors.background }} />
+                      }>
+                        <Spline
+                          key={isDarkMode ? 'dark' : 'light'} // Force re-render on theme change
+                          ref={splineRef}
+                          scene={getSplineURL()}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            pointerEvents: 'none', // Disable interactions for performance
+                            willChange: 'transform', // Optimize for animations
+                            backfaceVisibility: 'hidden', // Optimize 3D rendering
+                            contain: 'layout style paint',
+                          }}
+                          onLoad={() => {
+                            console.log('Spline loaded successfully for', isDarkMode ? 'dark' : 'light', 'mode');
+                            setSplineLoaded(true);
 
-                          // Additional performance optimizations after load
-                          const canvas = document.querySelector('canvas');
-                          if (canvas) {
-                            // Enable hardware acceleration
-                            canvas.style.transform = 'translateZ(0)';
-                            canvas.style.transformStyle = 'preserve-3d';
+                            // Additional performance optimizations after load
+                            requestAnimationFrame(() => {
+                              const canvas = document.querySelector('canvas');
+                              if (canvas) {
+                                // Enable hardware acceleration
+                                canvas.style.transform = 'translateZ(0)';
+                                canvas.style.transformStyle = 'preserve-3d';
+                                canvas.style.contain = 'layout style paint';
 
-                            // Optimize for different screen sizes
-                            if (window.innerWidth >= 1024) {
-                              // Full quality for large screens
-                              canvas.style.imageRendering = 'auto';
-                            } else if (window.innerWidth >= 768) {
-                              // Medium quality for tablets
-                              canvas.style.imageRendering = 'optimizeSpeed';
-                              canvas.style.filter = 'contrast(1.1) brightness(1.05)';
-                            }
-                          }
-                        }}
-                        onError={() => {
-                          console.warn('Spline failed to load, showing gradient fallback');
-                          setSplineError(true);
-                        }}
-                      />
+                                // Optimize for different screen sizes
+                                if (window.innerWidth >= 1024) {
+                                  // Full quality for large screens
+                                  canvas.style.imageRendering = 'auto';
+                                } else if (window.innerWidth >= 768) {
+                                  // Medium quality for tablets
+                                  canvas.style.imageRendering = 'optimizeSpeed';
+                                  canvas.style.filter = 'contrast(1.1) brightness(1.05)';
+                                }
+                              }
+                            });
+                          }}
+                          onError={() => {
+                            console.warn('Spline failed to load, showing gradient fallback');
+                            setSplineError(true);
+                          }}
+                        />
+                      </Suspense>
                     )}
 
                     {/* Fallback gradient for failed Spline loads */}
-                    {splineError && (
+                    {(splineError || !shouldLoadSpline) && (
                       <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -248,7 +295,7 @@ const Index = () => {
                     )}
 
                     {/* Loading indicator for Spline */}
-                    {!splineLoaded && !splineError && (
+                    {shouldLoadSpline && !splineLoaded && !splineError && (
                       <motion.div
                         initial={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -279,8 +326,8 @@ const Index = () => {
                     style={{ background: themeColors.mobileGradient }}
                   >
                     {/* Animated particles for mobile */}
-                    <div className="absolute inset-0 overflow-hidden">
-                      {Array.from({ length: 15 }).map((_, i) => (
+                    <div className="absolute inset-0 overflow-hidden" style={{ contain: 'layout style paint' }}>
+                      {Array.from({ length: isMobile ? 8 : 15 }).map((_, i) => (
                         <motion.div
                           key={`${isDarkMode}-${i}`} // Force re-render on theme change
                           initial={{
@@ -290,14 +337,14 @@ const Index = () => {
                           }}
                           animate={{
                             opacity: [0, 0.4, 0],
-                            x: Math.random() * window.innerWidth,
-                            y: Math.random() * window.innerHeight,
+                            x: Math.random() * (window.innerWidth || 800),
+                            y: Math.random() * (window.innerHeight || 600),
                           }}
                           transition={{
-                            duration: Math.random() * 8 + 12,
+                            duration: Math.random() * 6 + 8, // Reduced duration
                             repeat: Infinity,
                             ease: "linear",
-                            delay: Math.random() * 5,
+                            delay: Math.random() * 3, // Reduced delay
                           }}
                           className={`absolute w-1 h-1 rounded-full ${themeColors.particles}`}
                           style={{
@@ -312,7 +359,7 @@ const Index = () => {
                 )}
 
                 {/* Enhanced overlay - different for mobile vs desktop and theme */}
-                <div className={`absolute inset-0 ${
+                <div className={`absolute inset-0 pointer-events-none ${
                   isMobile ? themeColors.mobileOverlay : themeColors.overlay
                 }`} />
 
@@ -428,7 +475,7 @@ const Index = () => {
 
                       {/* Hover particles */}
                       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none">
-                        {Array.from({ length: 6 }).map((_, i) => (
+                        {Array.from({ length: 3 }).map((_, i) => ( // Reduced particle count
                           <motion.div
                             key={i}
                             initial={{
@@ -444,10 +491,10 @@ const Index = () => {
                               y: `${50 + (Math.random() - 0.5) * 200}%`
                             }}
                             transition={{
-                              duration: 2,
-                              delay: i * 0.2,
+                              duration: 1.5, // Reduced duration
+                              delay: i * 0.3,
                               repeat: Infinity,
-                              repeatDelay: 1
+                              repeatDelay: 0.5 // Reduced repeat delay
                             }}
                             className={`absolute w-1 h-1 rounded-full ${item.particleColor}`}
                           />
@@ -541,7 +588,7 @@ const Index = () => {
                     <Upload className="w-5 h-5" />
                     <span>Enter Upload Portal</span>
                     <motion.div
-                      animate={{ x: [0, 3, 0] }}
+                        z: 10 // Reduced z-transform for better performance
                       transition={{ duration: 2, repeat: Infinity }}
                       className={isDarkMode ? 'text-quantum-green' : 'text-blue-200'}
                     >
@@ -551,7 +598,7 @@ const Index = () => {
 
                   {/* Subtle particle effect */}
                   <div className="absolute inset-0 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    {Array.from({ length: 3 }).map((_, i) => (
+                    {Array.from({ length: 2 }).map((_, i) => ( // Reduced particle count
                       <motion.div
                         key={i}
                         initial={{ opacity: 0, scale: 0 }}
@@ -562,8 +609,8 @@ const Index = () => {
                           y: Math.random() * 60 - 30,
                         }}
                         transition={{
-                          duration: 3,
-                          delay: i * 0.8,
+                          duration: 2, // Reduced duration
+                          delay: i * 0.5, // Reduced delay
                           repeat: Infinity,
                         }}
                         className={`absolute w-1 h-1 rounded-full top-1/2 left-1/2 ${
@@ -619,7 +666,7 @@ const Index = () => {
                 {/* Process flow indicators */}
                 <div className={`flex justify-center items-center space-x-8 text-xs font-medium transition-colors duration-300 ${
                   isDarkMode ? 'opacity-70' : 'opacity-80'
-                }`}>
+                }`} style={{ contain: 'layout style' }}>
                   <div className="text-center">
                     <div className={`w-2 h-2 rounded-full mx-auto mb-1 ${
                       isDarkMode ? 'bg-quantum-green' : 'bg-emerald-500'

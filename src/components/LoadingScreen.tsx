@@ -13,7 +13,7 @@ export default function LoadingScreen({
   progress, 
   isVisible = true 
 }: LoadingScreenProps) {
-  const [particleCount, setParticleCount] = useState(12);
+  const [particleCount, setParticleCount] = useState(6); // Reduced default
   const [isReducedMotion, setIsReducedMotion] = useState(false);
 
   useEffect(() => {
@@ -27,9 +27,9 @@ export default function LoadingScreen({
     // Adjust particle count based on screen size
     const updateParticleCount = () => {
       const width = window.innerWidth;
-      if (width < 768) setParticleCount(6);
-      else if (width < 1024) setParticleCount(8);
-      else setParticleCount(12);
+      if (width < 768) setParticleCount(3); // Reduced for mobile
+      else if (width < 1024) setParticleCount(4); // Reduced for tablet
+      else setParticleCount(6); // Reduced for desktop
     };
 
     updateParticleCount();
@@ -47,7 +47,7 @@ export default function LoadingScreen({
       scale: [1, 1.1, 1],
       opacity: [0.8, 1, 0.8],
       transition: {
-        duration: 2,
+        duration: 3, // Slower for better performance
         repeat: Infinity,
         ease: "easeInOut"
       }
@@ -58,7 +58,7 @@ export default function LoadingScreen({
     animate: {
       rotate: 360,
       transition: {
-        duration: 8,
+        duration: 12, // Slower for better performance
         repeat: Infinity,
         ease: "linear"
       }
@@ -72,9 +72,9 @@ export default function LoadingScreen({
       opacity: [0, 1, 0],
       scale: [0, 1, 0],
       transition: {
-        duration: 3 + Math.random() * 2,
+        duration: 4 + Math.random() * 2, // Slower for better performance
         repeat: Infinity,
-        delay: i * 0.3,
+        delay: i * 0.5, // Increased delay
         ease: "easeInOut"
       }
     })
@@ -85,9 +85,9 @@ export default function LoadingScreen({
       scale: [0, 3],
       opacity: [0.8, 0],
       transition: {
-        duration: 2,
+        duration: 3, // Slower for better performance
         repeat: Infinity,
-        delay: i * 0.5,
+        delay: i * 0.8, // Increased delay
         ease: "easeOut"
       }
     })
@@ -104,10 +104,13 @@ export default function LoadingScreen({
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 w-screen h-screen bg-background/95 backdrop-blur-sm z-50 flex items-center justify-center overflow-hidden">
+    <div 
+      className="fixed inset-0 w-screen h-screen bg-background/95 backdrop-blur-sm z-50 flex items-center justify-center overflow-hidden"
+      style={{ contain: 'layout style paint' }}
+    >
       {/* Background Quantum Particles */}
-      <div className="absolute inset-0 pointer-events-none">
-        {Array.from({ length: particleCount }).map((_, i) => (
+      <div className="absolute inset-0 pointer-events-none" style={{ contain: 'layout style paint' }}>
+        {!isReducedMotion && Array.from({ length: particleCount }).map((_, i) => (
           <motion.div
             key={`bg-particle-${i}`}
             className="absolute w-1 h-1 bg-primary/30 rounded-full"
@@ -125,7 +128,7 @@ export default function LoadingScreen({
       {/* Main Loading Container */}
       <div className="relative text-center space-y-8 max-w-md mx-auto px-4">
         {/* Core Loading Orb */}
-        <div className="relative w-32 h-32 mx-auto">
+        <div className="relative w-32 h-32 mx-auto" style={{ contain: 'layout style paint' }}>
           {/* Inner Core */}
           <motion.div
             className="absolute inset-0 rounded-full bg-gradient-to-br from-primary via-quantum-purple to-quantum-green"
@@ -140,6 +143,7 @@ export default function LoadingScreen({
           {/* Quantum Glow Effect */}
           <motion.div
             className="absolute inset-0 rounded-full"
+            style={{ contain: 'layout style' }}
             animate={{
               boxShadow: [
                 '0 0 40px hsl(184 100% 50% / 0.5)',
@@ -148,7 +152,7 @@ export default function LoadingScreen({
               ]
             }}
             transition={{
-              duration: 3,
+              duration: 4, // Slower for better performance
               repeat: Infinity,
               ease: "easeInOut"
             }}
@@ -173,7 +177,7 @@ export default function LoadingScreen({
           />
 
           {/* Ripple Waves */}
-          {Array.from({ length: 3 }).map((_, i) => (
+          {!isReducedMotion && Array.from({ length: 2 }).map((_, i) => ( // Reduced count
             <motion.div
               key={`wave-${i}`}
               className="absolute inset-0 rounded-full border border-primary/20"
@@ -184,7 +188,7 @@ export default function LoadingScreen({
           ))}
 
           {/* Energy Particles */}
-          {Array.from({ length: 8 }).map((_, i) => (
+          {!isReducedMotion && Array.from({ length: 4 }).map((_, i) => ( // Reduced count
             <motion.div
               key={`energy-${i}`}
               className="absolute w-2 h-2 bg-primary rounded-full"
@@ -195,9 +199,9 @@ export default function LoadingScreen({
                 scale: [0, 1, 0]
               }}
               transition={{
-                duration: 2,
+                duration: 3, // Slower for better performance
                 repeat: Infinity,
-                delay: i * 0.25,
+                delay: i * 0.5, // Increased delay
                 ease: "easeInOut"
               }}
             />
@@ -262,8 +266,8 @@ export default function LoadingScreen({
         </div>
 
         {/* Floating Quantum Particles */}
-        <div className="absolute inset-0 pointer-events-none">
-          {Array.from({ length: particleCount }).map((_, i) => (
+        <div className="absolute inset-0 pointer-events-none" style={{ contain: 'layout style paint' }}>
+          {!isReducedMotion && Array.from({ length: Math.floor(particleCount / 2) }).map((_, i) => ( // Further reduced
             <motion.div
               key={`float-particle-${i}`}
               className="absolute w-1 h-1 bg-gradient-to-r from-primary to-quantum-purple rounded-full"
@@ -280,23 +284,26 @@ export default function LoadingScreen({
       </div>
 
       {/* Holographic Scan Lines */}
-      <div className="absolute inset-0 pointer-events-none">
+      {!isReducedMotion && (
+      <div className="absolute inset-0 pointer-events-none" style={{ contain: 'layout style' }}>
         <motion.div
           className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/10 to-transparent"
           animate={{
             y: ['-100%', '100%']
           }}
           transition={{
-            duration: 3,
+            duration: 4, // Slower for better performance
             repeat: Infinity,
             ease: "linear"
           }}
         />
       </div>
+      )}
 
       {/* Energy Flow Lines */}
-      <div className="absolute inset-0 pointer-events-none">
-        {Array.from({ length: 4 }).map((_, i) => (
+      {!isReducedMotion && (
+      <div className="absolute inset-0 pointer-events-none" style={{ contain: 'layout style' }}>
+        {Array.from({ length: 2 }).map((_, i) => ( // Reduced count
           <motion.div
             key={`energy-line-${i}`}
             className="absolute w-px h-full bg-gradient-to-b from-transparent via-primary/30 to-transparent"
@@ -308,14 +315,15 @@ export default function LoadingScreen({
               scaleY: [0, 1, 0]
             }}
             transition={{
-              duration: 2,
+              duration: 3, // Slower for better performance
               repeat: Infinity,
-              delay: i * 0.5,
+              delay: i * 1, // Increased delay
               ease: "easeInOut"
             }}
           />
         ))}
       </div>
+      )}
     </div>
   );
 }

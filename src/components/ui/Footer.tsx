@@ -41,6 +41,7 @@ const Footer = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             className="space-y-6"
+            style={{ contain: 'layout style' }}
           >
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-quantum-purple flex items-center justify-center">
@@ -123,7 +124,7 @@ const Footer = () => {
                     className="h-full bg-gradient-to-r from-primary to-quantum-purple rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: "78%" }}
-                    transition={{ duration: 2, delay: 0.5 }}
+                    transition={{ duration: 1.5, delay: 0.3 }} // Faster animation
                   />
                 </div>
               </div>
@@ -138,7 +139,7 @@ const Footer = () => {
                     className="h-full bg-gradient-to-r from-quantum-green to-quantum-purple rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: "92%" }}
-                    transition={{ duration: 2, delay: 0.7 }}
+                    transition={{ duration: 1.5, delay: 0.5 }} // Faster animation
                   />
                 </div>
               </div>

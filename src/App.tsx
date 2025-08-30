@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LoadingProvider } from "@/contexts/LoadingContext";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import AccessibilityFeatures from "@/components/AccessibilityFeatures";
 import SettingsPanel from "@/components/SettingsPanel";
 import AnimatedCursor from "@/components/ui/AnimatedCursor";
@@ -27,6 +27,13 @@ const App = () => {
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isNavigationVisible, setIsNavigationVisible] = useState(true);
   const { isLowPerformance, shouldReduceAnimations } = usePerformance();
+  
+  // Memoize cursor visibility logic to prevent unnecessary re-renders
+  const cursorVisibilityClass = useMemo(() => 
+    shouldReduceAnimations ? 'reduce-motion' : '', 
+    [shouldReduceAnimations]
+  );
+  
   useEffect(() => {
     const ensureCursorVisibility = () => {
       // Force hide default cursor everywhere
@@ -43,15 +50,17 @@ const App = () => {
 
     // Run immediately and after delays
     ensureCursorVisibility();
-    setTimeout(ensureCursorVisibility, 100);
-    setTimeout(ensureCursorVisibility, 1000);
+    const timer1 = setTimeout(ensureCursorVisibility, 100);
+    const timer2 = setTimeout(ensureCursorVisibility, 1000);
 
     // Run on various events
-    window.addEventListener('scroll', ensureCursorVisibility);
-    window.addEventListener('resize', ensureCursorVisibility);
-    window.addEventListener('mousemove', ensureCursorVisibility);
+    window.addEventListener('scroll', ensureCursorVisibility, { passive: true });
+    window.addEventListener('resize', ensureCursorVisibility, { passive: true });
+    window.addEventListener('mousemove', ensureCursorVisibility, { passive: true });
 
     return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
       window.removeEventListener('scroll', ensureCursorVisibility);
       window.removeEventListener('resize', ensureCursorVisibility);
       window.removeEventListener('mousemove', ensureCursorVisibility);
@@ -64,9 +73,9 @@ const App = () => {
           <TooltipProvider>
             <AccessibilityFeatures>
               <BrowserRouter>
-              <div className={shouldReduceAnimations ? 'reduce-motion' : ''}>
+              <div className={cursorVisibilityClass} style={{ contain: 'layout style' }}>
                 {/* Global UI Elements */}
-                <AnimatedCursor />
+                {!shouldReduceAnimations && <AnimatedCursor />}
                 <SimpleBackground />
                 <Toaster />
                 <Sonner />

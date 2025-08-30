@@ -1,19 +1,22 @@
 import React, { useEffect, useRef } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
-import Spline from '@splinetool/react-spline';
+import { lazy, Suspense } from 'react';
 import { usePerformance } from '@/hooks/usePerformance';
+
+// Lazy load Spline for better performance
+const Spline = lazy(() => import('@splinetool/react-spline'));
 
 export default function SimpleBackground() {
   const { settings } = useTheme();
   const { isLowPerformance, shouldReduceAnimations } = usePerformance();
   const splineRef = useRef<HTMLDivElement>(null);
 
-  if (settings.backgroundTexture !== 'starfield') return null;
+  if (settings.backgroundTexture !== 'starfield' || shouldReduceAnimations) return null;
 
   return (
     <div
       ref={splineRef}
-      className="will-change-transform gpu-accelerated"
+      className="gpu-accelerated"
       style={{
         position: "absolute",
         top: 0,
@@ -23,20 +26,25 @@ export default function SimpleBackground() {
         zIndex: -1,
         pointerEvents: "none",
         willChange: "transform",
-        transform: "translateZ(0)"
+        transform: "translateZ(0)",
+        contain: "layout style paint"
       }}
     >
-      <Spline 
-        scene="https://prod.spline.design/Lws6iY4vBNT0NXoF/scene.splinecode"
-        style={{ 
-          width: '100%', 
-          height: '100%',
-          willChange: "transform",
-          transform: "translateZ(0)"
-        }}
-      />
+      <Suspense fallback={<div style={{ width: '100%', height: '100%', background: 'transparent' }} />}>
+        <Spline 
+          scene="https://prod.spline.design/Lws6iY4vBNT0NXoF/scene.splinecode"
+          style={{ 
+            width: '100%', 
+            height: '100%',
+            willChange: "transform",
+            transform: "translateZ(0)",
+            contain: "layout style paint"
+          }}
+        />
+      </Suspense>
     </div>
   );
+  
   //   <div className="fixed inset-0 -z-10">
   //     {/* CSS-only starfield effect */}
   //     <div className="absolute inset-0 bg-gradient-to-b from-slate-950 to-slate-900">

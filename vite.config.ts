@@ -6,20 +6,42 @@ import { componentTagger } from "lovable-tagger";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
-    host: "127.0.0.1",
+    host: "::",
     port: 8080,
-    strictPort: true,
-    hmr: {
-      port: 8080,
-      host: "127.0.0.1"
-    },
-    cors: true
   },
   plugins: [
     react(),
     mode === 'development' &&
     componentTagger(),
   ].filter(Boolean),
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
+          motion: ['framer-motion'],
+          three: ['@react-three/fiber', '@react-three/drei', 'three'],
+          spline: ['@splinetool/react-spline', '@splinetool/runtime']
+        }
+      }
+    },
+    target: 'esnext',
+    minify: 'esbuild',
+    cssCodeSplit: true,
+    sourcemap: false
+  },
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      'framer-motion',
+      '@react-three/fiber',
+      '@react-three/drei',
+      'three'
+    ],
+    exclude: ['@splinetool/react-spline', '@splinetool/runtime']
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

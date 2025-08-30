@@ -13,10 +13,15 @@ interface KPICardProps {
 
 export default function KPICard({ title, value, suffix = '', icon, color, delay = 0 }: KPICardProps) {
   const [displayValue, setDisplayValue] = useState(0);
+  const animationRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const increment = value / 100;
+    if (animationRef.current) {
+      clearTimeout(animationRef.current);
+    }
+    
+    animationRef.current = setTimeout(() => {
+      const increment = value / 50; // Faster animation
       let current = 0;
       const interval = setInterval(() => {
         current += increment;
@@ -26,11 +31,14 @@ export default function KPICard({ title, value, suffix = '', icon, color, delay 
         } else {
           setDisplayValue(Math.floor(current));
         }
-      }, 20);
-      return () => clearInterval(interval);
+      }, 30); // Slightly slower interval for smoother animation
     }, delay);
 
-    return () => clearTimeout(timer);
+    return () => {
+      if (animationRef.current) {
+        clearTimeout(animationRef.current);
+      }
+    };
   }, [value, delay]);
 
   const colorClasses = {
@@ -50,12 +58,13 @@ export default function KPICard({ title, value, suffix = '', icon, color, delay 
       initial={{ opacity: 0, y: 20, scale: 0.9 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.6, delay }}
-      whileHover={{ scale: 1.02 }}
+      whileHover={{ scale: 1.01 }} // Reduced scale for better performance
       className="group"
+      style={{ contain: 'layout style' }}
     >
       <Card className={`glass relative p-3 sm:p-4 md:p-6 bg-gradient-to-br ${colorClasses[color]} ${glowClasses[color]} transition-all duration-300`}>
         {/* Background glow effect */}
-        <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300 bg-gradient-glow" />
+        <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-15 transition-opacity duration-300 bg-gradient-glow" style={{ contain: 'layout style' }} />
         
         <div className="relative z-10">
           <div className="flex items-center justify-between mb-3 sm:mb-4">
@@ -73,9 +82,9 @@ export default function KPICard({ title, value, suffix = '', icon, color, delay 
               <motion.span 
                 className="text-lg sm:text-xl md:text-2xl font-bold"
                 key={displayValue}
-                initial={{ scale: 1.2 }}
+                initial={{ scale: 1.1 }} // Reduced scale for better performance
                 animate={{ scale: 1 }}
-                transition={{ duration: 0.2 }}
+                transition={{ duration: 0.15 }} // Faster transition
               >
                 {displayValue.toLocaleString()}
               </motion.span>
@@ -84,7 +93,7 @@ export default function KPICard({ title, value, suffix = '', icon, color, delay 
           </div>
           
           {/* Animated line */}
-          <div className="mt-3 sm:mt-4 h-0.5 sm:h-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-30 rounded-full animate-shimmer" />
+          <div className="mt-3 sm:mt-4 h-0.5 sm:h-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-30 rounded-full" style={{ contain: 'layout style' }} />
         </div>
       </Card>
     </motion.div>
