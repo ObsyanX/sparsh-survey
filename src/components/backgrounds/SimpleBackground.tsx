@@ -1,12 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, memo } from 'react';
 import { usePerformance } from '@/hooks/usePerformance';
 
 // Lazy load Spline for better performance
 const Spline = lazy(() => import('@splinetool/react-spline'));
 
-export default function SimpleBackground() {
+const SimpleBackground = memo(function SimpleBackground() {
   const { settings } = useTheme();
   const { isLowPerformance, shouldReduceAnimations } = usePerformance();
   const splineRef = useRef<HTMLDivElement>(null);
@@ -30,7 +30,7 @@ export default function SimpleBackground() {
         contain: "layout style paint"
       }}
     >
-      <Suspense fallback={<div style={{ width: '100%', height: '100%', background: 'transparent' }} />}>
+      <Suspense fallback={null}>
         <Spline 
           scene="https://prod.spline.design/Lws6iY4vBNT0NXoF/scene.splinecode"
           style={{ 
@@ -82,4 +82,6 @@ export default function SimpleBackground() {
   //     </div>
   //   </div>
   // );
-}
+});
+
+export default SimpleBackground;

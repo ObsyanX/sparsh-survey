@@ -38,9 +38,12 @@ export default defineConfig(({ mode }) => ({
       'framer-motion',
       '@react-three/fiber',
       '@react-three/drei',
-      'three'
+      'three',
+      'lodash.debounce',
+      '@splinetool/react-spline',
+      '@splinetool/runtime'
     ],
-    exclude: ['@splinetool/react-spline', '@splinetool/runtime']
+    exclude: []
   },
   resolve: {
     alias: {
